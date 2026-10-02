@@ -16,7 +16,8 @@ export const codeBlockFilenameClass =
 export const codeBlockPreClass =
   "max-h-96 overflow-auto p-4 font-mono text-[13px] leading-6 text-foreground";
 
-export const codeBlockLineClass = "block whitespace-pre";
+/** `min-h-6` matches the `leading-6` line box so blank source lines keep their height. */
+export const codeBlockLineClass = "block min-h-6 whitespace-pre";
 
 export const codeBlockGutterClass =
   "mr-4 inline-block w-8 select-none text-right text-muted-foreground";

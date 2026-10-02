@@ -13,6 +13,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
+        "spinner",
         "utils"
       ],
       "files": [
@@ -25,16 +26,6 @@
           "path": "packages/ui/src/button-variants.ts",
           "type": "registry:ui",
           "target": "components/ui/button-variants.ts"
-        },
-        {
-          "path": "packages/ui/src/spinner.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/spinner.tsx"
-        },
-        {
-          "path": "packages/ui/src/spinner-variants.ts",
-          "type": "registry:ui",
-          "target": "components/ui/spinner-variants.ts"
         }
       ],
       "meta": {
@@ -254,7 +245,9 @@
       "type": "registry:ui",
       "title": "Skeleton",
       "description": "SyncQues skeleton. One pulse. Line, circle, or block.",
-      "dependencies": [],
+      "dependencies": [
+        "class-variance-authority"
+      ],
       "registryDependencies": [
         "utils"
       ],
@@ -289,7 +282,9 @@
       "type": "registry:ui",
       "title": "Spinner",
       "description": "SyncQues loading spinner. One arc, four sizes. Label it or leave it decorative.",
-      "dependencies": [],
+      "dependencies": [
+        "class-variance-authority"
+      ],
       "registryDependencies": [
         "utils"
       ],
@@ -692,7 +687,8 @@
         }
       ],
       "dependencies": [
-        "@radix-ui/react-avatar"
+        "@radix-ui/react-avatar",
+        "class-variance-authority"
       ]
     },
     {
@@ -811,7 +807,8 @@
         }
       ],
       "dependencies": [
-        "@radix-ui/react-slot"
+        "@radix-ui/react-slot",
+        "class-variance-authority"
       ]
     },
     {
@@ -930,6 +927,7 @@
         }
       ],
       "dependencies": [
+        "@radix-ui/react-popover",
         "react-day-picker"
       ]
     },
@@ -979,6 +977,7 @@
         }
       ],
       "dependencies": [
+        "@radix-ui/react-popover",
         "react-day-picker"
       ]
     },
@@ -987,6 +986,9 @@
       "type": "registry:ui",
       "title": "Time picker",
       "description": "Time field.",
+      "dependencies": [
+        "@radix-ui/react-popover"
+      ],
       "registryDependencies": [
         "utils"
       ],
@@ -1028,6 +1030,9 @@
       "type": "registry:ui",
       "title": "Month picker",
       "description": "Month field. Value is YYYY-MM or Present.",
+      "dependencies": [
+        "@radix-ui/react-popover"
+      ],
       "registryDependencies": [
         "utils"
       ],

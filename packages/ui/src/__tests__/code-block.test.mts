@@ -4,6 +4,7 @@ import { highlightCode, type CodeToken } from "../code-block-highlight.ts";
 import {
   codeBlockFrameClass,
   codeBlockGutterClass,
+  codeBlockLineClass,
   codeBlockPreClass,
   codeBlockTokenClass,
 } from "../code-block-variants.ts";
@@ -30,6 +31,20 @@ test("code block is one bordered monospace frame", () => {
   assert.match(codeBlockGutterClass, /text-muted-foreground/);
   assert.match(codeBlockTokenClass.keyword, /text-primary/);
   assert.match(codeBlockTokenClass.comment, /text-muted-foreground/);
+});
+
+test("blank source lines keep the line box height", () => {
+  assert.match(codeBlockPreClass, /leading-6/);
+  assert.match(codeBlockLineClass, /block/);
+  assert.match(codeBlockLineClass, /whitespace-pre/);
+  // An empty line has no in-flow content, so the row must supply its own height.
+  assert.match(codeBlockLineClass, /min-h-6/);
+
+  const source = "const a = 1;\n\nconst b = 2;";
+  const lines = highlightCode(source, "ts");
+  assert.equal(lines.length, 3);
+  assert.deepEqual(lines[1], [{ kind: "plain", text: "" }]);
+  assert.equal(textOf(lines), source);
 });
 
 test("tsx highlighting keeps the source and marks structure", () => {

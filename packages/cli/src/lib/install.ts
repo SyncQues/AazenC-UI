@@ -94,32 +94,44 @@ export function installComponents(plan: InstallPlan): void {
   let skipped = 0;
   let unchanged = 0;
 
-  const queue: { owner: string; relativePath: string; content: string }[] = [];
+  // A target can be claimed by more than one item (shared internals such as
+  // `use-open.ts`, or an item that another item depends on). Write each path
+  // once, but credit every claimant so `update <name>` still refreshes it.
+  const queue = new Map<string, { content: string; owners: string[] }>();
+  const claim = (owner: string, relativePath: string, content: string): void => {
+    const existing = queue.get(relativePath);
+    if (existing) {
+      if (!existing.owners.includes(owner)) existing.owners.push(owner);
+      return;
+    }
+    queue.set(relativePath, { content, owners: [owner] });
+  };
+
   for (const item of items) {
     for (const file of item.files) {
-      queue.push({ owner: item.name, relativePath: outputPath(config, file.target), content: file.content });
+      claim(item.name, outputPath(config, file.target), file.content);
     }
   }
   for (const extra of extras) {
-    queue.push({
-      owner: extra.owner,
-      relativePath: slash(join(config.uiDir, extra.filename)),
-      content: extra.content,
-    });
+    claim(extra.owner, slash(join(config.uiDir, extra.filename)), extra.content);
   }
 
-  for (const file of queue) {
-    const relativePath = file.relativePath;
-    const next = transform(file.content, relativePath, config.utilsFile);
+  for (const [relativePath, { content, owners }] of queue) {
+    const next = transform(content, relativePath, config.utilsFile);
     const absolute = insideProject(cwd, relativePath);
     const nextHash = hash(next);
-    const files = writtenByItem.get(file.owner) ?? [];
-    writtenByItem.set(file.owner, files);
+    const record = (value: string): void => {
+      for (const owner of owners) {
+        const files = writtenByItem.get(owner) ?? [];
+        files.push({ path: relativePath, hash: value });
+        writtenByItem.set(owner, files);
+      }
+    };
 
     if (!existsSync(absolute)) {
       mkdirSync(dirname(absolute), { recursive: true });
       writeFileSync(absolute, next);
-      files.push({ path: relativePath, hash: nextHash });
+      record(nextHash);
       wrote += 1;
       console.log(`added ${relativePath}`);
       continue;
@@ -127,7 +139,7 @@ export function installComponents(plan: InstallPlan): void {
 
     const current = readFileSync(absolute, "utf8");
     if (current === next) {
-      files.push({ path: relativePath, hash: nextHash });
+      record(nextHash);
       unchanged += 1;
       continue;
     }
@@ -137,12 +149,12 @@ export function installComponents(plan: InstallPlan): void {
     if (!canReplace) {
       skipped += 1;
       console.log(`skipped ${relativePath} (already exists; pass --overwrite)`);
-      if (previous) files.push({ path: relativePath, hash: previous });
+      if (previous) record(previous);
       continue;
     }
 
     writeFileSync(absolute, next);
-    files.push({ path: relativePath, hash: nextHash });
+    record(nextHash);
     wrote += 1;
     console.log(`updated ${relativePath}`);
   }
