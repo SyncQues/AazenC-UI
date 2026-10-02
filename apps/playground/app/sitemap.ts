@@ -8,6 +8,7 @@ const componentSlugs = [
   "drawer",
   "command",
   "skeleton",
+  "spinner",
   "empty",
   "dropdown",
   "input",
@@ -30,6 +31,7 @@ const componentSlugs = [
   "theme-selector",
   "pdf-viewer",
   "calendar",
+  "code-block",
 ];
 
 const routes = [

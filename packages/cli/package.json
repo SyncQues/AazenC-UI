@@ -1,7 +1,7 @@
 {
   "name": "@aazenc/cli",
-  "version": "0.1.0",
-  "description": "CLI for AazenC UI. Commands are filled in as components are added.",
+  "version": "0.2.0",
+  "description": "CLI for AazenC UI. init, list, add, and update copy components into your app.",
   "type": "module",
   "license": "MIT",
   "author": "AazenC",
@@ -24,7 +24,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/embed-registry.mjs",
     "check-types": "tsc --noEmit",
     "prepublishOnly": "pnpm build"
   },

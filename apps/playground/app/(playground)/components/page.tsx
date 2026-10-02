@@ -7,7 +7,8 @@ const components = [
   {
     href: "/components/button",
     name: "Button",
-    description: "SyncQues actions. Variant, size, shape, width, and align. No class name.",
+    description:
+      "SyncQues actions. Variant, size, shape, width, and align. No class name.",
   },
   {
     href: "/components/card",
@@ -17,17 +18,19 @@ const components = [
   {
     href: "/components/tabs",
     name: "Tabs",
-    description: "SyncQues tabs. Underline or pill.",
+    description: "SyncQues tabs. Underline, pill, or segmented.",
   },
   {
     href: "/components/dialog",
     name: "Dialog",
-    description: "SyncQues dialog. One panel. Size, padding, and alert behavior.",
+    description:
+      "SyncQues dialog. One panel. Size, padding, and alert behavior.",
   },
   {
     href: "/components/drawer",
     name: "Drawer",
-    description: "SyncQues drawer. One sheet, with a handle, scrolling body, and action row.",
+    description:
+      "SyncQues drawer. One sheet, with a handle, scrolling body, and action row.",
   },
   {
     href: "/components/command",
@@ -38,6 +41,12 @@ const components = [
     href: "/components/skeleton",
     name: "Skeleton",
     description: "SyncQues skeleton. Line, circle, or block.",
+  },
+  {
+    href: "/components/spinner",
+    name: "Spinner",
+    description:
+      "SyncQues loading spinner. One arc, four sizes, labelled or quiet.",
   },
   {
     href: "/components/empty",
@@ -67,7 +76,8 @@ const components = [
   {
     href: "/components/checkbox",
     name: "Checkbox",
-    description: "SyncQues checkbox. One box, with a dash for a partial selection.",
+    description:
+      "SyncQues checkbox. One box, with a dash for a partial selection.",
   },
   {
     href: "/components/collapsible",
@@ -92,7 +102,8 @@ const components = [
   {
     href: "/components/toast",
     name: "Toast",
-    description: "SyncQues toast. One card. Success, warning, and error change the icon.",
+    description:
+      "SyncQues toast. One card. Success, warning, and error change the icon.",
   },
   {
     href: "/components/switch",
@@ -147,7 +158,14 @@ const components = [
   {
     href: "/components/calendar",
     name: "Calendar",
-    description: "One month grid. Date, range, month, time, and date-time share one pill.",
+    description:
+      "One month grid. Date, range, month, time, and date-time share one pill.",
+  },
+  {
+    href: "/components/code-block",
+    name: "Code block",
+    description:
+      "One frame for example source. Filename, copy, and optional line numbers.",
   },
 ];
 
@@ -161,7 +179,9 @@ export default function ComponentsPage() {
           <li key={item.href}>
             <Link href={item.href} className="flex flex-col gap-1 py-4">
               <span className="font-medium">{item.name}</span>
-              <span className="text-sm text-muted-foreground">{item.description}</span>
+              <span className="text-sm text-muted-foreground">
+                {item.description}
+              </span>
             </Link>
           </li>
         ))}

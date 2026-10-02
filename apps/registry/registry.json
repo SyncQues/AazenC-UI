@@ -13,6 +13,7 @@
         "class-variance-authority"
       ],
       "registryDependencies": [
+        "spinner",
         "utils"
       ],
       "files": [
@@ -112,7 +113,7 @@
       "name": "tabs",
       "type": "registry:ui",
       "title": "Tabs",
-      "description": "SyncQues tabs. Underline or pill. Pass variant. Icons and counts are props.",
+      "description": "SyncQues tabs. Underline, pill, or segmented. Pass variant. Icons and counts are props.",
       "dependencies": [
         "@radix-ui/react-tabs",
         "class-variance-authority"
@@ -135,7 +136,8 @@
       "meta": {
         "variants": [
           "default",
-          "pill"
+          "pill",
+          "segmented"
         ]
       }
     },
@@ -243,7 +245,9 @@
       "type": "registry:ui",
       "title": "Skeleton",
       "description": "SyncQues skeleton. One pulse. Line, circle, or block.",
-      "dependencies": [],
+      "dependencies": [
+        "class-variance-authority"
+      ],
       "registryDependencies": [
         "utils"
       ],
@@ -270,6 +274,38 @@
           "medium",
           "long",
           "full"
+        ]
+      }
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "SyncQues loading spinner. One arc, four sizes. Label it or leave it decorative.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/spinner.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/spinner.tsx"
+        },
+        {
+          "path": "packages/ui/src/spinner-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/spinner-variants.ts"
+        }
+      ],
+      "meta": {
+        "sizes": [
+          "sm",
+          "md",
+          "lg",
+          "xl"
         ]
       }
     },
@@ -651,7 +687,8 @@
         }
       ],
       "dependencies": [
-        "@radix-ui/react-avatar"
+        "@radix-ui/react-avatar",
+        "class-variance-authority"
       ]
     },
     {
@@ -770,7 +807,8 @@
         }
       ],
       "dependencies": [
-        "@radix-ui/react-slot"
+        "@radix-ui/react-slot",
+        "class-variance-authority"
       ]
     },
     {
@@ -889,6 +927,7 @@
         }
       ],
       "dependencies": [
+        "@radix-ui/react-popover",
         "react-day-picker"
       ]
     },
@@ -938,6 +977,7 @@
         }
       ],
       "dependencies": [
+        "@radix-ui/react-popover",
         "react-day-picker"
       ]
     },
@@ -946,6 +986,9 @@
       "type": "registry:ui",
       "title": "Time picker",
       "description": "Time field.",
+      "dependencies": [
+        "@radix-ui/react-popover"
+      ],
       "registryDependencies": [
         "utils"
       ],
@@ -987,6 +1030,9 @@
       "type": "registry:ui",
       "title": "Month picker",
       "description": "Month field. Value is YYYY-MM or Present.",
+      "dependencies": [
+        "@radix-ui/react-popover"
+      ],
       "registryDependencies": [
         "utils"
       ],
@@ -1015,6 +1061,32 @@
           "path": "packages/ui/src/calendar-utils.ts",
           "type": "registry:ui",
           "target": "components/ui/calendar-utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "Code block",
+      "description": "One frame for example source. Filename, copy, and optional line numbers.",
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/code-block.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/code-block.tsx"
+        },
+        {
+          "path": "packages/ui/src/code-block-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/code-block-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/code-block-highlight.ts",
+          "type": "registry:ui",
+          "target": "components/ui/code-block-highlight.ts"
         }
       ]
     }

@@ -61,7 +61,12 @@ export type {
   DialogTitleProps,
   DialogTriggerProps,
 } from "./dialog";
-export type { DialogContentVariantProps, DialogKind, DialogPadding, DialogSize } from "./dialog-variants";
+export type {
+  DialogContentVariantProps,
+  DialogKind,
+  DialogPadding,
+  DialogSize,
+} from "./dialog-variants";
 export {
   Drawer,
   DrawerBody,
@@ -110,6 +115,18 @@ export type {
 export { Skeleton, skeletonVariants } from "./skeleton";
 export type { SkeletonProps } from "./skeleton";
 export type { SkeletonShape, SkeletonWidth } from "./skeleton-variants";
+export {
+  Spinner,
+  SpinnerLabel,
+  SpinnerOverlay,
+  spinnerVariants,
+} from "./spinner";
+export type {
+  SpinnerLabelProps,
+  SpinnerOverlayProps,
+  SpinnerProps,
+} from "./spinner";
+export type { SpinnerSize } from "./spinner-variants";
 export {
   Empty,
   EmptyContent,
@@ -184,12 +201,30 @@ export type {
 } from "./select";
 export { MultiSelect } from "./multi-select";
 export type { MultiSelectOption, MultiSelectProps } from "./multi-select";
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion";
-export type { AccordionContentProps, AccordionItemProps, AccordionProps, AccordionTriggerProps } from "./accordion";
+export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./accordion";
+export type {
+  AccordionContentProps,
+  AccordionItemProps,
+  AccordionProps,
+  AccordionTriggerProps,
+} from "./accordion";
 export { Checkbox } from "./checkbox";
 export type { CheckboxProps } from "./checkbox";
-export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsible";
-export type { CollapsibleContentProps, CollapsibleProps, CollapsibleTriggerProps } from "./collapsible";
+export {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./collapsible";
+export type {
+  CollapsibleContentProps,
+  CollapsibleProps,
+  CollapsibleTriggerProps,
+} from "./collapsible";
 export { Label } from "./label";
 export type { LabelProps } from "./label";
 export { Badge, badgeVariants } from "./badge";
@@ -202,12 +237,36 @@ export type { ToastOptions } from "./toast";
 export type { ToastTone } from "./toast-variants";
 export { Switch } from "./switch";
 export type { SwitchProps } from "./switch";
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
-export type { TooltipContentProps, TooltipProps, TooltipProviderProps, TooltipTriggerProps } from "./tooltip";
-export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover";
-export type { PopoverAnchorProps, PopoverContentProps, PopoverProps, PopoverTriggerProps } from "./popover";
+export {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./tooltip";
+export type {
+  TooltipContentProps,
+  TooltipProps,
+  TooltipProviderProps,
+  TooltipTriggerProps,
+} from "./tooltip";
+export {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "./popover";
+export type {
+  PopoverAnchorProps,
+  PopoverContentProps,
+  PopoverProps,
+  PopoverTriggerProps,
+} from "./popover";
 export { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-export type { AvatarFallbackProps, AvatarImageProps, AvatarProps } from "./avatar";
+export type {
+  AvatarFallbackProps,
+  AvatarImageProps,
+  AvatarProps,
+} from "./avatar";
 export type { AvatarSize } from "./avatar-variants";
 export { Carousel, CarouselItem } from "./carousel";
 export type { CarouselItemProps, CarouselProps } from "./carousel";
@@ -215,7 +274,16 @@ export { Progress } from "./progress";
 export type { ProgressProps } from "./progress";
 export { Slider } from "./slider";
 export type { SliderProps } from "./slider";
-export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "./table";
+export {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./table";
 export type {
   TableBodyProps,
   TableCaptionProps,
@@ -226,21 +294,44 @@ export type {
   TableProps,
   TableRowProps,
 } from "./table";
-export { Navbar, NavbarActions, NavbarBrand, NavbarLink, NavbarLinks } from "./navbar";
-export type { NavbarActionsProps, NavbarBrandProps, NavbarLinkProps, NavbarLinksProps, NavbarProps } from "./navbar";
+export {
+  Navbar,
+  NavbarActions,
+  NavbarBrand,
+  NavbarLink,
+  NavbarLinks,
+} from "./navbar";
+export type {
+  NavbarActionsProps,
+  NavbarBrandProps,
+  NavbarLinkProps,
+  NavbarLinksProps,
+  NavbarProps,
+} from "./navbar";
 export type { NavbarVariant } from "./navbar-variants";
 export { ThemeSelector } from "./theme-selector";
 export type { ThemeChoice, ThemeSelectorProps } from "./theme-selector";
 export { PdfViewer } from "./pdf-viewer";
 export type { PdfViewerProps } from "./pdf-viewer";
 export { Calendar } from "./calendar";
-export type { CalendarProps, CalendarRangeProps, CalendarSingleProps } from "./calendar";
+export type {
+  CalendarProps,
+  CalendarRangeProps,
+  CalendarSingleProps,
+} from "./calendar";
 export type { DateRange } from "./calendar";
 export { DatePicker } from "./date-picker";
-export type { DatePickerProps, DatePickerRangeProps, DatePickerSingleProps } from "./date-picker";
+export type {
+  DatePickerProps,
+  DatePickerRangeProps,
+  DatePickerSingleProps,
+} from "./date-picker";
 export { DateTimePicker } from "./date-time-picker";
 export type { DateTimePickerProps } from "./date-time-picker";
 export { TimePicker } from "./time-picker";
 export type { TimePickerProps } from "./time-picker";
 export { MonthPicker } from "./month-picker";
 export type { MonthPickerProps } from "./month-picker";
+export { CodeBlock } from "./code-block";
+export type { CodeBlockProps } from "./code-block";
+export type { CodeBlockLanguage } from "./code-block-highlight";

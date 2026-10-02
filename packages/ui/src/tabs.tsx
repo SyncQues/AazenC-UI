@@ -25,6 +25,13 @@ type TabsVariant = NonNullable<TabsVariantProps["variant"]>;
 
 const TabsVariantContext = createContext<TabsVariant>("default");
 
+/** The underline sits under the bar, so it only moves on x. Every pill mark moves on both axes. */
+const TAB_MARK_CLASS: Record<TabsVariant, string> = {
+  default: tabsUnderlineIndicatorClass,
+  pill: tabsPillIndicatorClass,
+  segmented: tabsPillIndicatorClass,
+};
+
 type IndicatorBox = { x: number; y: number; w: number; h: number };
 
 export interface TabsProps extends Omit<ComponentProps<typeof TabsPrimitive.Root>, "className"> {
@@ -124,9 +131,9 @@ function TabsList({ children, ...props }: TabsListProps) {
   }, []);
 
   const indicatorStyle = box
-    ? variant === "pill"
-      ? { width: box.w, height: box.h, transform: `translate(${box.x}px, ${box.y}px)` }
-      : { width: box.w, transform: `translateX(${box.x}px)` }
+    ? variant === "default"
+      ? { width: box.w, transform: `translateX(${box.x}px)` }
+      : { width: box.w, height: box.h, transform: `translate(${box.x}px, ${box.y}px)` }
     : undefined;
 
   return (
@@ -145,7 +152,7 @@ function TabsList({ children, ...props }: TabsListProps) {
           <span
             aria-hidden
             data-slot="tabs-indicator"
-            className={variant === "pill" ? tabsPillIndicatorClass : tabsUnderlineIndicatorClass}
+            className={TAB_MARK_CLASS[variant]}
             style={indicatorStyle}
           />
         ) : null}

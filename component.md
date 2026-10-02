@@ -16,7 +16,7 @@ Add each one under `packages/ui/src` (web) and `packages/ui-native/src/component
 -   Breadcrumb
 -   Separator
 -   Skeleton
--   Spinner
+-   Spinner ✅ (`spinner`)
 -   Progress
 -   Circular Progress
 -   Chip
