@@ -6,7 +6,7 @@ export default function PlaygroundLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pt-14">
       <PlaygroundNav />
       {children}
     </div>
