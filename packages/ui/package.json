@@ -12,6 +12,7 @@
     "./drawer": "./src/drawer.tsx",
     "./command": "./src/command.tsx",
     "./skeleton": "./src/skeleton.tsx",
+    "./spinner": "./src/spinner.tsx",
     "./empty": "./src/empty.tsx",
     "./dropdown-menu": "./src/dropdown-menu.tsx",
     "./input": "./src/input.tsx",
@@ -39,7 +40,8 @@
     "./date-picker": "./src/date-picker.tsx",
     "./date-time-picker": "./src/date-time-picker.tsx",
     "./time-picker": "./src/time-picker.tsx",
-    "./month-picker": "./src/month-picker.tsx"
+    "./month-picker": "./src/month-picker.tsx",
+    "./code-block": "./src/code-block.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

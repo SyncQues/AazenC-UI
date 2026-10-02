@@ -28,7 +28,7 @@ Source root: `SyncQues-Frontend/src/components`.
 ## Feedback and text
 
 - Alert — `ui/alert.tsx`
-- Spinner — `ui/LoadingSpinner.tsx`
+- Spinner — `ui/LoadingSpinner.tsx` ✅ (`spinner` — Spinner, SpinnerLabel, SpinnerOverlay)
 - Expandable Text — `ui/expandable-text.tsx`
 
 ## Data

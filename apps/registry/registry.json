@@ -25,6 +25,16 @@
           "path": "packages/ui/src/button-variants.ts",
           "type": "registry:ui",
           "target": "components/ui/button-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/spinner.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/spinner.tsx"
+        },
+        {
+          "path": "packages/ui/src/spinner-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/spinner-variants.ts"
         }
       ],
       "meta": {
@@ -270,6 +280,36 @@
           "medium",
           "long",
           "full"
+        ]
+      }
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "SyncQues loading spinner. One arc, four sizes. Label it or leave it decorative.",
+      "dependencies": [],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/spinner.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/spinner.tsx"
+        },
+        {
+          "path": "packages/ui/src/spinner-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/spinner-variants.ts"
+        }
+      ],
+      "meta": {
+        "sizes": [
+          "sm",
+          "md",
+          "lg",
+          "xl"
         ]
       }
     },
@@ -1015,6 +1055,32 @@
           "path": "packages/ui/src/calendar-utils.ts",
           "type": "registry:ui",
           "target": "components/ui/calendar-utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "Code block",
+      "description": "One frame for example source. Filename, copy, and optional line numbers.",
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/code-block.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/code-block.tsx"
+        },
+        {
+          "path": "packages/ui/src/code-block-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/code-block-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/code-block-highlight.ts",
+          "type": "registry:ui",
+          "target": "components/ui/code-block-highlight.ts"
         }
       ]
     }

@@ -51,6 +51,20 @@ pnpm lint
 pnpm check-types
 ```
 
+## Use it in an app
+
+The CLI copies components into your project. It does not replace files that are already there.
+
+```bash
+npx @aazenc/cli@latest init
+npx @aazenc/cli@latest list
+npx @aazenc/cli@latest add button card dialog
+npx @aazenc/cli@latest update
+npx @aazenc/cli@latest update button --overwrite
+```
+
+If the project has no `ui` folder, `init` creates `components/ui` (or `src/components/ui`) and `add` writes components there. If a `ui` folder is already present, components go in `aazenc-ui` beside it, for example `components/aazenc-ui`. Pass `--ui <dir>` to choose the directory. Import the generated `aazenc.css` after `tailwindcss` in your global CSS. `@aazenc/cli` on npm is updated when this package is published again. Version 0.1.0 only prints a stub.
+
 ## Add a component
 
 1. Add `packages/ui/src/<name>.tsx` (and the native file under `packages/ui-native/src/components` when it has a native version).

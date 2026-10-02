@@ -5,6 +5,7 @@ import { type VariantProps } from "class-variance-authority";
 import { type ComponentProps } from "react";
 import { cn } from "@aazenc/utils";
 import { buttonVariants } from "./button-variants";
+import { Spinner } from "./spinner";
 
 export interface ButtonProps
   extends Omit<ComponentProps<"button">, "className">,
@@ -13,23 +14,9 @@ export interface ButtonProps
   loading?: boolean;
 }
 
+/** The button already names itself and carries the busy state, so the mark stays quiet. */
 function ButtonSpinner() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="size-4 animate-spin"
-    >
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" />
-      <path
-        d="M21 12a9 9 0 0 0-9-9"
-        stroke="currentColor"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
+  return <Spinner size="sm" />;
 }
 
 function Button({

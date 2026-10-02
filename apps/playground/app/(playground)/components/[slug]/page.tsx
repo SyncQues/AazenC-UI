@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ComponentType } from "react";
 import { AccordionPreview } from "../../../../components/accordion-preview";
 import { AvatarPreview } from "../../../../components/avatar-preview";
 import { CarouselPreview } from "../../../../components/carousel-preview";
@@ -20,6 +21,7 @@ import { PopoverPreview } from "../../../../components/popover-preview";
 import { ProgressPreview } from "../../../../components/progress-preview";
 import { SelectPreview } from "../../../../components/select-preview";
 import { SkeletonPreview } from "../../../../components/skeleton-preview";
+import { SpinnerPreview } from "../../../../components/spinner-preview";
 import { SwitchPreview } from "../../../../components/switch-preview";
 import { TablePreview } from "../../../../components/table-preview";
 import { ToastPreview } from "../../../../components/toast-preview";
@@ -28,6 +30,8 @@ import { TabsPreview } from "../../../../components/tabs-preview";
 import { ThemeSelectorPreview } from "../../../../components/theme-selector-preview";
 import { PdfViewerPreview } from "../../../../components/pdf-viewer-preview";
 import { CalendarPreview } from "../../../../components/calendar-preview";
+import { CodeBlockPreview } from "../../../../components/code-block-preview";
+import { ExampleCode } from "../../../../components/example-code";
 import { PlaceholderPage } from "../../../../components/placeholder-page";
 
 export async function generateMetadata({
@@ -44,6 +48,7 @@ export async function generateMetadata({
     drawer: "Drawer",
     command: "Command",
     skeleton: "Skeleton",
+    spinner: "Spinner",
     empty: "Empty",
     dropdown: "Dropdown",
     input: "Input",
@@ -66,6 +71,7 @@ export async function generateMetadata({
     "theme-selector": "Theme selector",
     "pdf-viewer": "PDF viewer",
     calendar: "Calendar",
+    "code-block": "Code block",
   };
   return { title: titles[slug] ?? slug };
 }
@@ -76,40 +82,54 @@ export default async function ComponentPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  if (slug === "button") return <ButtonPreview />;
-  if (slug === "card") return <CardPreview />;
-  if (slug === "tabs") return <TabsPreview />;
-  if (slug === "dialog") return <DialogPreview />;
-  if (slug === "drawer") return <DrawerPreview />;
-  if (slug === "command") return <CommandPreview />;
-  if (slug === "skeleton") return <SkeletonPreview />;
-  if (slug === "empty") return <EmptyPreview />;
-  if (slug === "dropdown") return <DropdownPreview />;
-  if (slug === "input") return <InputPreview />;
-  if (slug === "select") return <SelectPreview />;
-  if (slug === "accordion") return <AccordionPreview />;
-  if (slug === "checkbox") return <CheckboxPreview />;
-  if (slug === "collapsible") return <CollapsiblePreview />;
-  if (slug === "label") return <LabelPreview />;
-  if (slug === "badge") return <BadgePreview />;
-  if (slug === "file-upload") return <FileUploadPreview />;
-  if (slug === "toast") return <ToastPreview />;
-  if (slug === "switch") return <SwitchPreview />;
-  if (slug === "tooltip") return <TooltipPreview />;
-  if (slug === "popover") return <PopoverPreview />;
-  if (slug === "avatar") return <AvatarPreview />;
-  if (slug === "carousel") return <CarouselPreview />;
-  if (slug === "progress") return <ProgressPreview />;
-  if (slug === "table") return <TablePreview />;
-  if (slug === "navbar") return <NavbarPreview />;
-  if (slug === "theme-selector") return <ThemeSelectorPreview />;
-  if (slug === "pdf-viewer") return <PdfViewerPreview />;
-  if (slug === "calendar") return <CalendarPreview />;
+  const previews: Record<string, ComponentType> = {
+    button: ButtonPreview,
+    card: CardPreview,
+    tabs: TabsPreview,
+    dialog: DialogPreview,
+    drawer: DrawerPreview,
+    command: CommandPreview,
+    skeleton: SkeletonPreview,
+    spinner: SpinnerPreview,
+    empty: EmptyPreview,
+    dropdown: DropdownPreview,
+    input: InputPreview,
+    select: SelectPreview,
+    accordion: AccordionPreview,
+    checkbox: CheckboxPreview,
+    collapsible: CollapsiblePreview,
+    label: LabelPreview,
+    badge: BadgePreview,
+    "file-upload": FileUploadPreview,
+    toast: ToastPreview,
+    switch: SwitchPreview,
+    tooltip: TooltipPreview,
+    popover: PopoverPreview,
+    avatar: AvatarPreview,
+    carousel: CarouselPreview,
+    progress: ProgressPreview,
+    table: TablePreview,
+    navbar: NavbarPreview,
+    "theme-selector": ThemeSelectorPreview,
+    "pdf-viewer": PdfViewerPreview,
+    calendar: CalendarPreview,
+    "code-block": CodeBlockPreview,
+  };
+  const Preview = previews[slug];
+
+  if (!Preview) {
+    return (
+      <PlaceholderPage
+        title={slug}
+        description="This component does not exist yet. Add it under packages/ui/src, then document it on this route."
+      />
+    );
+  }
 
   return (
-    <PlaceholderPage
-      title={slug}
-      description="This component does not exist yet. Add it under packages/ui/src, then document it on this route."
-    />
+    <>
+      <Preview />
+      <ExampleCode slug={slug} />
+    </>
   );
 }
