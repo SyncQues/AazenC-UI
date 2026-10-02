@@ -3,6 +3,7 @@
   "framework": "nextjs",
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm turbo run build --filter=playground",
+  "outputDirectory": "apps/playground/.next",
   "headers": [
     {
       "source": "/r/(.*)",
