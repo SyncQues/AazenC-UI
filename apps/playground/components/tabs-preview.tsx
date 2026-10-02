@@ -51,6 +51,13 @@ const companyItems: TabsItem[] = [
   { value: "archive", label: "Archive", disabled: true },
 ];
 
+const dashboardItems: TabsItem[] = [
+  { value: "overview", label: "Overview" },
+  { value: "analytics", label: "Analytics" },
+  { value: "reports", label: "Reports" },
+  { value: "settings", label: "Settings" },
+];
+
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-10">
@@ -64,6 +71,7 @@ export function TabsPreview() {
   const { mode, toggleMode } = useTheme();
   const [section, setSection] = useState("posts");
   const [company, setCompany] = useState("people");
+  const [dashboard, setDashboard] = useState("overview");
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
@@ -72,7 +80,8 @@ export function TabsPreview() {
           <p className="text-sm text-muted-foreground">Component</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Tabs</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Underline or pill. The active mark uses the primary color. Icons and counts belong on the tab.
+            Underline, pill, or segmented. The segmented bar is one pill track with a single inset pill on the
+            active tab. The underline and pill marks use the primary color. Icons and counts belong on the tab.
           </p>
         </div>
         <Button type="button" variant="outline" onClick={toggleMode}>
@@ -119,6 +128,28 @@ export function TabsPreview() {
 
       <Section title="Pill">
         <Tabs variant="pill" value={company} onValueChange={setCompany}>
+          <TabsItemsList items={companyItems} />
+          <TabsContent value="overview">Company overview.</TabsContent>
+          <TabsContent value="people">People at this company.</TabsContent>
+          <TabsContent value="jobs">Open jobs.</TabsContent>
+          <TabsContent value="updates">Company updates.</TabsContent>
+          <TabsContent value="analytics">Company analytics.</TabsContent>
+          <TabsContent value="archive">Archived pages.</TabsContent>
+        </Tabs>
+      </Section>
+
+      <Section title="Segmented">
+        <Tabs variant="segmented" value={dashboard} onValueChange={setDashboard}>
+          <TabsItemsList items={dashboardItems} />
+          <TabsContent value="overview">Workspace overview.</TabsContent>
+          <TabsContent value="analytics">Workspace analytics.</TabsContent>
+          <TabsContent value="reports">Saved reports.</TabsContent>
+          <TabsContent value="settings">Workspace settings.</TabsContent>
+        </Tabs>
+      </Section>
+
+      <Section title="Segmented with icons and counts">
+        <Tabs variant="segmented" defaultValue="overview">
           <TabsItemsList items={companyItems} />
           <TabsContent value="overview">Company overview.</TabsContent>
           <TabsContent value="people">People at this company.</TabsContent>

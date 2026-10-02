@@ -18,7 +18,7 @@ const components = [
   {
     href: "/components/tabs",
     name: "Tabs",
-    description: "SyncQues tabs. Underline or pill.",
+    description: "SyncQues tabs. Underline, pill, or segmented.",
   },
   {
     href: "/components/dialog",

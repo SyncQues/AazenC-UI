@@ -122,7 +122,7 @@
       "name": "tabs",
       "type": "registry:ui",
       "title": "Tabs",
-      "description": "SyncQues tabs. Underline or pill. Pass variant. Icons and counts are props.",
+      "description": "SyncQues tabs. Underline, pill, or segmented. Pass variant. Icons and counts are props.",
       "dependencies": [
         "@radix-ui/react-tabs",
         "class-variance-authority"
@@ -145,7 +145,8 @@
       "meta": {
         "variants": [
           "default",
-          "pill"
+          "pill",
+          "segmented"
         ]
       }
     },

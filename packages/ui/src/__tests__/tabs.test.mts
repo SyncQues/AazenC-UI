@@ -45,7 +45,31 @@ test("pill is one chip and does not keep accent colors", () => {
   assert.match(tabsPillIndicatorClass, /rounded-full/);
 });
 
-test("the count chip is shared by both tab looks", () => {
+test("segmented is one pill track that holds the same primary pill mark", () => {
+  const list = cn(tabsListVariants({ variant: "segmented" }));
+  assert.match(list, /rounded-full/);
+  assert.match(list, /bg-muted/);
+  assert.match(list, /inline-flex/);
+  assert.match(list, /w-max/);
+  assert.doesNotMatch(list, /border-b(?!order)|min-w-full|rounded-none|rounded-md/);
+
+  const trigger = cn(tabsTriggerVariants({ variant: "segmented" }));
+  assert.match(trigger, /rounded-full/);
+  assert.doesNotMatch(trigger, /rounded-none|rounded-md|rounded-lg|rounded-xl/);
+  // Inactive tabs sit on the track with no fill of their own.
+  assert.match(trigger, /border-transparent/);
+  assert.match(trigger, /bg-transparent/);
+  assert.match(trigger, /text-muted-foreground/);
+  // The mark is the primary fill, so the active label flips with it.
+  assert.match(trigger, /data-\[state=active\]:text-primary-foreground/);
+  assert.doesNotMatch(trigger, /text-blue|bg-blue|amber|teal|purple|indigo|border-primary/);
+
+  // The mark is the same primary pill the chip row uses; only the track differs.
+  assert.match(tabsPillIndicatorClass, /bg-primary/);
+  assert.match(tabsPillIndicatorClass, /rounded-full/);
+});
+
+test("the count chip is shared by every tab look", () => {
   assert.match(tabsBadgeClass, /rounded-full/);
   assert.match(tabsBadgeClass, /bg-background/);
   assert.match(tabsBadgeClass, /text-foreground/);
