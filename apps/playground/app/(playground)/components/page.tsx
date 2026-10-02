@@ -84,6 +84,71 @@ const components = [
     name: "Badge",
     description: "SyncQues badge. Solid, soft, outline, or destructive.",
   },
+  {
+    href: "/components/file-upload",
+    name: "File upload",
+    description: "SyncQues file upload. One drop zone.",
+  },
+  {
+    href: "/components/toast",
+    name: "Toast",
+    description: "SyncQues toast. One card. Success, warning, and error change the icon.",
+  },
+  {
+    href: "/components/switch",
+    name: "Switch",
+    description: "SyncQues switch. One track.",
+  },
+  {
+    href: "/components/tooltip",
+    name: "Tooltip",
+    description: "SyncQues tooltip. One inverse bubble.",
+  },
+  {
+    href: "/components/popover",
+    name: "Popover",
+    description: "SyncQues popover. One panel, same radius as the menus.",
+  },
+  {
+    href: "/components/avatar",
+    name: "Avatar",
+    description: "SyncQues avatar. One circle. Small, default, or large.",
+  },
+  {
+    href: "/components/carousel",
+    name: "Carousel",
+    description: "SyncQues carousel. One horizontal frame.",
+  },
+  {
+    href: "/components/progress",
+    name: "Progress",
+    description: "SyncQues progress and slider. One track.",
+  },
+  {
+    href: "/components/table",
+    name: "Table",
+    description: "SyncQues table. One bordered grid.",
+  },
+  {
+    href: "/components/navbar",
+    name: "Navbar",
+    description: "SyncQues navbar. One sticky bar.",
+  },
+  {
+    href: "/components/theme-selector",
+    name: "Theme selector",
+    description: "One menu for appearance, surface, and palette.",
+  },
+  {
+    href: "/components/pdf-viewer",
+    name: "PDF viewer",
+    description: "One framed reader. Pages, zoom, and thumbnails.",
+  },
+  {
+    href: "/components/calendar",
+    name: "Calendar",
+    description: "One month grid. Date, range, month, time, and date-time share one pill.",
+  },
 ];
 
 export default function ComponentsPage() {

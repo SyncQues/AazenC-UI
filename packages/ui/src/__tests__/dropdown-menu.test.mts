@@ -11,7 +11,7 @@ test("dropdown is one panel", () => {
   assert.match(dropdownMenuContentClass, /bg-popover/);
   assert.match(dropdownMenuContentClass, /border-border/);
   assert.match(dropdownMenuContentClass, /shadow-md/);
-  assert.match(dropdownMenuContentClass, /rounded-md/);
+  assert.match(dropdownMenuContentClass, /rounded-\[var\(--radius-panel\)\]/);
   assert.match(dropdownMenuContentClass, /z-\[var\(--z-popper\)\]/);
   assert.doesNotMatch(dropdownMenuContentClass, /slide-in-from|backdrop-blur|shadow-lg|bg-background/);
 });

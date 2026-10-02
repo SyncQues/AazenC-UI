@@ -10,15 +10,15 @@ export const selectIconClass =
   "size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-out group-data-[state=open]:rotate-180 motion-reduce:transition-none";
 
 export const selectContentClass =
-  "menu-motion pointer-events-auto z-[var(--z-popper)] max-h-72 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md outline-none";
+  "menu-motion pointer-events-auto z-[var(--z-popper)] max-h-72 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-[var(--radius-panel)] border border-border bg-popover text-popover-foreground shadow-md outline-none";
 
-export const selectViewportClass = "max-h-72 w-full min-w-[var(--radix-select-trigger-width)] overflow-y-auto p-1";
+export const selectViewportClass = "max-h-72 w-full min-w-[var(--radix-select-trigger-width)] overflow-y-auto p-1.5";
 
-export const selectLabelClass = "px-2 py-1.5 text-xs font-medium text-muted-foreground";
+export const selectLabelClass = "px-3 py-1.5 text-xs font-medium text-muted-foreground";
 
 export const selectItemClass =
-  "relative flex w-full cursor-pointer items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none select-none transition-colors duration-150 ease-out focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 motion-reduce:transition-none";
+  "relative flex w-full cursor-pointer items-center truncate rounded-full py-1.5 pr-3 pl-8 text-sm whitespace-nowrap outline-none select-none transition-colors duration-150 ease-out focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 motion-reduce:transition-none";
 
-export const selectSeparatorClass = "bg-border -mx-1 my-1 h-px";
+export const selectSeparatorClass = "bg-border mx-2 my-1 h-px";
 
 export const selectScrollButtonClass = "flex items-center justify-center py-1 text-muted-foreground";

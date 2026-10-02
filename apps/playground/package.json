@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "prebuild": "node ../../scripts/bundle-registry.mjs",
+    "prebuild": "node ../../scripts/bundle-registry.mjs && node ../../scripts/copy-pdfjs-assets.mjs",
+    "predev": "node ../../scripts/copy-pdfjs-assets.mjs",
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start",
@@ -16,8 +17,10 @@
     "@aazenc/ui": "workspace:*",
     "@aazenc/utils": "workspace:*",
     "next": "16.2.11",
+    "pdfjs-dist": "5.4.296",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-pdf": "10.4.1"
   },
   "devDependencies": {
     "@aazenc/config": "workspace:*",
