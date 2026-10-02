@@ -138,6 +138,380 @@
           "pill"
         ]
       }
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "SyncQues dialog. One panel. Pass size, padding, and kind. Alert uses the same chrome.",
+      "dependencies": [
+        "@radix-ui/react-dialog",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dialog.tsx"
+        },
+        {
+          "path": "packages/ui/src/dialog-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/dialog-variants.ts"
+        }
+      ],
+      "meta": {
+        "sizes": [
+          "sm",
+          "default",
+          "lg",
+          "xl"
+        ],
+        "paddings": [
+          "default",
+          "none"
+        ],
+        "kinds": [
+          "dialog",
+          "alert"
+        ]
+      }
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "title": "Drawer",
+      "description": "SyncQues drawer. One sheet. Side chooses the edge. Handle, scrolling body, and action row are built in.",
+      "dependencies": [
+        "vaul"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/drawer.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/drawer.tsx"
+        },
+        {
+          "path": "packages/ui/src/drawer-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/drawer-variants.ts"
+        }
+      ],
+      "meta": {
+        "sides": [
+          "bottom",
+          "top",
+          "left",
+          "right"
+        ]
+      }
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "SyncQues command. One list. The palette is that list inside a dialog.",
+      "dependencies": [
+        "cmdk",
+        "@radix-ui/react-dialog"
+      ],
+      "registryDependencies": [
+        "utils",
+        "dialog"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/command.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command.tsx"
+        },
+        {
+          "path": "packages/ui/src/command-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/command-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "SyncQues skeleton. One pulse. Line, circle, or block.",
+      "dependencies": [],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/skeleton.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/skeleton.tsx"
+        },
+        {
+          "path": "packages/ui/src/skeleton-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/skeleton-variants.ts"
+        }
+      ],
+      "meta": {
+        "shapes": [
+          "line",
+          "circle",
+          "block"
+        ],
+        "widths": [
+          "short",
+          "medium",
+          "long",
+          "full"
+        ]
+      }
+    },
+    {
+      "name": "empty",
+      "type": "registry:ui",
+      "title": "Empty",
+      "description": "SyncQues empty state. One dashed layout with an icon well.",
+      "dependencies": [],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/src/empty.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/empty.tsx"
+        },
+        {
+          "path": "packages/ui/src/empty-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/empty-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown menu",
+      "description": "SyncQues dropdown. One menu. Destructive is the only item tone.",
+      "dependencies": [
+        "@radix-ui/react-dropdown-menu",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/dropdown-menu.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown-menu.tsx"
+        },
+        {
+          "path": "packages/ui/src/dropdown-menu-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown-menu-variants.ts"
+        }
+      ],
+      "meta": {
+        "tones": [
+          "default",
+          "destructive"
+        ]
+      }
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "SyncQues input. One field. Native type covers password, search, email, and the rest.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/input.tsx"
+        },
+        {
+          "path": "packages/ui/src/input-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/input-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "SyncQues select. One pill field. Multi-select adds search, tags, and select all on that same field.",
+      "dependencies": [
+        "@radix-ui/react-select",
+        "@radix-ui/react-popover"
+      ],
+      "registryDependencies": [
+        "utils",
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/select.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select.tsx"
+        },
+        {
+          "path": "packages/ui/src/select-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/select-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/multi-select.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/multi-select.tsx"
+        },
+        {
+          "path": "packages/ui/src/multi-select-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/multi-select-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "SyncQues accordion. One bordered list. Single and multiple are behavior.",
+      "dependencies": [
+        "@radix-ui/react-accordion"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/accordion.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/accordion.tsx"
+        },
+        {
+          "path": "packages/ui/src/accordion-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/accordion-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "SyncQues checkbox. One box. Indeterminate uses the same fill.",
+      "dependencies": [
+        "@radix-ui/react-checkbox"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/checkbox.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/checkbox.tsx"
+        },
+        {
+          "path": "packages/ui/src/checkbox-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/checkbox-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "SyncQues collapsible. One disclosure. The panel animates open and closed.",
+      "dependencies": [
+        "@radix-ui/react-collapsible"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/collapsible.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/collapsible.tsx"
+        },
+        {
+          "path": "packages/ui/src/collapsible-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/collapsible-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "SyncQues label. One caption. Required adds a mark.",
+      "dependencies": [
+        "@radix-ui/react-label"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/label.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/label.tsx"
+        },
+        {
+          "path": "packages/ui/src/label-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/label-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "SyncQues badge. Solid, soft, outline, or destructive. Soft replaces secondary.",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/badge.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/badge.tsx"
+        },
+        {
+          "path": "packages/ui/src/badge-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/badge-variants.ts"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "default",
+          "soft",
+          "outline",
+          "destructive"
+        ]
+      }
     }
   ]
 }

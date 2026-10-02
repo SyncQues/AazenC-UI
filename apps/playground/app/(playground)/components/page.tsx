@@ -19,6 +19,71 @@ const components = [
     name: "Tabs",
     description: "SyncQues tabs. Underline or pill.",
   },
+  {
+    href: "/components/dialog",
+    name: "Dialog",
+    description: "SyncQues dialog. One panel. Size, padding, and alert behavior.",
+  },
+  {
+    href: "/components/drawer",
+    name: "Drawer",
+    description: "SyncQues drawer. One sheet, with a handle, scrolling body, and action row.",
+  },
+  {
+    href: "/components/command",
+    name: "Command",
+    description: "SyncQues command. One list, inline or in a dialog.",
+  },
+  {
+    href: "/components/skeleton",
+    name: "Skeleton",
+    description: "SyncQues skeleton. Line, circle, or block.",
+  },
+  {
+    href: "/components/empty",
+    name: "Empty",
+    description: "SyncQues empty state. One dashed layout.",
+  },
+  {
+    href: "/components/dropdown",
+    name: "Dropdown",
+    description: "SyncQues dropdown. One menu. Destructive is the only tone.",
+  },
+  {
+    href: "/components/input",
+    name: "Input",
+    description: "SyncQues input. One field for every native type.",
+  },
+  {
+    href: "/components/select",
+    name: "Select",
+    description: "SyncQues select. One pill, plus a searchable multi-select.",
+  },
+  {
+    href: "/components/accordion",
+    name: "Accordion",
+    description: "SyncQues accordion. One bordered list.",
+  },
+  {
+    href: "/components/checkbox",
+    name: "Checkbox",
+    description: "SyncQues checkbox. One box, with a dash for a partial selection.",
+  },
+  {
+    href: "/components/collapsible",
+    name: "Collapsible",
+    description: "SyncQues collapsible. One disclosure.",
+  },
+  {
+    href: "/components/label",
+    name: "Label",
+    description: "SyncQues label. One caption, with an optional required mark.",
+  },
+  {
+    href: "/components/badge",
+    name: "Badge",
+    description: "SyncQues badge. Solid, soft, outline, or destructive.",
+  },
 ];
 
 export default function ComponentsPage() {

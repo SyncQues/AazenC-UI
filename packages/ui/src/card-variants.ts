@@ -29,12 +29,14 @@ export const cardPaddingClass: Record<CardPadding, { header: string; content: st
   },
 };
 
-export const cardVariants = cva("overflow-hidden text-card-foreground", {
+export const cardVariants = cva("animate-fade-in overflow-hidden text-card-foreground", {
   variants: {
     variant: {
-      default: "border border-border bg-card shadow-sm",
+      default:
+        "border border-border bg-card shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-md motion-reduce:translate-none motion-reduce:scale-none",
       /* Glass chrome comes from .premium-glass-card. Background utilities would paint over it. */
-      glass: "premium-glass-card",
+      glass:
+        "premium-glass-card transition-[translate,scale,box-shadow,border-color,background-color] duration-300 ease-out hover:-translate-y-1 motion-reduce:translate-none motion-reduce:scale-none",
       plain: "border-0 bg-transparent shadow-none",
     },
     radius: {
@@ -54,17 +56,18 @@ export const cardVariants = cva("overflow-hidden text-card-foreground", {
     {
       variant: "default",
       interactive: true,
-      className: "cursor-pointer transition-shadow hover:shadow-md",
+      className: "cursor-pointer active:scale-[0.985]",
     },
     {
       variant: "plain",
       interactive: true,
-      className: "cursor-pointer transition-colors hover:bg-accent/40",
+      className:
+        "cursor-pointer transition-[translate,scale,background-color] duration-300 ease-out hover:-translate-y-1 hover:bg-accent/40 active:scale-[0.985] motion-reduce:translate-none motion-reduce:scale-none",
     },
     {
       variant: "glass",
       interactive: true,
-      className: "cursor-pointer",
+      className: "cursor-pointer active:scale-[0.985]",
     },
   ],
   defaultVariants: {

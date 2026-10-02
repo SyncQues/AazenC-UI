@@ -22,13 +22,19 @@ test("default card is a bordered panel with the standard radius", () => {
   assert.match(value, /rounded-lg/);
   assert.match(value, /text-card-foreground/);
   assert.match(value, /overflow-hidden/);
-  assert.doesNotMatch(value, /rounded-3xl|premium-glass-card|bg-transparent|shadow-lg|shadow-md/);
+  assert.match(value, /animate-fade-in/);
+  assert.match(value, /hover:-translate-y-1/);
+  assert.match(value, /hover:shadow-md/);
+  assert.match(value, /transition-\[translate,scale,box-shadow\]/);
+  assert.doesNotMatch(value, /rounded-3xl|premium-glass-card|bg-transparent|shadow-lg/);
+  assert.doesNotMatch(value, /(^|\s)shadow-md(\s|$)/);
 });
 
 test("glass and plain are the other two surfaces", () => {
   const glass = card({ variant: "glass" });
   assert.match(glass, /premium-glass-card/);
   assert.match(glass, /rounded-lg/);
+  assert.match(glass, /hover:-translate-y-1/);
   assert.doesNotMatch(glass, /bg-card|shadow-lg|border-0|bg-transparent/);
 
   const plain = card({ variant: "plain" });

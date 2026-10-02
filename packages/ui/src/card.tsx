@@ -29,7 +29,7 @@ export interface CardTitleProps
   extends Omit<ComponentProps<"h3">, "className">,
     VariantProps<typeof cardTitleVariants> {}
 
-export interface CardDescriptionProps extends Omit<ComponentProps<"p">, "className"> {}
+export type CardDescriptionProps = Omit<ComponentProps<"p">, "className">
 
 export interface CardContentProps
   extends Omit<ComponentProps<"div">, "className">,

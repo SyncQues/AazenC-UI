@@ -16,6 +16,8 @@ test("default button is a primary pill", () => {
   assert.match(value, /rounded-full/);
   assert.doesNotMatch(value, /rounded-md/);
   assert.match(value, /focus-visible:ring-\[3px\]/);
+  assert.match(value, /transition-\[color,background-color,border-color,box-shadow,opacity,transform\]/);
+  assert.match(value, /active:scale-\[0\.98\]/);
   assert.doesNotMatch(value, /brand-gradient|bg-green-600|bg-white\/50/);
 });
 
@@ -28,6 +30,8 @@ test("outline, ghost, and link stay distinct from the primary fill", () => {
   assert.match(link, /hover:underline/);
   assert.match(link, /h-auto/);
   assert.match(link, /rounded-none/);
+  assert.match(link, /active:scale-100/);
+  assert.doesNotMatch(link, /active:scale-\[0\.98\]/);
   assert.doesNotMatch(link, /\bh-10\b/);
 });
 

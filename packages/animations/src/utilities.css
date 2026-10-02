@@ -41,8 +41,86 @@
   animation: accordion-up var(--duration-normal) var(--ease-default) forwards;
 }
 
+@utility collapsible-motion {
+  &[data-state="open"] {
+    animation: collapsible-down var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"] {
+    animation: collapsible-up var(--duration-normal) var(--ease-default) forwards;
+  }
+}
+
 @utility animate-tab-content {
   animation: tab-content-in var(--duration-slow) var(--ease-default) forwards;
+}
+
+/* Scale stays off `transform` so the dialog can stay centered with `translate`. */
+@utility dialog-motion {
+  &[data-state="open"] {
+    animation: dialog-in var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"] {
+    animation: dialog-out var(--duration-normal) var(--ease-default) forwards;
+  }
+}
+
+/* Keeps the Radix portal mounted until the panel finishes leaving. */
+@utility dialog-presence {
+  &:has([data-state="open"]) {
+    animation: dialog-presence-in var(--duration-normal) linear forwards;
+  }
+
+  &:has([data-state="closed"]) {
+    animation: dialog-presence-out var(--duration-normal) linear forwards;
+  }
+}
+
+@utility dialog-overlay-motion {
+  &[data-state="open"] {
+    animation: dialog-overlay-in var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"] {
+    animation: dialog-overlay-out var(--duration-normal) var(--ease-default) forwards;
+  }
+}
+
+/* Menus scale on the `scale` property so Radix can keep positioning on `transform`. */
+@utility menu-motion {
+  &[data-state="open"] {
+    animation: dialog-in var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"] {
+    animation: dialog-out var(--duration-normal) var(--ease-default) forwards;
+  }
+}
+
+/* Only the panel is marked data-presence. Nested items also use data-state. */
+@utility menu-presence {
+  &:has([data-presence][data-state="open"]) {
+    animation: dialog-presence-in var(--duration-normal) linear forwards;
+  }
+
+  &:has([data-presence][data-state="closed"]) {
+    animation: dialog-presence-out var(--duration-normal) linear forwards;
+  }
+}
+
+@utility drawer-overlay-motion {
+  &[data-state="open"] {
+    animation: dialog-overlay-in var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"] {
+    animation: dialog-overlay-out var(--duration-normal) var(--ease-default) forwards;
+  }
+}
+
+@utility skeleton-motion {
+  animation: skeleton-pulse 1.5s var(--ease-default) infinite;
 }
 
 @utility animate-row-fade-in {
@@ -235,7 +313,28 @@
   .animate-float-in,
   .animate-accordion-down,
   .animate-accordion-up,
+  .collapsible-motion[data-state="open"],
+  .collapsible-motion[data-state="closed"],
+  [data-slot="accordion-content"][data-state="closed"],
+  [data-slot="collapsible-content"][data-state="closed"],
   .animate-tab-content,
+  .dialog-motion,
+  .dialog-motion[data-state="open"],
+  .dialog-motion[data-state="closed"],
+  .dialog-overlay-motion,
+  .dialog-overlay-motion[data-state="open"],
+  .dialog-overlay-motion[data-state="closed"],
+  .dialog-presence:has([data-state="open"]),
+  .dialog-presence:has([data-state="closed"]),
+  .menu-motion,
+  .menu-motion[data-state="open"],
+  .menu-motion[data-state="closed"],
+  .menu-presence:has([data-presence][data-state="open"]),
+  .menu-presence:has([data-presence][data-state="closed"]),
+  .drawer-overlay-motion,
+  .drawer-overlay-motion[data-state="open"],
+  .drawer-overlay-motion[data-state="closed"],
+  .skeleton-motion,
   .animate-row-fade-in,
   .animate-checkbox-check,
   .animate-select-content-in,
@@ -252,6 +351,11 @@
   .glass-stagger-children > * {
     animation: none !important;
     transition: none !important;
+  }
+
+  [data-slot="accordion-content"][data-state="closed"],
+  [data-slot="collapsible-content"][data-state="closed"] {
+    height: 0;
   }
 
   .glass-row-hover:hover {

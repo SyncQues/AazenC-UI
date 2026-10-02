@@ -1,15 +1,32 @@
 {
   "name": "@aazenc/cli",
-  "version": "0.0.0",
-  "private": true,
-  "description": "CLI and MCP server skeleton for AazenC UI. Commands are filled in after components exist.",
+  "version": "0.1.0",
+  "description": "CLI for AazenC UI. Commands are filled in as components are added.",
   "type": "module",
   "license": "MIT",
+  "author": "AazenC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SyncQues/AazenC-UI.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/SyncQues/AazenC-UI/issues"
+  },
+  "homepage": "https://github.com/SyncQues/AazenC-UI",
   "bin": {
-    "aazenc-ui": "./src/index.ts"
+    "aazenc-ui": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "build": "tsc",
+    "check-types": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
