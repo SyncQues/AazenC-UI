@@ -1,0 +1,826 @@
+@import "tailwindcss";
+@import "@aazenc/tokens/globals.css";
+@import "@aazenc/themes/slate.css";
+@import "@aazenc/themes/mono.css";
+@import "@aazenc/themes/aurora.css";
+@import "@aazenc/themes/sunset.css";
+@import "@aazenc/themes/frost.css";
+@import "@aazenc/themes/ocean.css";
+@import "@aazenc/animations/globals.css";
+
+/* Class mode, matching SyncQues. ThemeProvider toggles `.dark` on <html>. */
+@custom-variant dark (&:is(.dark *));
+
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+@source "../../../apps/playground/**/*.{ts,tsx}";
+/* Demo-only classes stay out of the critical CSS graph (smaller render-blocking sheet) */
+@source not "../../../apps/playground/components/**/*-demo.tsx";
+@source not "../../../apps/playground/lib/examples/**/*.{ts,tsx}";
+@source not "../../../apps/playground/public/**/*";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-overlay: var(--overlay);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-about-accent: var(--about-accent);
+  --color-brand: var(--brand);
+  --color-brand-accent: var(--brand-accent);
+  --color-analytics-accent: var(--analytics-accent);
+  --color-analytics-positive: var(--analytics-positive);
+  --color-analytics-negative: var(--analytics-negative);
+  --color-signal-hiring: var(--signal-hiring);
+  --color-signal-culture: var(--signal-culture);
+  --color-signal-milestone: var(--signal-milestone);
+  --color-signal-update: var(--signal-update);
+
+  --font-sans: var(--font-inter, Inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  --font-serif: var(--font-playfair, "Playfair Display"), Georgia, Cambria, "Times New Roman",
+    Times, serif;
+  --font-display: var(--font-playfair, "Playfair Display"), Georgia, Cambria, "Times New Roman",
+    Times, serif;
+  --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+
+  --background-image-brand: var(--brand-gradient);
+  --background-image-wordmark: var(--brand-wordmark);
+
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+/*
+ * Apple Liquid Glass materials
+ *
+ * CRITICAL: use baked-in alpha (oklch(... / a)), NEVER
+ *   color-mix(in oklch, var(--x) var(--pct), transparent)
+ * Percentage custom-properties in color-mix are unreliable after LightningCSS
+ * and often resolve as fully transparent in browsers.
+ *
+ * Also: do NOT put transform:translateZ(0) on sticky glass — it breaks
+ * backdrop-filter sampling of scrolled content in Chromium.
+ */
+:root.light {
+  /* Opaque base (for components that re-mix carefully) */
+  --glass-surface-fill: oklch(0.99 0 0);
+  /* Ready-to-use frosted fills — alpha baked in (Apple-like milky frost) */
+  --glass-panel-bg: oklch(0.99 0 0 / 0.78);
+  --glass-header-bg: oklch(0.99 0 0 / 0.72);
+  --glass-dialog-bg: oklch(0.99 0 0 / 0.7);
+  --glass-dialog-elevated-bg: oklch(0.99 0 0 / 0.82);
+  --glass-surface-bg: oklch(0.99 0 0 / 0.68);
+  --glass-surface-thin-bg: oklch(0.99 0 0 / 0.55);
+  --glass-surface-subtle-bg: oklch(0.99 0 0 / 0.4);
+  --glass-field-bg: oklch(0.97 0 0 / 0.65);
+  /* Weight tokens kept for ad-hoc Tailwind color-mix (numeric only — never var-in-var) */
+  --glass-fill-thick: 78%;
+  --glass-fill-regular: 72%;
+  --glass-fill-thin: 55%;
+  --glass-fill-ultra-thin: 40%;
+  /* Chrome capsule */
+  --glass-chrome-bg: oklch(0.97 0 0 / 0.75);
+  --glass-chrome-bg-env: oklch(0.97 0 0 / 0.78);
+  --glass-chrome-fg: oklch(0.13 0 0);
+  --glass-chrome-fg-muted: oklch(0.4 0 0);
+  --glass-chrome-border: oklch(0.13 0 0 / 0.12);
+  --glass-chrome-blur: 5px;
+  --glass-chrome-shadow:
+    0 1px 2px oklch(0 0 0 / 0.05),
+    0 8px 28px oklch(0 0 0 / 0.1);
+  --glass-chrome-inset: inset 0 1px 0 oklch(1 0 0 / 0.92);
+  --glass-chrome-rim: 0 0 0 0.5px oklch(0.13 0 0 / 0.1);
+  --glass-chrome-indicator-bg: oklch(1 0 0 / 0.96);
+  --glass-chrome-indicator-border: oklch(0.13 0 0 / 0.09);
+  --glass-chrome-indicator-shadow:
+    0 1px 3px oklch(0 0 0 / 0.09),
+    0 2px 8px oklch(0 0 0 / 0.07),
+    inset 0 1px 0 oklch(1 0 0 / 0.96),
+    var(--glass-chrome-rim);
+  --glass-button-ui-bg: oklch(1 0 0 / 0.68);
+  --glass-button-ui-bg-hover: oklch(1 0 0 / 0.82);
+  --glass-button-ui-fg: oklch(0.14 0 0);
+  --glass-button-ui-border: oklch(0.13 0 0 / 0.14);
+  --glass-scroll-thumb: oklch(0.45 0 0 / 0.52);
+  --glass-scroll-thumb-hover: oklch(0.35 0 0 / 0.62);
+  --glass-scroll-track: transparent;
+  /* Shared frost filter stack */
+  --glass-frost: blur(3px) saturate(180%);
+  --glass-frost-heavy: blur(5px) saturate(190%);
+  --glass-frost-chrome: blur(5px) saturate(180%);
+  /* Second stop for color-mix(..., transparent) surfaces — solid mode stays opaque */
+  --glass-mix-into: transparent;
+}
+
+:root.dark {
+  --glass-surface-fill: oklch(0.24 0.015 270);
+  /* Dense smoked glass — readable frost, not clear plastic */
+  --glass-panel-bg: oklch(0.24 0.015 270 / 0.78);
+  --glass-header-bg: oklch(0.24 0.015 270 / 0.72);
+  --glass-dialog-bg: oklch(0.24 0.015 270 / 0.74);
+  --glass-dialog-elevated-bg: oklch(0.26 0.015 270 / 0.84);
+  --glass-surface-bg: oklch(0.24 0.015 270 / 0.68);
+  --glass-surface-thin-bg: oklch(0.26 0.015 270 / 0.55);
+  --glass-surface-subtle-bg: oklch(0.28 0.015 270 / 0.4);
+  --glass-field-bg: oklch(0.28 0.018 270 / 0.62);
+  --glass-fill-thick: 78%;
+  --glass-fill-regular: 72%;
+  --glass-fill-thin: 55%;
+  --glass-fill-ultra-thin: 40%;
+  --glass-chrome-bg: oklch(0.3 0.018 270 / 0.72);
+  --glass-chrome-bg-env: oklch(0.3 0.018 270 / 0.75);
+  --glass-chrome-fg: oklch(0.96 0 0);
+  --glass-chrome-fg-muted: oklch(0.74 0.01 270);
+  --glass-chrome-border: oklch(1 0 0 / 0.16);
+  --glass-chrome-blur: 5px;
+  --glass-chrome-shadow:
+    0 4px 16px oklch(0 0 0 / 0.32),
+    0 12px 40px oklch(0 0 0 / 0.4);
+  --glass-chrome-inset: inset 0 1px 0 oklch(1 0 0 / 0.14);
+  --glass-chrome-rim: 0 0 0 0.5px oklch(1 0 0 / 0.2);
+  --glass-chrome-indicator-bg: oklch(0.18 0.02 270 / 0.9);
+  --glass-chrome-indicator-border: oklch(1 0 0 / 0.14);
+  --glass-chrome-indicator-shadow: var(--glass-chrome-inset), var(--glass-chrome-rim);
+  --glass-button-ui-bg: oklch(0.36 0.02 270 / 0.7);
+  --glass-button-ui-bg-hover: oklch(0.4 0.02 270 / 0.82);
+  --glass-button-ui-fg: oklch(0.97 0 0);
+  --glass-button-ui-border: oklch(1 0 0 / 0.2);
+  --glass-scroll-thumb: oklch(0.75 0.01 270 / 0.52);
+  --glass-scroll-thumb-hover: oklch(0.85 0.01 270 / 0.62);
+  --glass-scroll-track: transparent;
+  --glass-frost: blur(5px) saturate(180%);
+  --glass-frost-heavy: blur(7px) saturate(190%);
+  --glass-frost-chrome: blur(5px) saturate(180%);
+  --glass-mix-into: transparent;
+}
+
+/*
+ * Solid material — opaque product chrome.
+ * Fills come from the active theme (slate's paper, or another palette's surface).
+ * Set html[data-material="solid"].
+ * Button recipes match SyncQues button-variants, including the dark outline and destructive alphas.
+ */
+:root[data-material="solid"].light {
+  --glass-surface-fill: var(--surface);
+  --glass-panel-bg: var(--surface);
+  --glass-header-bg: color-mix(in oklch, var(--background) 94%, transparent);
+  --glass-dialog-bg: var(--surface);
+  --glass-dialog-elevated-bg: var(--surface);
+  --glass-surface-bg: var(--surface);
+  --glass-surface-thin-bg: var(--surface);
+  --glass-surface-subtle-bg: var(--muted);
+  --glass-field-bg: var(--background);
+  --glass-chrome-bg: var(--background);
+  --glass-chrome-bg-env: var(--background);
+  --glass-chrome-fg: var(--foreground);
+  --glass-chrome-fg-muted: var(--muted-foreground);
+  --glass-chrome-border: var(--border);
+  --glass-chrome-blur: 0px;
+  --glass-chrome-shadow: var(--shadow-sm);
+  --glass-chrome-inset: none;
+  --glass-chrome-rim: none;
+  --glass-chrome-indicator-bg: var(--surface);
+  --glass-chrome-indicator-border: var(--border);
+  --glass-chrome-indicator-shadow: var(--shadow-xs);
+  --glass-button-ui-bg: var(--surface);
+  --glass-button-ui-bg-hover: var(--muted);
+  --glass-button-ui-fg: var(--foreground);
+  --glass-button-ui-border: var(--border);
+  --glass-frost: none;
+  --glass-frost-heavy: none;
+  --glass-frost-chrome: none;
+  --card: var(--surface);
+  --popover: var(--surface);
+  --glass-blur: 0px;
+  --glass-blur-heavy: 0px;
+  --glass-saturation: 100%;
+  --glass-inset: none;
+  --glass-shimmer: transparent;
+  --glass-border: var(--border);
+  --glass-shadow: var(--shadow-sm);
+  --glass-shadow-hover: var(--shadow-md);
+  --glass-shadow-pressed: var(--inset-shadow-xs);
+  --button-filled-bg: var(--primary);
+  --button-filled-text: var(--primary-foreground);
+  --button-filled-border: transparent;
+  --button-destructive-bg: var(--destructive);
+  --button-destructive-text: #ffffff;
+  --button-destructive-border: transparent;
+  --button-tonal-bg: var(--secondary);
+  --button-tonal-text: var(--secondary-foreground);
+  --button-tonal-border: transparent;
+  --button-outline-bg: var(--background);
+  --button-outline-text: var(--foreground);
+  --button-outline-border: var(--border);
+  --button-ghost-hover-bg: var(--accent);
+  --glass-mix-into: var(--glass-surface-fill);
+}
+
+:root[data-material="solid"].dark {
+  --glass-surface-fill: var(--surface);
+  --glass-panel-bg: var(--surface);
+  --glass-header-bg: color-mix(in oklch, var(--background) 96%, transparent);
+  --glass-dialog-bg: var(--surface);
+  --glass-dialog-elevated-bg: var(--surface);
+  --glass-surface-bg: var(--surface);
+  --glass-surface-thin-bg: var(--surface);
+  --glass-surface-subtle-bg: var(--muted);
+  --glass-field-bg: color-mix(in oklch, var(--input) 30%, transparent);
+  --glass-chrome-bg: var(--surface);
+  --glass-chrome-bg-env: var(--surface);
+  --glass-chrome-fg: var(--foreground);
+  --glass-chrome-fg-muted: var(--muted-foreground);
+  --glass-chrome-border: var(--border);
+  --glass-chrome-blur: 0px;
+  --glass-chrome-shadow: var(--shadow-lg);
+  --glass-chrome-inset: none;
+  --glass-chrome-rim: none;
+  --glass-chrome-indicator-bg: var(--muted);
+  --glass-chrome-indicator-border: var(--border);
+  --glass-chrome-indicator-shadow: none;
+  --glass-button-ui-bg: var(--muted);
+  --glass-button-ui-bg-hover: var(--accent);
+  --glass-button-ui-fg: var(--foreground);
+  --glass-button-ui-border: var(--border);
+  --glass-frost: none;
+  --glass-frost-heavy: none;
+  --glass-frost-chrome: none;
+  --card: var(--surface);
+  --glass-blur: 0px;
+  --glass-blur-heavy: 0px;
+  --glass-saturation: 100%;
+  --glass-inset: none;
+  --glass-shimmer: transparent;
+  --glass-border: var(--border);
+  --glass-shadow: var(--shadow-lg);
+  --glass-shadow-hover: var(--shadow-xl);
+  --glass-shadow-pressed: var(--inset-shadow-xs);
+  --button-filled-bg: var(--primary);
+  --button-filled-text: var(--primary-foreground);
+  --button-filled-border: transparent;
+  --button-destructive-bg: color-mix(in oklch, var(--destructive) 60%, transparent);
+  --button-destructive-text: #ffffff;
+  --button-destructive-border: transparent;
+  --button-tonal-bg: var(--secondary);
+  --button-tonal-text: var(--secondary-foreground);
+  --button-tonal-border: transparent;
+  --button-outline-bg: color-mix(in oklch, var(--input) 30%, transparent);
+  --button-outline-text: var(--foreground);
+  --button-outline-border: var(--input);
+  --button-ghost-hover-bg: color-mix(in oklch, var(--accent) 50%, transparent);
+  --glass-mix-into: var(--glass-surface-fill);
+}
+
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--glass-scroll-thumb) var(--glass-scroll-track);
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--glass-scroll-track);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--glass-scroll-thumb);
+    border-radius: var(--radius-full);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--glass-scroll-thumb-hover);
+  }
+}
+
+/*
+ * Frost stacks use LITERAL blur values (not var(--glass-frost)).
+ * Safari/Chromium have intermittent bugs with backdrop-filter: var(--multi-fn).
+ */
+@utility glass-frost {
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+}
+
+/* Apple Liquid Glass: blur + saturation + specular edge, background set per variant */
+@utility glass-base {
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+}
+
+/* Material filled button — opaque tinted container */
+@utility glass-filled {
+  background-color: var(--button-filled-bg);
+  color: var(--button-filled-text);
+  border-color: var(--button-filled-border);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+}
+
+@utility glass-filled-destructive {
+  background-color: var(--button-destructive-bg);
+  color: var(--button-destructive-text);
+  border-color: var(--button-destructive-border);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+}
+
+/* Material tonal button — secondary container */
+@utility glass-tonal {
+  background-color: var(--button-tonal-bg);
+  color: var(--button-tonal-text);
+  border: 1px solid var(--button-tonal-border);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+}
+
+/* Material outlined + Apple vibrancy surface */
+@utility glass-outlined {
+  background-color: var(--button-outline-bg);
+  color: var(--button-outline-text);
+  border: 1.5px solid var(--button-outline-border);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+}
+
+@utility glass-ghost-surface {
+  background-color: transparent;
+  color: var(--button-ghost-text);
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+@utility glass-interactive {
+  transition-property: transform, box-shadow, border-color, background-color, color;
+  transition-duration: var(--duration-normal);
+  transition-timing-function: var(--ease-default);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      var(--glass-shadow-hover),
+      var(--glass-inset);
+  }
+
+  &:active {
+    transform: scale(0.98) translateY(0);
+    box-shadow:
+      var(--glass-shadow-pressed),
+      var(--glass-inset);
+  }
+}
+
+@utility glass-shimmer-hover {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--glass-shimmer) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity var(--duration-normal) var(--ease-default);
+    pointer-events: none;
+  }
+
+  &:hover::after {
+    opacity: 1;
+    animation: glass-shimmer 2s ease-in-out infinite;
+  }
+}
+
+@utility glass-text-filled {
+  text-shadow: var(--button-filled-text-shadow);
+}
+
+/* Apple Liquid Glass panel — thick frosted surface (cards, footers, search) */
+@utility glass-panel {
+  background-color: var(--glass-panel-bg);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inset), var(--glass-chrome-rim);
+}
+
+/* Sticky / floating headers — milky frost (no transform — breaks sticky blur) */
+@utility glass-header {
+  background-color: var(--glass-header-bg);
+  -webkit-backdrop-filter: blur(5px) saturate(180%);
+  backdrop-filter: blur(5px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inset), var(--glass-chrome-rim);
+}
+
+/* Modal / sheet — denser frost + heavy blur */
+@utility glass-dialog {
+  background-color: var(--glass-dialog-bg);
+  -webkit-backdrop-filter: blur(5px) saturate(190%);
+  backdrop-filter: blur(5px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    var(--glass-shadow),
+    var(--glass-inset),
+    var(--glass-chrome-rim);
+}
+
+@utility glass-dialog-elevated {
+  background-color: var(--glass-dialog-elevated-bg);
+  -webkit-backdrop-filter: blur(5px) saturate(190%);
+  backdrop-filter: blur(5px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    var(--glass-shadow),
+    var(--glass-inset),
+    var(--glass-chrome-rim);
+}
+
+/* Form fields — frosted chrome inputs */
+@utility glass-field {
+  background-color: var(--glass-field-bg);
+  color: var(--glass-chrome-fg);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  border: 1px solid var(--glass-chrome-border);
+  box-shadow: var(--glass-chrome-inset);
+}
+
+/*
+ * Generic frosted surfaces (prefer over raw color-mix %)
+ * glass-surface / glass-surface-thin / glass-surface-subtle
+ */
+@utility glass-surface {
+  background-color: var(--glass-surface-bg);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inset);
+}
+
+@utility glass-surface-thin {
+  background-color: var(--glass-surface-thin-bg);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-inset);
+}
+
+@utility glass-surface-subtle {
+  background-color: var(--glass-surface-subtle-bg);
+  -webkit-backdrop-filter: blur(3px) saturate(170%);
+  backdrop-filter: blur(3px) saturate(170%);
+  border: 1px solid var(--glass-border);
+}
+
+/* Apple Liquid Glass chrome — neutral functional layer above content */
+@utility glass-chrome {
+  background-color: var(--glass-chrome-bg-env);
+  color: var(--glass-chrome-fg);
+  -webkit-backdrop-filter: blur(5px) saturate(180%);
+  backdrop-filter: blur(5px) saturate(180%);
+  border: 1px solid var(--glass-chrome-border);
+  box-shadow: var(--glass-chrome-shadow), var(--glass-chrome-inset), var(--glass-chrome-rim);
+}
+
+@utility glass-chrome-text {
+  color: var(--glass-chrome-fg);
+}
+
+@utility glass-chrome-text-muted {
+  color: var(--glass-chrome-fg-muted);
+}
+
+@utility glass-chrome-capsule {
+  border-radius: var(--radius-full);
+}
+
+/* Sliding chrome indicator — active tab pill inside a glass-chrome capsule */
+@utility glass-chrome-indicator {
+  background-color: var(--glass-chrome-indicator-bg);
+  border: 1px solid var(--glass-chrome-indicator-border);
+  box-shadow: var(--glass-chrome-indicator-shadow);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+}
+
+@utility glass-chrome-interactive {
+  transition-property: transform, box-shadow, background;
+  transition-duration: var(--duration-normal);
+  transition-timing-function: var(--ease-default);
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      var(--glass-shadow-hover),
+      var(--glass-chrome-inset),
+      var(--glass-chrome-rim);
+  }
+
+  &:active {
+    transform: scale(0.96);
+    box-shadow:
+      var(--glass-shadow-pressed),
+      var(--glass-chrome-inset),
+      var(--glass-chrome-rim);
+  }
+}
+
+@utility content-text {
+  color: var(--content-text);
+}
+
+@utility content-text-muted {
+  color: var(--content-text-muted);
+}
+
+/* Button chrome layer — neutral Liquid Glass controls */
+@utility glass-button-chrome {
+  background-color: var(--glass-chrome-bg-env);
+  color: var(--glass-chrome-fg);
+  border: 1px solid var(--glass-chrome-border);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-chrome-shadow), var(--glass-chrome-inset), var(--glass-chrome-rim);
+}
+
+@utility glass-button-chrome-subtle {
+  background-color: var(--glass-chrome-bg-env);
+  color: var(--glass-chrome-fg);
+  border: 1px solid var(--glass-chrome-border);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-chrome-shadow), var(--glass-chrome-inset), var(--glass-chrome-rim);
+}
+
+/* Button content layer — saturated expressive CTAs */
+@utility glass-button-content {
+  background-color: color-mix(in oklch, var(--primary) 82%, transparent);
+  color: var(--primary-foreground);
+  border: 1px solid color-mix(in oklch, var(--primary) 55%, var(--glass-chrome-border));
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-chrome-shadow), var(--glass-chrome-inset), var(--glass-chrome-rim);
+}
+
+@utility glass-button-content-destructive {
+  background-color: color-mix(in oklch, var(--destructive) 80%, transparent);
+  color: var(--destructive-foreground);
+  border: 1px solid color-mix(in oklch, var(--destructive) 50%, var(--glass-chrome-border));
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-chrome-shadow), var(--glass-chrome-inset), var(--glass-chrome-rim);
+}
+
+@utility glass-button-ghost {
+  background-color: transparent;
+  color: var(--glass-chrome-fg);
+  border: 1px solid transparent;
+  box-shadow: none;
+
+  &:hover {
+    background-color: var(--glass-chrome-bg-env);
+    border-color: var(--glass-chrome-border);
+    -webkit-backdrop-filter: blur(3px) saturate(180%);
+    backdrop-filter: blur(3px) saturate(180%);
+    box-shadow: var(--glass-chrome-shadow), var(--glass-chrome-inset), var(--glass-chrome-rim);
+  }
+}
+
+/* Glass UI button — rounded frosted control, neutral (not theme-saturated) */
+@utility glass-button-glass {
+  background-color: var(--glass-button-ui-bg);
+  color: var(--glass-button-ui-fg);
+  border: 1px solid var(--glass-button-ui-border);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  backdrop-filter: blur(3px) saturate(180%);
+  box-shadow: var(--glass-chrome-shadow), var(--glass-chrome-inset), var(--glass-chrome-rim);
+
+  &:hover {
+    background-color: var(--glass-button-ui-bg-hover);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-interactive:hover,
+  .glass-interactive:active,
+  .glass-chrome-interactive:hover,
+  .glass-chrome-interactive:active,
+  .glass-row-hover:hover {
+    transform: none !important;
+  }
+
+  .glass-shimmer-hover:hover::after {
+    animation: none !important;
+  }
+
+  .glass-link-underline::after {
+    transform: scaleX(1) !important;
+  }
+}
+
+/*
+ * Mobile Core Web Vitals — Liquid Glass performance profile
+ *
+ * backdrop-filter is the #1 GPU cost on low-end mobile. Keep the premium
+ * frosted look via denser milky fills + thinner blur (not flat solid UI).
+ * Desktop (≥768px) is unchanged.
+ */
+@media (max-width: 767px) {
+  :root.light {
+    --glass-panel-bg: oklch(0.99 0 0 / 0.9);
+    --glass-header-bg: oklch(0.99 0 0 / 0.88);
+    --glass-dialog-bg: oklch(0.99 0 0 / 0.9);
+    --glass-dialog-elevated-bg: oklch(0.99 0 0 / 0.94);
+    --glass-surface-bg: oklch(0.99 0 0 / 0.86);
+    --glass-surface-thin-bg: oklch(0.99 0 0 / 0.78);
+    --glass-surface-subtle-bg: oklch(0.99 0 0 / 0.7);
+    --glass-field-bg: oklch(0.97 0 0 / 0.84);
+    --glass-chrome-bg: oklch(0.97 0 0 / 0.9);
+    --glass-chrome-bg-env: oklch(0.97 0 0 / 0.92);
+    --glass-button-ui-bg: oklch(1 0 0 / 0.86);
+    --glass-button-ui-bg-hover: oklch(1 0 0 / 0.94);
+    --glass-blur: 2px;
+    --glass-blur-heavy: 3px;
+    --glass-chrome-blur: 3px;
+  }
+
+  :root.dark {
+    --glass-panel-bg: oklch(0.24 0.015 270 / 0.9);
+    --glass-header-bg: oklch(0.24 0.015 270 / 0.88);
+    --glass-dialog-bg: oklch(0.24 0.015 270 / 0.9);
+    --glass-dialog-elevated-bg: oklch(0.26 0.015 270 / 0.94);
+    --glass-surface-bg: oklch(0.24 0.015 270 / 0.86);
+    --glass-surface-thin-bg: oklch(0.26 0.015 270 / 0.78);
+    --glass-surface-subtle-bg: oklch(0.28 0.015 270 / 0.7);
+    --glass-field-bg: oklch(0.28 0.018 270 / 0.84);
+    --glass-chrome-bg: oklch(0.3 0.018 270 / 0.9);
+    --glass-chrome-bg-env: oklch(0.3 0.018 270 / 0.92);
+    --glass-button-ui-bg: oklch(0.36 0.02 270 / 0.86);
+    --glass-button-ui-bg-hover: oklch(0.4 0.02 270 / 0.94);
+    --glass-blur: 2px;
+    --glass-blur-heavy: 3px;
+    --glass-chrome-blur: 3px;
+  }
+
+  /* Utility stacks hard-code blur px — re-assert thinner mobile frost */
+  .glass-frost,
+  .glass-base,
+  .glass-filled,
+  .glass-filled-destructive,
+  .glass-tonal,
+  .glass-outlined,
+  .glass-panel,
+  .glass-field,
+  .glass-surface,
+  .glass-surface-thin,
+  .glass-surface-subtle,
+  .glass-chrome-indicator,
+  .glass-button-chrome,
+  .glass-button-chrome-subtle,
+  .glass-button-content,
+  .glass-button-content-destructive,
+  .glass-button-glass {
+    -webkit-backdrop-filter: blur(2px) saturate(140%);
+    backdrop-filter: blur(2px) saturate(140%);
+  }
+
+  .glass-header,
+  .glass-dialog,
+  .glass-dialog-elevated,
+  .glass-chrome {
+    -webkit-backdrop-filter: blur(3px) saturate(150%);
+    backdrop-filter: blur(3px) saturate(150%);
+  }
+
+  /* Hover-only glass should not pay backdrop cost until needed */
+  .glass-button-ghost:hover {
+    -webkit-backdrop-filter: blur(2px) saturate(140%);
+    backdrop-filter: blur(2px) saturate(140%);
+  }
+
+  /* Touch UIs don't benefit from hover lift; skip transform paint churn */
+  .glass-interactive:hover,
+  .glass-chrome-interactive:hover,
+  .glass-row-hover:hover {
+    transform: none;
+  }
+
+  /* Solid material must stay unfrosted on mobile (overrides thinner-blur above). */
+  :root[data-material="solid"] .glass-frost,
+  :root[data-material="solid"] .glass-base,
+  :root[data-material="solid"] .glass-filled,
+  :root[data-material="solid"] .glass-filled-destructive,
+  :root[data-material="solid"] .glass-tonal,
+  :root[data-material="solid"] .glass-outlined,
+  :root[data-material="solid"] .glass-panel,
+  :root[data-material="solid"] .glass-field,
+  :root[data-material="solid"] .glass-surface,
+  :root[data-material="solid"] .glass-surface-thin,
+  :root[data-material="solid"] .glass-surface-subtle,
+  :root[data-material="solid"] .glass-chrome-indicator,
+  :root[data-material="solid"] .glass-button-chrome,
+  :root[data-material="solid"] .glass-button-chrome-subtle,
+  :root[data-material="solid"] .glass-button-content,
+  :root[data-material="solid"] .glass-button-content-destructive,
+  :root[data-material="solid"] .glass-button-glass,
+  :root[data-material="solid"] .glass-header,
+  :root[data-material="solid"] .glass-dialog,
+  :root[data-material="solid"] .glass-dialog-elevated,
+  :root[data-material="solid"] .glass-chrome,
+  :root[data-material="solid"] .glass-button-ghost:hover {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/*
+ * Solid material — strip hardcoded backdrop-filter on glass utilities.
+ * Utilities use literal blur() because Safari/Chromium are flaky with var().
+ */
+:root[data-material="solid"] .glass-frost,
+:root[data-material="solid"] .glass-base,
+:root[data-material="solid"] .glass-filled,
+:root[data-material="solid"] .glass-filled-destructive,
+:root[data-material="solid"] .glass-tonal,
+:root[data-material="solid"] .glass-outlined,
+:root[data-material="solid"] .glass-panel,
+:root[data-material="solid"] .glass-header,
+:root[data-material="solid"] .glass-dialog,
+:root[data-material="solid"] .glass-dialog-elevated,
+:root[data-material="solid"] .glass-field,
+:root[data-material="solid"] .glass-surface,
+:root[data-material="solid"] .glass-surface-thin,
+:root[data-material="solid"] .glass-surface-subtle,
+:root[data-material="solid"] .glass-chrome,
+:root[data-material="solid"] .glass-chrome-indicator,
+:root[data-material="solid"] .glass-button-chrome,
+:root[data-material="solid"] .glass-button-chrome-subtle,
+:root[data-material="solid"] .glass-button-content,
+:root[data-material="solid"] .glass-button-content-destructive,
+:root[data-material="solid"] .glass-button-glass,
+:root[data-material="solid"] .glass-button-ghost:hover {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+:root[data-material="solid"] .glass-button-content {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+:root[data-material="solid"] .glass-button-content-destructive {
+  background-color: var(--destructive);
+  border-color: var(--destructive);
+}

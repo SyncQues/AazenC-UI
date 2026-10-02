@@ -1,0 +1,7 @@
+{
+  "name": "@aazenc/locale",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Locale data placeholder. Fill this package when a component needs shared locale data.",
+  "license": "MIT"
+}

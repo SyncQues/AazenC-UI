@@ -1,0 +1,9 @@
+{
+  "name": "@aazenc/tokens",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./globals.css": "./src/index.css"
+  },
+  "license": "MIT"
+}

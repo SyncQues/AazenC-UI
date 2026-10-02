@@ -1,0 +1,22 @@
+{
+  "name": "@aazenc/cli",
+  "version": "0.0.0",
+  "private": true,
+  "description": "CLI and MCP server skeleton for AazenC UI. Commands are filled in after components exist.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "aazenc-ui": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

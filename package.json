@@ -1,0 +1,30 @@
+{
+  "name": "aazenc-ui",
+  "private": true,
+  "description": "AazenC UI — component library monorepo (CLI, registry, playground). Components are added one at a time.",
+  "license": "MIT",
+  "author": "AazenC",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "native": "pnpm --filter native-playground dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types"
+  },
+  "devDependencies": {
+    "prettier": "^3.7.4",
+    "turbo": "^2.10.0",
+    "typescript": "5.9.2"
+  },
+  "packageManager": "pnpm@10.12.4",
+  "engines": {
+    "node": ">=18"
+  },
+  "browserslist": [
+    "chrome >= 111",
+    "edge >= 111",
+    "firefox >= 111",
+    "safari >= 16.4"
+  ]
+}

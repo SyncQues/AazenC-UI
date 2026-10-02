@@ -1,0 +1,324 @@
+/**
+ * SyncQues product theme (shadcn new-york, slate).
+ *
+ * Semantic colors are the live values from
+ * SyncQues-Frontend/src/styles/globals.css `:root` and `.dark`.
+ * Hex swatches in design.md are approximations — do not substitute them.
+ *
+ * Layered selectors are the palette. Unlayered `[data-theme="slate"]`
+ * rules only replace the library's neutral glass fills, and only for this
+ * theme, so mono / aurora / sunset / frost / ocean keep their own glass.
+ */
+
+@layer theme {
+  :root,
+  :root[data-theme="slate"] {
+    --background: oklch(0.985 0.003 247.896);
+    --foreground: oklch(0.129 0.042 264.695);
+    --surface: oklch(1 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.129 0.042 264.695);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.129 0.042 264.695);
+    --primary: oklch(0.208 0.042 265.755);
+    --primary-foreground: oklch(0.984 0.003 247.858);
+    --secondary: oklch(0.968 0.007 247.896);
+    --secondary-foreground: oklch(0.208 0.042 265.755);
+    --muted: oklch(0.968 0.007 247.896);
+    --muted-foreground: oklch(0.45 0.04 257.417);
+    --accent: oklch(0.968 0.007 247.896);
+    --accent-foreground: oklch(0.208 0.042 265.755);
+    /* Light mode never set this. White matches button `text-white`, badges, and portfolio. */
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: #ffffff;
+    --warning: oklch(0.769 0.169 70.08);
+    --warning-foreground: oklch(0.473 0.137 50.76);
+    --border: oklch(0.86 0.012 255.508);
+    --input: oklch(0.86 0.012 255.508);
+    --ring: oklch(0.704 0.04 256.788);
+    --chart-1: oklch(0.646 0.222 41.116);
+    --chart-2: oklch(0.6 0.118 184.704);
+    --chart-3: oklch(0.398 0.07 227.392);
+    --chart-4: oklch(0.828 0.189 84.429);
+    --chart-5: oklch(0.769 0.188 70.08);
+    --sidebar: oklch(0.984 0.003 247.858);
+    --sidebar-foreground: oklch(0.129 0.042 264.695);
+    --sidebar-primary: oklch(0.208 0.042 265.755);
+    --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+    --sidebar-accent: oklch(0.968 0.007 247.896);
+    --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+    --sidebar-border: oklch(0.929 0.013 255.508);
+    --sidebar-ring: oklch(0.704 0.04 256.788);
+    --about-accent: #027F7C;
+    --brand: #3b82f6;
+    --brand-accent: #22d3ee;
+    --analytics-accent: oklch(0.623 0.214 259.815);
+    --analytics-positive: oklch(0.627 0.194 149.214);
+    --analytics-negative: oklch(0.577 0.245 27.325);
+    --signal-hiring: #047857;
+    --signal-culture: #6d28d9;
+    --signal-milestone: #b45309;
+    --signal-update: #1d4ed8;
+    --overlay: rgb(0 0 0 / 0.5);
+    --shadow-color: oklch(0.208 0.042 265.755);
+
+    /* .btn-primary — blue-600 → cyan-400. Unchanged in dark. */
+    --brand-gradient: linear-gradient(to right, #2563eb, #22d3ee);
+    /* Logo wordmark: blue-600 → blue-500 → cyan-500. */
+    --brand-wordmark: linear-gradient(to right, #2563eb, #3b82f6, #06b6d4);
+
+    /* Community ambient (.community-page-bg). */
+    --mesh-1: rgba(99, 102, 241, 0.06);
+    --mesh-2: rgba(6, 182, 212, 0.04);
+    --mesh-3: transparent;
+
+    /* .premium-glass-card */
+    --premium-card-bg: rgba(255, 255, 255, 0.95);
+    --premium-card-blur: 8px;
+    --premium-card-border: rgba(203, 213, 225, 0.9);
+    --premium-card-border-hover: rgba(203, 213, 225, 0.8);
+    --premium-card-shadow:
+      0 4px 20px -2px rgba(148, 163, 184, 0.12),
+      0 2px 8px -1px rgba(148, 163, 184, 0.06);
+    --premium-card-shadow-hover:
+      0 10px 25px -3px rgba(148, 163, 184, 0.12),
+      0 4px 12px -2px rgba(148, 163, 184, 0.06);
+
+    /* Floating navbar pill (NAVBAR_GLASS_SURFACE). */
+    --navbar-bg: color-mix(in oklch, var(--background) 90%, transparent);
+    --navbar-border: rgb(0 0 0 / 0.15);
+    --navbar-shadow: 0 8px 28px rgb(0 0 0 / 0.1);
+    --navbar-ring: rgb(0 0 0 / 0.05);
+    --navbar-blur: 24px;
+    --navbar-indicator: rgb(59 130 246 / 0.1);
+
+    /* shadcn button recipes. Hover opacity stays in the component. */
+    --glass-blur: 8px;
+    --glass-saturation: 100%;
+    --glass-blur-heavy: 8px;
+    --glass-border: var(--premium-card-border);
+    --glass-highlight: rgb(255 255 255 / 0.95);
+    --glass-shadow: var(--premium-card-shadow);
+    --glass-shadow-hover: var(--premium-card-shadow-hover);
+    --glass-shadow-pressed: inset 0 1px 2px rgb(148 163 184 / 0.16);
+    --glass-inset: none;
+    --glass-shimmer: transparent;
+
+    --button-filled-bg: var(--primary);
+    --button-filled-text: var(--primary-foreground);
+    --button-filled-border: transparent;
+    --button-filled-text-shadow: none;
+    --button-destructive-bg: var(--destructive);
+    --button-destructive-text: #ffffff;
+    --button-destructive-border: transparent;
+    --button-tonal-bg: var(--secondary);
+    --button-tonal-text: var(--secondary-foreground);
+    --button-tonal-border: transparent;
+    --button-outline-bg: var(--background);
+    --button-outline-text: var(--foreground);
+    --button-outline-border: var(--border);
+    --button-ghost-text: var(--foreground);
+    --button-ghost-hover-bg: var(--accent);
+  }
+
+  :root.dark,
+  :root[data-theme="slate"].dark {
+    --background: oklch(0.14 0 0);
+    --foreground: oklch(0.96 0 0);
+    --surface: oklch(0.17 0 0);
+    --card: oklch(0.17 0 0);
+    --card-foreground: oklch(0.96 0 0);
+    --popover: oklch(0.14 0 0);
+    --popover-foreground: oklch(0.96 0 0);
+    --primary: oklch(0.96 0 0);
+    --primary-foreground: oklch(0.10 0 0);
+    --secondary: oklch(0.20 0 0);
+    --secondary-foreground: oklch(0.96 0 0);
+    --muted: oklch(0.20 0 0);
+    --muted-foreground: oklch(0.65 0 0);
+    --accent: oklch(0.20 0 0);
+    --accent-foreground: oklch(0.96 0 0);
+    --destructive: oklch(0.396 0.141 25.723);
+    --destructive-foreground: oklch(0.637 0.237 25.331);
+    --warning: oklch(0.769 0.169 70.08);
+    --warning-foreground: oklch(0.924 0.106 88.78);
+    --border: oklch(0.30 0 0);
+    --input: oklch(0.20 0 0);
+    --ring: oklch(0.75 0 0);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.10 0 0);
+    --sidebar-foreground: oklch(0.96 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.96 0 0);
+    --sidebar-accent: oklch(0.20 0 0);
+    --sidebar-accent-foreground: oklch(0.96 0 0);
+    --sidebar-border: oklch(0.20 0 0);
+    --sidebar-ring: oklch(0.75 0 0);
+    --about-accent: #03a3a0;
+    --brand: #3b82f6;
+    --brand-accent: #22d3ee;
+    --analytics-accent: oklch(0.707 0.165 254.624);
+    --analytics-positive: oklch(0.723 0.219 149.579);
+    --analytics-negative: oklch(0.637 0.237 25.331);
+    --signal-hiring: #34d399;
+    --signal-culture: #a78bfa;
+    --signal-milestone: #fbbf24;
+    --signal-update: #60a5fa;
+    --overlay: rgb(0 0 0 / 0.5);
+    --shadow-color: oklch(0 0 0);
+
+    /* sky-300 → blue-400 → cyan-300 */
+    --brand-wordmark: linear-gradient(to right, #7dd3fc, #60a5fa, #67e8f9);
+
+    --mesh-1: rgba(99, 102, 241, 0.05);
+    --mesh-2: rgba(6, 182, 212, 0.03);
+    --mesh-3: transparent;
+
+    --premium-card-bg: var(--card);
+    --premium-card-blur: 8px;
+    --premium-card-border: var(--border);
+    --premium-card-border-hover: var(--border);
+    --premium-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+    --premium-card-shadow-hover: 0 8px 30px -5px rgba(0, 0, 0, 0.4);
+
+    /* zinc-900/80 */
+    --navbar-bg: rgb(24 24 27 / 0.8);
+    --navbar-border: rgb(255 255 255 / 0.15);
+    --navbar-shadow: 0 8px 32px rgb(0 0 0 / 0.45);
+    --navbar-ring: rgb(255 255 255 / 0.1);
+    --navbar-blur: 24px;
+    --navbar-indicator: rgb(96 165 250 / 0.15);
+
+    --glass-border: var(--border);
+    --glass-highlight: rgb(255 255 255 / 0.08);
+    --glass-shadow: var(--premium-card-shadow);
+    --glass-shadow-hover: var(--premium-card-shadow-hover);
+    --glass-shadow-pressed: inset 0 1px 2px rgb(0 0 0 / 0.35);
+    --glass-inset: none;
+    --glass-shimmer: transparent;
+
+    --button-filled-bg: var(--primary);
+    --button-filled-text: var(--primary-foreground);
+    --button-filled-border: transparent;
+    --button-filled-text-shadow: none;
+    /* button-variants: dark:bg-destructive/60, text stays white */
+    --button-destructive-bg: color-mix(in oklch, var(--destructive) 60%, transparent);
+    --button-destructive-text: #ffffff;
+    --button-destructive-border: transparent;
+    --button-tonal-bg: var(--secondary);
+    --button-tonal-text: var(--secondary-foreground);
+    --button-tonal-border: transparent;
+    /* outline: dark:bg-input/30 dark:border-input */
+    --button-outline-bg: color-mix(in oklch, var(--input) 30%, transparent);
+    --button-outline-text: var(--foreground);
+    --button-outline-border: var(--input);
+    --button-ghost-text: var(--foreground);
+    --button-ghost-hover-bg: color-mix(in oklch, var(--accent) 50%, transparent);
+  }
+}
+
+/*
+ * Product glass fills. Higher specificity than the neutral :root.light / :root.dark
+ * fills in @aazenc/config. Solid material is declared later at the same specificity
+ * and keeps opaque paper when data-material="solid".
+ */
+:root[data-theme="slate"].light {
+  --glass-surface-fill: var(--card);
+  --glass-panel-bg: var(--premium-card-bg);
+  --glass-header-bg: var(--navbar-bg);
+  --glass-dialog-bg: var(--card);
+  --glass-dialog-elevated-bg: var(--card);
+  --glass-surface-bg: var(--card);
+  --glass-surface-thin-bg: var(--navbar-bg);
+  --glass-surface-subtle-bg: var(--muted);
+  --glass-field-bg: var(--background);
+  --glass-chrome-bg: var(--navbar-bg);
+  --glass-chrome-bg-env: var(--navbar-bg);
+  --glass-chrome-fg: var(--foreground);
+  --glass-chrome-fg-muted: var(--muted-foreground);
+  --glass-chrome-border: var(--navbar-border);
+  --glass-chrome-blur: var(--navbar-blur);
+  --glass-chrome-shadow: var(--navbar-shadow);
+  --glass-chrome-inset: none;
+  --glass-chrome-rim: 0 0 0 1px var(--navbar-ring);
+  --glass-chrome-indicator-bg: var(--navbar-indicator);
+  --glass-chrome-indicator-border: transparent;
+  --glass-chrome-indicator-shadow: none;
+  --glass-button-ui-bg: rgb(255 255 255 / 0.5);
+  --glass-button-ui-bg-hover: rgb(255 255 255 / 0.8);
+  --glass-button-ui-fg: var(--foreground);
+  --glass-button-ui-border: rgb(255 255 255 / 0.2);
+}
+
+:root[data-theme="slate"].dark {
+  --glass-surface-fill: var(--card);
+  --glass-panel-bg: var(--card);
+  --glass-header-bg: var(--navbar-bg);
+  --glass-dialog-bg: var(--card);
+  --glass-dialog-elevated-bg: var(--card);
+  --glass-surface-bg: var(--card);
+  --glass-surface-thin-bg: var(--navbar-bg);
+  --glass-surface-subtle-bg: var(--muted);
+  --glass-field-bg: color-mix(in oklch, var(--input) 30%, transparent);
+  --glass-chrome-bg: var(--navbar-bg);
+  --glass-chrome-bg-env: var(--navbar-bg);
+  --glass-chrome-fg: var(--foreground);
+  --glass-chrome-fg-muted: var(--muted-foreground);
+  --glass-chrome-border: var(--navbar-border);
+  --glass-chrome-blur: var(--navbar-blur);
+  --glass-chrome-shadow: var(--navbar-shadow);
+  --glass-chrome-inset: none;
+  --glass-chrome-rim: 0 0 0 1px var(--navbar-ring);
+  --glass-chrome-indicator-bg: var(--navbar-indicator);
+  --glass-chrome-indicator-border: transparent;
+  --glass-chrome-indicator-shadow: none;
+  --glass-button-ui-bg: rgb(255 255 255 / 0.05);
+  --glass-button-ui-bg-hover: rgb(255 255 255 / 0.1);
+  --glass-button-ui-fg: var(--foreground);
+  --glass-button-ui-border: rgb(255 255 255 / 0.05);
+  --glass-scroll-thumb: oklch(0.30 0 0);
+  --glass-scroll-thumb-hover: oklch(0.40 0 0);
+}
+
+@layer components {
+  /* Literal blur: backdrop-filter: var(...) is unreliable in Safari/Chromium. */
+  .navbar-glass {
+    border: 1px solid var(--navbar-border);
+    background-color: var(--navbar-bg);
+    box-shadow: var(--navbar-shadow), 0 0 0 1px var(--navbar-ring);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+
+  .premium-glass-card {
+    background-color: var(--premium-card-bg);
+    border: 1px solid var(--premium-card-border);
+    box-shadow: var(--premium-card-shadow);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transition:
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .premium-glass-card:hover {
+    border-color: var(--premium-card-border-hover);
+    box-shadow: var(--premium-card-shadow-hover);
+  }
+
+  .community-page-bg {
+    background-image:
+      radial-gradient(circle at top right, var(--mesh-1), transparent 50%),
+      radial-gradient(circle at bottom left, var(--mesh-2), transparent 50%);
+  }
+}
+
+:root[data-theme="slate"].dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}

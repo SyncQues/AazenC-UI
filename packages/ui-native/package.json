@@ -1,0 +1,42 @@
+{
+  "name": "@aazenc/ui-native",
+  "version": "0.0.0",
+  "private": true,
+  "description": "React Native component library for AazenC UI",
+  "exports": {
+    ".": "./src/index.ts",
+    "./theme": "./src/theme/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-native": ">=0.74"
+  },
+  "peerDependenciesMeta": {
+    "expo-blur": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "~19.2.2",
+    "eslint": "^9.39.1",
+    "react": "19.2.3",
+    "react-native": "0.85.3",
+    "typescript": "5.9.2"
+  },
+  "license": "MIT"
+}

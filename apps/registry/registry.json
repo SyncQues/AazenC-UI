@@ -1,0 +1,143 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "aazenc-ui",
+  "homepage": "http://localhost:3000",
+  "items": [
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "SyncQues product button. Six variants, pill by default. Pass variant, size, shape, width, and align.",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/button.tsx"
+        },
+        {
+          "path": "packages/ui/src/button-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/button-variants.ts"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "default",
+          "outline",
+          "ghost",
+          "destructive",
+          "destructive-soft",
+          "link"
+        ],
+        "sizes": [
+          "xs",
+          "sm",
+          "default",
+          "lg",
+          "xl",
+          "icon-2xs",
+          "icon-xs",
+          "icon-sm",
+          "icon",
+          "icon-lg"
+        ],
+        "shapes": [
+          "pill",
+          "rounded",
+          "square"
+        ],
+        "widths": [
+          "auto",
+          "full"
+        ],
+        "aligns": [
+          "center",
+          "start",
+          "between"
+        ]
+      }
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "SyncQues product card. Default, glass, or plain. Pass padding, radius, and align.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/card.tsx"
+        },
+        {
+          "path": "packages/ui/src/card-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/card-variants.ts"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "default",
+          "glass",
+          "plain"
+        ],
+        "paddings": [
+          "none",
+          "sm",
+          "lg"
+        ],
+        "radii": [
+          "lg",
+          "round"
+        ],
+        "aligns": [
+          "start",
+          "center"
+        ]
+      }
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "SyncQues tabs. Underline or pill. Pass variant. Icons and counts are props.",
+      "dependencies": [
+        "@radix-ui/react-tabs",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/tabs.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tabs.tsx"
+        },
+        {
+          "path": "packages/ui/src/tabs-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/tabs-variants.ts"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "default",
+          "pill"
+        ]
+      }
+    }
+  ]
+}

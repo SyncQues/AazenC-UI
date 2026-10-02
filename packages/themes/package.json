@@ -1,0 +1,30 @@
+{
+  "name": "@aazenc/themes",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts",
+    "./slate.css": "./src/slate.css",
+    "./mono.css": "./src/mono.css",
+    "./aurora.css": "./src/aurora.css",
+    "./sunset.css": "./src/sunset.css",
+    "./frost.css": "./src/frost.css",
+    "./ocean.css": "./src/ocean.css"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "react": "^19.2.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "19.2.2",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2"
+  },
+  "license": "MIT"
+}

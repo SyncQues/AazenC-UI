@@ -1,0 +1,17 @@
+{
+  "name": "@aazenc/config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./postcss": "./postcss.config.mjs",
+    "./globals.css": "./src/globals.css"
+  },
+  "dependencies": {
+    "@aazenc/animations": "workspace:*",
+    "@aazenc/themes": "workspace:*",
+    "@aazenc/tokens": "workspace:*",
+    "@tailwindcss/postcss": "^4.1.8",
+    "tailwindcss": "^4.1.8"
+  },
+  "license": "MIT"
+}
