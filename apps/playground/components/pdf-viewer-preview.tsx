@@ -14,7 +14,7 @@ export function PdfViewerPreview() {
           <p className="text-sm text-muted-foreground">Component</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">PDF viewer</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            One framed reader. Turn the page, zoom, and open thumbnails when the file has more than one page.
+            One framed reader. Click the page to open it full page. Turn the page, zoom, and open thumbnails when the file has more than one page.
           </p>
         </div>
         <Button type="button" variant="outline" onClick={toggleMode}>

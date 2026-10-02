@@ -246,7 +246,7 @@ Add each one under `packages/ui/src` (web) and `packages/ui-native/src/component
 -   Folder Card
 -   File Explorer
 -   Image Preview ✅ (`image-preview`)
--   PDF Viewer
+-   PDF Viewer ✅ (`pdf-viewer`)
 -   Audio Player ✅ (via `media-player` kind=audio)
 -   Video Player ✅ (via `media-player` kind=video; CC + quality)
 -   Image Editor ✅ (`image-editor` — crop, rotate, filters)

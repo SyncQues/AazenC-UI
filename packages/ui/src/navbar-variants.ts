@@ -1,8 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
 /** SyncQues desktop chrome: transparent header, one frosted pill around the links. */
-export const navbarGlassSurface =
-  "border border-border bg-background/90 shadow-[0_8px_28px_rgba(0,0,0,0.10)] ring-1 ring-foreground/5 backdrop-blur-xl dark:bg-background/80 dark:shadow-[0_8px_32px_rgba(0,0,0,0.45)]";
+export const navbarGlassSurface = "glass-chrome glass-chrome-capsule";
 
 export const navbarVariants = cva("z-[var(--z-sticky)]", {
   variants: {

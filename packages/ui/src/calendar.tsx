@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ComponentProps, type HTMLAttributes, type Ref } from "react";
+import { useEffect, useRef, useState, type ComponentProps, type HTMLAttributes, type Ref } from "react";
 import {
   DayPicker,
   type DateRange,
@@ -91,7 +91,7 @@ function CalendarDayButton({ day, modifiers, className, ...props }: DayButtonPro
     <button
       ref={ref}
       type="button"
-      data-day={day.date.toISOString()}
+      data-day={day.isoDate}
       data-today={modifiers.today ? "true" : undefined}
       data-outside={modifiers.outside ? "true" : undefined}
       data-selection={selection}
@@ -159,8 +159,11 @@ function CalendarChrome(props: ComponentProps<typeof DayPicker>) {
       }}
       {...props}
       captionLayout="dropdown"
+      fixedWeeks
       formatters={{
-        formatMonthDropdown: (month) => month.toLocaleDateString("en-US", { month: "short" }),
+        formatMonthDropdown: (month, dateLib) =>
+          dateLib ? dateLib.format(month, "LLL") : month.toLocaleDateString("en-US", { month: "short" }),
+        ...props.formatters,
       }}
     />
   );
@@ -168,10 +171,17 @@ function CalendarChrome(props: ComponentProps<typeof DayPicker>) {
 
 function Calendar(props: CalendarProps) {
   const { disablePast = false, disabled, ...rest } = props;
-  const resolvedDisabled = withPastDisabled(disabled, disablePast) as Matcher | Matcher[] | undefined;
-  const today = new Date();
-  const startMonth = rest.startMonth ?? new Date(today.getFullYear() - 100, 0, 1);
-  const endMonth = rest.endMonth ?? new Date(today.getFullYear() + 10, 11, 31);
+  const [today, setToday] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setToday(new Date());
+  }, []);
+
+  const resolvedDisabled = (
+    disablePast && today ? withPastDisabled(disabled, true, today) : disabled
+  ) as Matcher | Matcher[] | undefined;
+  const startMonth = rest.startMonth ?? (today ? new Date(today.getFullYear() - 100, 0, 1) : undefined);
+  const endMonth = rest.endMonth ?? (today ? new Date(today.getFullYear() + 10, 11, 31) : undefined);
 
   if (rest.mode === "range") {
     return (

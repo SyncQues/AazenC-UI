@@ -1,7 +1,7 @@
 "use client";
 
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import { type ComponentProps, type ReactNode } from "react";
+import { createContext, useContext, type ComponentProps, type ReactNode } from "react";
 import { tooltipContentClass } from "./tooltip-variants";
 
 export type TooltipProviderProps = Omit<ComponentProps<typeof TooltipPrimitive.Provider>, "className">;
@@ -16,16 +16,21 @@ export interface TooltipContentProps extends Omit<ComponentProps<typeof TooltipP
   children?: ReactNode;
 }
 
+const TooltipProviderState = createContext(false);
+
 function TooltipProvider({ delayDuration = 300, ...props }: TooltipProviderProps) {
-  return <TooltipPrimitive.Provider data-slot="tooltip-provider" delayDuration={delayDuration} {...props} />;
+  return (
+    <TooltipProviderState.Provider value={true}>
+      <TooltipPrimitive.Provider data-slot="tooltip-provider" delayDuration={delayDuration} {...props} />
+    </TooltipProviderState.Provider>
+  );
 }
 
 function Tooltip(props: TooltipProps) {
-  return (
-    <TooltipProvider>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-    </TooltipProvider>
-  );
+  const nested = useContext(TooltipProviderState);
+  const root = <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
+  if (nested) return root;
+  return <TooltipProvider>{root}</TooltipProvider>;
 }
 
 function TooltipTrigger({ asChild = false, ...props }: TooltipTriggerProps) {
@@ -44,7 +49,7 @@ function TooltipContent({ sideOffset = 6, children, ...props }: TooltipContentPr
           {...props}
         >
           {children}
-          <TooltipPrimitive.Arrow className="z-[var(--z-popper)] size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px] bg-primary fill-primary" />
+          <TooltipPrimitive.Arrow className="z-[var(--z-popper)] size-2.5 rotate-45 rounded-[2px] bg-primary fill-primary" />
         </TooltipPrimitive.Content>
       </div>
     </TooltipPrimitive.Portal>

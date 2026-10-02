@@ -13,9 +13,13 @@ const monthLabel = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
 });
 
-export const MONTH_LABELS = Array.from({ length: 12 }, (_, month) =>
-  new Date(2024, month, 1).toLocaleDateString("en-US", { month: "short" }),
-);
+export function monthLabels(locale = "en-US") {
+  return Array.from({ length: 12 }, (_, month) =>
+    new Date(2024, month, 1).toLocaleDateString(locale, { month: "short" }),
+  );
+}
+
+export const MONTH_LABELS = monthLabels();
 
 export function startOfDay(date: Date): Date {
   const next = new Date(date);
@@ -85,11 +89,15 @@ export function formatRangeLabel(from: Date | undefined, to: Date | undefined): 
   return `${formatDateLabel(from)} – ${formatDateLabel(to)}`;
 }
 
-type DisabledMatcher = { before: Date } | unknown;
+type PastMatcher = { before: Date };
 
-export function withPastDisabled<T>(disabled: T | undefined, disablePast: boolean, today = new Date()): T | DisabledMatcher | Array<T | DisabledMatcher> {
-  if (!disablePast) return disabled as T;
-  const past = { before: startOfDay(today) };
+export function withPastDisabled<T>(
+  disabled: T | undefined,
+  disablePast: boolean,
+  today = new Date(),
+): T | PastMatcher | Array<T | PastMatcher> | undefined {
+  if (!disablePast) return disabled;
+  const past: PastMatcher = { before: startOfDay(today) };
   if (disabled == null) return past;
   return Array.isArray(disabled) ? [...disabled, past] : [disabled, past];
 }

@@ -11,4 +11,4 @@ export const sliderRootClass =
   "relative flex w-full touch-none items-center select-none data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50";
 
 export const sliderThumbClass =
-  "block size-5 shrink-0 rounded-full border border-primary bg-background shadow-sm outline-none transition-[box-shadow] duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none motion-reduce:transition-none";
+  "relative block size-6 shrink-0 rounded-full border border-primary bg-background shadow-sm outline-none transition-[box-shadow] duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none motion-reduce:transition-none";

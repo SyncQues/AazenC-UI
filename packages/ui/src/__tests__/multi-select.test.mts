@@ -20,7 +20,7 @@ test("multi-select field is the same pill", () => {
   assert.match(multiSelectFieldClass, /border-input/);
   assert.match(multiSelectFieldClass, /aria-invalid:border-destructive/);
   assert.match(multiSelectContentClass, /menu-motion/);
-  assert.match(multiSelectContentClass, /rounded-\[1\.125rem\]/);
+  assert.match(multiSelectContentClass, /rounded-\[var\(--radius-panel\)\]/);
   assert.doesNotMatch(multiSelectFieldClass, /rounded-xl|backdrop-blur|shadow-2xl/);
 });
 

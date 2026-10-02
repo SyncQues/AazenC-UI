@@ -19,7 +19,7 @@ test("select trigger matches the input pill", () => {
 
 test("select menu is one popover", () => {
   assert.match(selectContentClass, /menu-motion/);
-  assert.match(selectContentClass, /rounded-\[1\.125rem\]/);
+  assert.match(selectContentClass, /rounded-\[var\(--radius-panel\)\]/);
   assert.match(selectContentClass, /bg-popover/);
   assert.match(selectContentClass, /shadow-md/);
   assert.match(selectContentClass, /z-\[var\(--z-popper\)\]/);

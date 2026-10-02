@@ -28,15 +28,15 @@ function measureActiveLink(nav: HTMLElement): IndicatorBox | null {
 
 const NavbarVariantContext = createContext<NavbarVariant>("bar");
 
-export type NavbarProps = {
+export interface NavbarProps extends Omit<ComponentProps<"header">, "className" | "children"> {
   children: ReactNode;
   /** `bar` is the sticky docs header. `floating` is the SyncQues glass pill. */
   variant?: NavbarVariant;
-};
+}
 
-function Navbar({ children, variant = "bar" }: NavbarProps) {
+function Navbar({ children, variant = "bar", ...props }: NavbarProps) {
   return (
-    <header data-slot="navbar" data-variant={variant} className={navbarVariants({ variant })}>
+    <header data-slot="navbar" data-variant={variant} className={navbarVariants({ variant })} {...props}>
       <NavbarVariantContext.Provider value={variant}>
         <div className={navbarRowClass}>{children}</div>
       </NavbarVariantContext.Provider>
@@ -54,12 +54,12 @@ function NavbarBrand({ asChild = false, ...props }: NavbarBrandProps) {
   return <Comp data-slot="navbar-brand" className={navbarBrandVariants({ variant })} {...props} />;
 }
 
-export type NavbarLinksProps = {
+export interface NavbarLinksProps extends Omit<ComponentProps<"nav">, "className" | "children"> {
   children: ReactNode;
   label?: string;
-};
+}
 
-function NavbarLinks({ children, label = "Main" }: NavbarLinksProps) {
+function NavbarLinks({ children, label = "Main", ...props }: NavbarLinksProps) {
   const variant = useContext(NavbarVariantContext);
   const navRef = useRef<HTMLElement>(null);
   const [box, setBox] = useState<IndicatorBox | null>(null);
@@ -92,7 +92,7 @@ function NavbarLinks({ children, label = "Main" }: NavbarLinksProps) {
   }, []);
 
   return (
-    <nav ref={navRef} data-slot="navbar-links" aria-label={label} className={navbarLinksVariants({ variant })}>
+    <nav {...props} ref={navRef} data-slot="navbar-links" aria-label={label} className={navbarLinksVariants({ variant })}>
       {box ? (
         <span
           aria-hidden
@@ -124,14 +124,14 @@ function NavbarLink({ active = false, asChild = false, ...props }: NavbarLinkPro
   );
 }
 
-export type NavbarActionsProps = {
+export interface NavbarActionsProps extends Omit<ComponentProps<"div">, "className" | "children"> {
   children: ReactNode;
-};
+}
 
-function NavbarActions({ children }: NavbarActionsProps) {
+function NavbarActions({ children, ...props }: NavbarActionsProps) {
   const variant = useContext(NavbarVariantContext);
   return (
-    <div data-slot="navbar-actions" className={navbarActionsVariants({ variant })}>
+    <div {...props} data-slot="navbar-actions" className={navbarActionsVariants({ variant })}>
       {children}
     </div>
   );

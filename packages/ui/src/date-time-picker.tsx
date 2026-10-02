@@ -6,9 +6,11 @@ import { Calendar } from "./calendar";
 import { applyTime, formatDateLabel, formatTimeLabel } from "./calendar-utils";
 import { DateField } from "./date-field";
 import { TimeControls } from "./time-controls";
+import { useOpen } from "./use-open";
 
 export interface DateTimePickerProps {
   id?: string;
+  /** Local date and time. Formatting with `toISOString()` shifts the date west of UTC. */
   value?: Date | null;
   onValueChange?: (value: Date | null) => void;
   placeholder?: string;
@@ -21,7 +23,7 @@ export interface DateTimePickerProps {
 
 function DateTimePicker({
   id,
-  value = null,
+  value,
   onValueChange,
   placeholder = "Pick a date and time",
   disabled = false,
@@ -30,44 +32,47 @@ function DateTimePicker({
   open,
   onOpenChange,
 }: DateTimePickerProps) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const [month, setMonth] = useState<Date>(() => value ?? new Date());
-  const isOpen = open ?? uncontrolledOpen;
+  const [isOpen, setOpen] = useOpen(open, onOpenChange);
+  const [inner, setInner] = useState<Date | null>(null);
+  const [month, setMonth] = useState<Date | undefined>(() => value ?? undefined);
+  const selected = value !== undefined ? value : inner;
 
-  const setOpen = (next: boolean) => {
-    if (next && value) setMonth(value);
-    if (open === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+  const setSelected = (next: Date | null) => {
+    if (value === undefined) setInner(next);
+    onValueChange?.(next);
   };
 
-  const hours = value?.getHours() ?? 12;
-  const minutes = value?.getMinutes() ?? 0;
-  const label = value
-    ? `${formatDateLabel(value)} · ${formatTimeLabel(value.getHours(), value.getMinutes())}`
+  const hours = selected?.getHours() ?? 12;
+  const minutes = selected?.getMinutes() ?? 0;
+  const label = selected
+    ? `${formatDateLabel(selected)} · ${formatTimeLabel(selected.getHours(), selected.getMinutes())}`
     : placeholder;
 
   return (
     <DateField
       id={id}
       label={label}
-      empty={!value}
+      empty={!selected}
       disabled={disabled}
       invalid={invalid}
       open={isOpen}
-      onOpenChange={setOpen}
+      onOpenChange={(next) => {
+        if (next && selected) setMonth(selected);
+        setOpen(next);
+      }}
     >
       <Calendar
         mode="single"
-        selected={value ?? undefined}
+        selected={selected ?? undefined}
         month={month}
         onMonthChange={setMonth}
         disablePast={disablePast}
         onSelect={(date) => {
           if (!date) {
-            onValueChange?.(null);
+            setSelected(null);
             return;
           }
-          onValueChange?.(applyTime(date, value ? hours : 12, value ? minutes : 0));
+          setSelected(applyTime(date, selected ? hours : 12, selected ? minutes : 0));
         }}
       />
       <div className="mx-1 border-t border-border">
@@ -75,14 +80,12 @@ function DateTimePicker({
           hours={hours}
           minutes={minutes}
           disabled={disabled}
-          onChange={(nextHours, nextMinutes) => {
-            onValueChange?.(applyTime(value ?? new Date(), nextHours, nextMinutes));
-          }}
+          onChange={(nextHours, nextMinutes) => setSelected(applyTime(selected ?? new Date(), nextHours, nextMinutes))}
         />
       </div>
       <div className="flex flex-col gap-1 px-1 pt-1 pb-1">
-        {value ? (
-          <Button type="button" variant="ghost" width="full" onClick={() => onValueChange?.(null)}>
+        {selected ? (
+          <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear
           </Button>
         ) : null}

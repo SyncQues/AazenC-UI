@@ -7,7 +7,7 @@ import { cva, type VariantProps } from "class-variance-authority";
  * Destructive is the only item tone that reads differently.
  */
 export const dropdownMenuContentClass =
-  "menu-motion pointer-events-auto z-[var(--z-popper)] min-w-32 overflow-hidden rounded-[1.125rem] border border-border bg-popover p-1.5 text-popover-foreground shadow-md outline-none";
+  "menu-motion pointer-events-auto z-[var(--z-popper)] min-w-32 overflow-hidden rounded-[var(--radius-panel)] border border-border bg-popover p-1.5 text-popover-foreground shadow-md outline-none";
 
 export const dropdownMenuItemVariants = cva(
   "relative flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-sm outline-none select-none transition-colors duration-150 ease-out focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 motion-reduce:transition-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",

@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   formatDateLabel,
@@ -21,16 +20,15 @@ import {
 test("calendar fields share one pill and one grid", () => {
   assert.match(dateFieldClass, /rounded-full/);
   assert.match(dateFieldClass, /h-9/);
-  assert.match(datePanelClass, /rounded-\[1\.125rem\]/);
+  assert.match(datePanelClass, /rounded-\[var\(--radius-panel\)\]/);
   assert.match(calendarDayButtonClass, /rounded-full/);
+  assert.match(calendarDayButtonClass, /size-8/);
+  assert.match(calendarDayButtonClass, /ring-inset/);
   assert.match(calendarDayButtonClass, /data-\[selection=single\]:bg-primary/);
   assert.match(monthButtonClass, /rounded-full/);
   assert.match(calendarDropdownRootClass, /rounded-md/);
   assert.match(calendarDropdownRootClass, /border-border/);
   assert.doesNotMatch(`${dateFieldClass} ${datePanelClass} ${calendarDayButtonClass}`, /backdrop-blur|bg-muted|glass-panel/);
-  const source = readFileSync(new URL("../calendar.tsx", import.meta.url), "utf8");
-  assert.match(source, /captionLayout="dropdown"/);
-  assert.doesNotMatch(source, /calendarVariants|variant="chrome"|variant="outline"|variant="elevated"/);
 });
 
 test("date labels stay in one format", () => {

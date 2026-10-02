@@ -35,15 +35,15 @@ export const calendarWeekdayClass =
 
 export const calendarWeekClass = "mt-1 flex";
 
-export const calendarDayClass = "relative size-9 p-0 text-center";
+export const calendarDayClass = "relative flex size-9 items-center justify-center p-0 text-center";
 
 export const calendarDayButtonClass = [
-  "inline-flex size-9 items-center justify-center rounded-full text-sm tabular-nums",
+  "inline-flex size-8 items-center justify-center rounded-full text-sm tabular-nums",
   "cursor-pointer outline-none transition-colors duration-150 ease-out motion-reduce:transition-none",
-  "hover:bg-foreground/10 focus-visible:ring-[3px] focus-visible:ring-ring/50",
+  "hover:bg-foreground/10 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/50",
   "disabled:pointer-events-none disabled:opacity-40",
   "data-[outside=true]:text-muted-foreground",
-  "data-[today=true]:ring-1 data-[today=true]:ring-foreground/40",
+  "data-[today=true]:ring-1 data-[today=true]:ring-inset data-[today=true]:ring-foreground/40",
   "data-[selection=single]:bg-primary data-[selection=single]:text-primary-foreground data-[selection=single]:ring-0",
   "data-[selection=start]:bg-primary data-[selection=start]:text-primary-foreground data-[selection=start]:ring-0",
   "data-[selection=end]:bg-primary data-[selection=end]:text-primary-foreground data-[selection=end]:ring-0",
@@ -66,7 +66,7 @@ export const dateFieldClass = [
 ].join(" ");
 
 export const datePanelClass =
-  "menu-motion pointer-events-auto z-[var(--z-popper)] flex w-fit flex-col rounded-[1.125rem] border border-border bg-popover p-2 text-popover-foreground shadow-md outline-none";
+  "menu-motion pointer-events-auto z-[var(--z-popper)] flex w-fit flex-col rounded-[var(--radius-panel)] border border-border bg-popover p-2 text-popover-foreground shadow-md outline-none";
 
 export const timePartClass =
   "h-9 min-w-14 cursor-pointer appearance-none rounded-full border border-input bg-transparent px-3 text-center text-sm tabular-nums outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30";

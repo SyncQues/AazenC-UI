@@ -1,5 +1,6 @@
 "use client";
 
+import { type ComponentProps } from "react";
 import { Button } from "./button";
 import {
   DropdownMenu,
@@ -16,7 +17,7 @@ export type ThemeChoice = {
   label: string;
 };
 
-export type ThemeSelectorProps = {
+export interface ThemeSelectorProps extends Omit<ComponentProps<"button">, "className" | "children" | "value"> {
   theme: string;
   themes: ThemeChoice[];
   mode: "light" | "dark";
@@ -24,15 +25,15 @@ export type ThemeSelectorProps = {
   onTheme: (theme: string) => void;
   onMode: (mode: "light" | "dark") => void;
   onMaterial: (material: "solid" | "glass") => void;
-};
+}
 
-function ThemeSelector({ theme, themes, mode, material, onTheme, onMode, onMaterial }: ThemeSelectorProps) {
+function ThemeSelector({ theme, themes, mode, material, onTheme, onMode, onMaterial, ...triggerProps }: ThemeSelectorProps) {
   const current = themes.find((item) => item.id === theme)?.label ?? theme;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button type="button" variant="outline" size="sm" aria-label={`Theme, ${current}, ${mode}`}>
+        <Button type="button" variant="outline" size="sm" aria-label={`Theme, ${current}, ${mode}`} {...triggerProps}>
           {current}
         </Button>
       </DropdownMenuTrigger>

@@ -512,6 +512,511 @@
           "destructive"
         ]
       }
+    },
+    {
+      "name": "file-upload",
+      "type": "registry:ui",
+      "title": "File upload",
+      "description": "One dashed drop zone.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/file-upload.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/file-upload.tsx"
+        },
+        {
+          "path": "packages/ui/src/file-upload-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/file-upload-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "One notice card. Mount Toaster once.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/toast.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toast.tsx"
+        },
+        {
+          "path": "packages/ui/src/toast-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/toast-variants.ts"
+        }
+      ],
+      "dependencies": [
+        "class-variance-authority"
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "One switch track.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/switch.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/switch.tsx"
+        },
+        {
+          "path": "packages/ui/src/switch-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/switch-variants.ts"
+        }
+      ],
+      "dependencies": [
+        "@radix-ui/react-switch"
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "One tooltip bubble. Wrap the app in TooltipProvider.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/tooltip.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tooltip.tsx"
+        },
+        {
+          "path": "packages/ui/src/tooltip-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/tooltip-variants.ts"
+        }
+      ],
+      "dependencies": [
+        "@radix-ui/react-tooltip"
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "One popover panel.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/popover.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/popover.tsx"
+        },
+        {
+          "path": "packages/ui/src/popover-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/popover-variants.ts"
+        }
+      ],
+      "dependencies": [
+        "@radix-ui/react-popover"
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "One avatar with image and fallback.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/avatar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/avatar.tsx"
+        },
+        {
+          "path": "packages/ui/src/avatar-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/avatar-variants.ts"
+        }
+      ],
+      "dependencies": [
+        "@radix-ui/react-avatar"
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "title": "Carousel",
+      "description": "One scroll-snap carousel.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/carousel.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/carousel.tsx"
+        },
+        {
+          "path": "packages/ui/src/carousel-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/carousel-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "One progress bar. Null value is indeterminate.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/progress.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/progress.tsx"
+        },
+        {
+          "path": "packages/ui/src/progress-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/progress-utils.ts"
+        },
+        {
+          "path": "packages/ui/src/meter-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/meter-variants.ts"
+        }
+      ],
+      "dependencies": [
+        "@radix-ui/react-progress"
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "One slider, including range.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/slider.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/slider.tsx"
+        },
+        {
+          "path": "packages/ui/src/meter-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/meter-variants.ts"
+        }
+      ],
+      "dependencies": [
+        "@radix-ui/react-slider"
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "One data table.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/table.tsx"
+        },
+        {
+          "path": "packages/ui/src/table-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/table-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "navbar",
+      "type": "registry:ui",
+      "title": "Navbar",
+      "description": "Sticky bar and floating glass navbar.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/navbar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/navbar.tsx"
+        },
+        {
+          "path": "packages/ui/src/navbar-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/navbar-variants.ts"
+        }
+      ],
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ]
+    },
+    {
+      "name": "theme-selector",
+      "type": "registry:ui",
+      "title": "Theme selector",
+      "description": "Appearance, surface, and theme menu.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/theme-selector.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/theme-selector.tsx"
+        }
+      ]
+    },
+    {
+      "name": "pdf-viewer",
+      "type": "registry:ui",
+      "title": "PDF viewer",
+      "description": "Paged PDF reader.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/pdf-viewer.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/pdf-viewer.tsx"
+        },
+        {
+          "path": "packages/ui/src/pdf-viewer-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/pdf-viewer-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/pdf-viewer-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/pdf-viewer-utils.ts"
+        }
+      ],
+      "dependencies": [
+        "react-pdf",
+        "pdfjs-dist"
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "One month grid.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/calendar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/calendar.tsx"
+        },
+        {
+          "path": "packages/ui/src/calendar-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-utils.ts"
+        }
+      ],
+      "dependencies": [
+        "react-day-picker"
+      ]
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "Date picker",
+      "description": "Single or range date field.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/date-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/date-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/date-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/date-field.tsx"
+        },
+        {
+          "path": "packages/ui/src/use-open.ts",
+          "type": "registry:ui",
+          "target": "components/ui/use-open.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/calendar.tsx"
+        },
+        {
+          "path": "packages/ui/src/calendar-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-utils.ts"
+        }
+      ],
+      "dependencies": [
+        "react-day-picker"
+      ]
+    },
+    {
+      "name": "date-time-picker",
+      "type": "registry:ui",
+      "title": "Date time picker",
+      "description": "Date and time field.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/date-time-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/date-time-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/time-controls.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/time-controls.tsx"
+        },
+        {
+          "path": "packages/ui/src/date-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/date-field.tsx"
+        },
+        {
+          "path": "packages/ui/src/use-open.ts",
+          "type": "registry:ui",
+          "target": "components/ui/use-open.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/calendar.tsx"
+        },
+        {
+          "path": "packages/ui/src/calendar-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-utils.ts"
+        }
+      ],
+      "dependencies": [
+        "react-day-picker"
+      ]
+    },
+    {
+      "name": "time-picker",
+      "type": "registry:ui",
+      "title": "Time picker",
+      "description": "Time field.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/time-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/time-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/time-controls.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/time-controls.tsx"
+        },
+        {
+          "path": "packages/ui/src/date-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/date-field.tsx"
+        },
+        {
+          "path": "packages/ui/src/use-open.ts",
+          "type": "registry:ui",
+          "target": "components/ui/use-open.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "month-picker",
+      "type": "registry:ui",
+      "title": "Month picker",
+      "description": "Month field. Value is YYYY-MM or Present.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/month-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/month-picker.tsx"
+        },
+        {
+          "path": "packages/ui/src/date-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/date-field.tsx"
+        },
+        {
+          "path": "packages/ui/src/use-open.ts",
+          "type": "registry:ui",
+          "target": "components/ui/use-open.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/calendar-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/calendar-utils.ts"
+        }
+      ]
     }
   ]
 }

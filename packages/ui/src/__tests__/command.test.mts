@@ -11,7 +11,7 @@ import {
 
 test("command is one list", () => {
   assert.match(commandClass, /bg-popover/);
-  assert.match(commandClass, /rounded-\[1\.125rem\]/);
+  assert.match(commandClass, /rounded-\[var\(--radius-panel\)\]/);
   assert.doesNotMatch(commandClass, /backdrop-blur|bg-background|shadow-2xl/);
   assert.match(commandInputClass, /h-10/);
   assert.match(commandInputClass, /bg-transparent/);

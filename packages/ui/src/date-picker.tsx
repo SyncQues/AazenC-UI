@@ -6,6 +6,7 @@ import { Button } from "./button";
 import { Calendar } from "./calendar";
 import { formatDateLabel, formatRangeLabel, sameDay } from "./calendar-utils";
 import { DateField } from "./date-field";
+import { useOpen } from "./use-open";
 
 type FieldShared = {
   id?: string;
@@ -19,6 +20,7 @@ type FieldShared = {
 
 export type DatePickerSingleProps = FieldShared & {
   mode?: "single";
+  /** Local calendar day. Formatting with `toISOString()` shifts the date west of UTC. */
   value?: Date | null;
   onValueChange?: (value: Date | null) => void;
 };
@@ -30,16 +32,6 @@ export type DatePickerRangeProps = FieldShared & {
 };
 
 export type DatePickerProps = DatePickerSingleProps | DatePickerRangeProps;
-
-function useOpen(open: boolean | undefined, onOpenChange?: (open: boolean) => void) {
-  const [uncontrolled, setUncontrolled] = useState(false);
-  const current = open ?? uncontrolled;
-  const setOpen = (next: boolean) => {
-    if (open === undefined) setUncontrolled(next);
-    onOpenChange?.(next);
-  };
-  return [current, setOpen] as const;
-}
 
 function SingleDatePicker({
   id,
@@ -54,7 +46,7 @@ function SingleDatePicker({
 }: DatePickerSingleProps) {
   const [isOpen, setOpen] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<Date | null>(null);
-  const [month, setMonth] = useState<Date>(() => value ?? new Date());
+  const [month, setMonth] = useState<Date | undefined>(() => value ?? undefined);
   const selected = value !== undefined ? value : inner;
 
   const setSelected = (next: Date | null) => {
@@ -110,7 +102,7 @@ function RangeDatePicker({
 }: DatePickerRangeProps) {
   const [isOpen, setOpen] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<DateRange | null>(null);
-  const [month, setMonth] = useState<Date>(() => value?.from ?? new Date());
+  const [month, setMonth] = useState<Date | undefined>(() => value?.from ?? undefined);
   const selected = value !== undefined ? value : inner;
 
   const setSelected = (next: DateRange | null) => {

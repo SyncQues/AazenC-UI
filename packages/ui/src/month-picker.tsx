@@ -1,22 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./button";
 import { calendarCaptionClass, calendarNavButtonClass, monthButtonClass } from "./calendar-variants";
 import {
-  MONTH_LABELS,
   PRESENT_VALUE,
   formatMonthLabel,
   formatMonthValue,
+  monthLabels,
   parseMonthValue,
 } from "./calendar-utils";
 import { DateField } from "./date-field";
+import { useOpen } from "./use-open";
 
 export interface MonthPickerProps {
   id?: string;
   /** `YYYY-MM`, or `Present` when that choice is allowed. */
   value?: string | null;
-  onValueChange?: (value: string) => void;
+  onValueChange?: (value: string | null) => void;
   placeholder?: string;
   disabled?: boolean;
   invalid?: boolean;
@@ -41,7 +42,7 @@ function Chevron({ direction }: { direction: "left" | "right" }) {
 
 function MonthPicker({
   id,
-  value = null,
+  value,
   onValueChange,
   placeholder = "Pick a month",
   disabled = false,
@@ -50,15 +51,24 @@ function MonthPicker({
   open,
   onOpenChange,
 }: MonthPickerProps) {
-  const parsed = parseMonthValue(value);
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const [year, setYear] = useState(() => (parsed && parsed !== "present" ? parsed.year : new Date().getFullYear()));
-  const isOpen = open ?? uncontrolledOpen;
+  const [isOpen, setOpenState] = useOpen(open, onOpenChange);
+  const [inner, setInner] = useState<string | null>(null);
+  const selected = value !== undefined ? value : inner;
+  const parsed = parseMonthValue(selected);
+  const [year, setYear] = useState<number | null>(() => (parsed && parsed !== "present" ? parsed.year : null));
+
+  useEffect(() => {
+    if (year == null) setYear(new Date().getFullYear());
+  }, [year]);
+
+  const setSelected = (next: string | null) => {
+    if (value === undefined) setInner(next);
+    onValueChange?.(next);
+  };
 
   const setOpen = (next: boolean) => {
     if (next && parsed && parsed !== "present") setYear(parsed.year);
-    if (open === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+    setOpenState(next);
   };
 
   const label =
@@ -69,9 +79,11 @@ function MonthPicker({
         : placeholder;
 
   const choose = (next: string) => {
-    onValueChange?.(next);
+    setSelected(next);
     setOpen(false);
   };
+
+  const labels = monthLabels();
 
   return (
     <DateField
@@ -86,10 +98,10 @@ function MonthPicker({
       <div data-slot="month-picker" className="w-[16.5rem] p-1">
         <div className="relative">
           <div className="absolute inset-x-0 top-0 flex h-9 items-center justify-between">
-            <button type="button" className={calendarNavButtonClass} aria-label="Previous year" onClick={() => setYear((current) => current - 1)}>
+            <button type="button" className={calendarNavButtonClass} aria-label="Previous year" onClick={() => setYear((current) => (current ?? new Date().getFullYear()) - 1)}>
               <Chevron direction="left" />
             </button>
-            <button type="button" className={calendarNavButtonClass} aria-label="Next year" onClick={() => setYear((current) => current + 1)}>
+            <button type="button" className={calendarNavButtonClass} aria-label="Next year" onClick={() => setYear((current) => (current ?? new Date().getFullYear()) + 1)}>
               <Chevron direction="right" />
             </button>
           </div>
@@ -108,16 +120,20 @@ function MonthPicker({
           </button>
         ) : null}
         <div className="mt-2 grid grid-cols-3 gap-1">
-          {MONTH_LABELS.map((month, index) => {
-            const selected = parsed !== "present" && parsed?.year === year && parsed?.month === index;
+          {labels.map((month, index) => {
+            const monthSelected = parsed !== "present" && parsed?.year === year && parsed?.month === index;
             return (
               <button
                 key={month}
                 type="button"
                 className={monthButtonClass}
-                data-selected={selected ? "true" : undefined}
-                aria-pressed={selected}
-                onClick={() => choose(formatMonthValue(year, index))}
+                data-selected={monthSelected ? "true" : undefined}
+                aria-pressed={monthSelected}
+                disabled={year == null}
+                onClick={() => {
+                  if (year == null) return;
+                  choose(formatMonthValue(year, index));
+                }}
               >
                 {month}
               </button>
@@ -126,7 +142,7 @@ function MonthPicker({
         </div>
         {parsed ? (
           <div className="pt-2">
-            <Button type="button" variant="ghost" width="full" onClick={() => onValueChange?.("")}>
+            <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
               Clear
             </Button>
           </div>

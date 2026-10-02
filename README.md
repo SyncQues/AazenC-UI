@@ -1,6 +1,6 @@
 # AazenC UI
 
-pnpm + Turborepo skeleton for the AazenC component library. The folder layout matches [intelli-ui](https://github.com/IntelliHelper/IntelliHelper-UI). Component implementations are not copied. Add them one at a time. The build list is [component.md](./component.md).
+pnpm + Turborepo monorepo for the AazenC component library. The folder layout matches [intelli-ui](https://github.com/IntelliHelper/IntelliHelper-UI). The build list is [component.md](./component.md).
 
 ## Layout
 
@@ -10,7 +10,7 @@ apps/
   native-playground/   # Expo shell for native components
   registry/            # shadcn-style registry.json (items start empty)
 packages/
-  ui/                  # Web components (@aazenc/ui) — src/index.ts only
+  ui/                  # Web components (@aazenc/ui)
   ui-native/           # Native components (@aazenc/ui-native)
                        # theme + utils are in place; components/ is empty
   cli/                 # CLI + MCP skeleton (@aazenc/cli)
@@ -35,15 +35,12 @@ The playground has the same routes as intelli-ui (`/`, `/components`, `/componen
 
 ## What is not here
 
-- Web component files (`packages/ui/src/*.tsx` in intelli-ui)
 - Native component files (`packages/ui-native/src/components/*.tsx`)
-- Playground demos
-- CLI install / MCP implementation
-- Registry items
+- Some catalog entries in component.md that are not built yet
 
 ## Develop
 
-Node.js 18 or newer, pnpm 10.
+Node.js 22.6 or newer, pnpm 10.
 
 ```bash
 pnpm install

@@ -1,7 +1,7 @@
 "use client";
 
 import * as PopoverPrimitive from "@radix-ui/react-popover";
-import { type ReactNode } from "react";
+import { type ComponentProps, type ReactNode } from "react";
 import { dateFieldClass, datePanelClass } from "./calendar-variants";
 
 function CalendarIcon() {
@@ -22,11 +22,9 @@ function ClockIcon() {
   );
 }
 
-export interface DateFieldProps {
-  id?: string;
+export interface DateFieldProps extends Omit<ComponentProps<typeof PopoverPrimitive.Trigger>, "className" | "children"> {
   label: string;
   empty?: boolean;
-  disabled?: boolean;
   invalid?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -35,26 +33,25 @@ export interface DateFieldProps {
 }
 
 function DateField({
-  id,
   label,
   empty = false,
-  disabled = false,
   invalid = false,
   open,
   onOpenChange,
   icon = "date",
   children,
+  "aria-invalid": ariaInvalid,
+  ...triggerProps
 }: DateFieldProps) {
   return (
     <PopoverPrimitive.Root open={open} onOpenChange={onOpenChange} modal>
       <PopoverPrimitive.Trigger
-        id={id}
         type="button"
-        disabled={disabled}
         data-slot="date-field"
         data-empty={empty ? "true" : undefined}
-        aria-invalid={invalid || undefined}
+        aria-invalid={ariaInvalid ?? (invalid ? true : undefined)}
         className={dateFieldClass}
+        {...triggerProps}
       >
         {icon === "time" ? <ClockIcon /> : <CalendarIcon />}
         <span className="min-w-0 flex-1 truncate">{label}</span>
@@ -67,6 +64,7 @@ function DateField({
             align="start"
             sideOffset={8}
             collisionPadding={16}
+            aria-label={label}
             className={datePanelClass}
           >
             {children}

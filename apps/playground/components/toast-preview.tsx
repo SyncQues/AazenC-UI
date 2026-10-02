@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@aazenc/ui/button";
-import { toast, Toaster } from "@aazenc/ui/toast";
+import { toast } from "@aazenc/ui/toast";
 import { useTheme } from "@aazenc/themes";
 
 export function ToastPreview() {
@@ -9,7 +9,6 @@ export function ToastPreview() {
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
-      <Toaster />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm text-muted-foreground">Component</p>

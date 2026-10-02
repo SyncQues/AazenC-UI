@@ -5,6 +5,7 @@ import { Button } from "./button";
 import { applyTime, formatTimeLabel } from "./calendar-utils";
 import { DateField } from "./date-field";
 import { TimeControls } from "./time-controls";
+import { useOpen } from "./use-open";
 
 export interface TimePickerProps {
   id?: string;
@@ -19,7 +20,7 @@ export interface TimePickerProps {
 
 function TimePicker({
   id,
-  value = null,
+  value,
   onValueChange,
   placeholder = "Pick a time",
   disabled = false,
@@ -27,22 +28,24 @@ function TimePicker({
   open,
   onOpenChange,
 }: TimePickerProps) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
-  const isOpen = open ?? uncontrolledOpen;
-  const setOpen = (next: boolean) => {
-    if (open === undefined) setUncontrolledOpen(next);
-    onOpenChange?.(next);
+  const [isOpen, setOpen] = useOpen(open, onOpenChange);
+  const [inner, setInner] = useState<Date | null>(null);
+  const selected = value !== undefined ? value : inner;
+
+  const setSelected = (next: Date | null) => {
+    if (value === undefined) setInner(next);
+    onValueChange?.(next);
   };
-  const hours = value?.getHours() ?? 12;
-  const minutes = value?.getMinutes() ?? 0;
-  const base = value ?? new Date();
+
+  const hours = selected?.getHours() ?? 12;
+  const minutes = selected?.getMinutes() ?? 0;
 
   return (
     <DateField
       id={id}
       icon="time"
-      label={value ? formatTimeLabel(hours, minutes) : placeholder}
-      empty={!value}
+      label={selected ? formatTimeLabel(hours, minutes) : placeholder}
+      empty={!selected}
       disabled={disabled}
       invalid={invalid}
       open={isOpen}
@@ -52,11 +55,11 @@ function TimePicker({
         hours={hours}
         minutes={minutes}
         disabled={disabled}
-        onChange={(nextHours, nextMinutes) => onValueChange?.(applyTime(base, nextHours, nextMinutes))}
+        onChange={(nextHours, nextMinutes) => setSelected(applyTime(selected ?? new Date(), nextHours, nextMinutes))}
       />
       <div className="flex flex-col gap-1 px-1 pt-1 pb-1">
-        {value ? (
-          <Button type="button" variant="ghost" width="full" onClick={() => onValueChange?.(null)}>
+        {selected ? (
+          <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear
           </Button>
         ) : null}

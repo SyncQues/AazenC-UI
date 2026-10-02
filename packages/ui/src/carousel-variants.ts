@@ -1,9 +1,12 @@
-export const carouselFrameClass = "relative overflow-hidden rounded-[1.125rem]";
+export const carouselFrameClass = "relative overflow-hidden rounded-[var(--radius-panel)]";
 
 export const carouselTrackClass =
-  "flex transition-[translate] duration-300 ease-out motion-reduce:transition-none";
+  "flex snap-x snap-mandatory overflow-x-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden motion-reduce:scroll-auto";
 
-export const carouselItemClass = "min-w-full shrink-0";
+export const carouselItemClass = "min-w-full shrink-0 snap-start";
 
 export const carouselDotClass =
-  "size-2 rounded-full bg-foreground/25 outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 data-[active=true]:bg-primary";
+  "grid size-6 place-items-center rounded-full outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[active=true]:bg-primary/20";
+
+export const carouselDotMarkClass =
+  "size-2 rounded-full bg-foreground/45 transition-transform group-data-[active=true]:scale-125 group-data-[active=true]:bg-primary motion-reduce:transition-none";

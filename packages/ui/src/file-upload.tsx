@@ -1,11 +1,11 @@
 "use client";
 
-import { type ChangeEvent, type DragEvent, useId, useRef, useState } from "react";
+import { type ChangeEvent, type ComponentProps, type DragEvent, useId, useRef, useState } from "react";
 import { fileUploadClass, fileUploadFileClass } from "./file-upload-variants";
 
 const DEFAULT_MAX_BYTES = 10 * 1024 * 1024;
 
-export interface FileUploadProps {
+export interface FileUploadProps extends Omit<ComponentProps<"div">, "className" | "children" | "onChange"> {
   /** `accept` for the file input. Extensions or MIME types. */
   accept?: string;
   multiple?: boolean;
@@ -60,42 +60,56 @@ function FileUpload({
   invalid = false,
   error,
   label = "Drop a file or browse",
-  hint = "Up to 10 MB",
+  hint,
   progress = null,
   value,
   onValueChange,
   onReject,
+  ...zoneProps
 }: FileUploadProps) {
   const inputId = useId();
+  const errorId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uncontrolled, setUncontrolled] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
+  const [rejected, setRejected] = useState<string | null>(null);
   const files = value ?? uncontrolled;
+  const shownHint = hint ?? `Up to ${formatBytes(maxBytes)}`;
+  const message = error ?? rejected;
 
   function commit(next: File[]) {
     if (value === undefined) setUncontrolled(next);
     onValueChange?.(next);
   }
 
+  function reject(message: string) {
+    setRejected(message);
+    onReject?.(message);
+  }
+
   function take(list: FileList | File[] | null) {
-    if (disabled || !list) return;
-    const incoming = Array.from(list);
+    // Copy before clearing. The change event's FileList is live and empties with the input.
+    const incoming = list ? Array.from(list) : [];
+    if (inputRef.current) inputRef.current.value = "";
+    if (disabled || incoming.length === 0) return;
     const accepted: File[] = [];
+    let rejection: string | null = null;
     for (const file of incoming) {
       if (!acceptsFile(file, accept)) {
-        onReject?.(`${file.name} is not an allowed type.`);
+        rejection = `${file.name} is not an allowed type.`;
         continue;
       }
       if (file.size > maxBytes) {
-        onReject?.(`${file.name} is larger than ${formatBytes(maxBytes)}.`);
+        rejection = `${file.name} is larger than ${formatBytes(maxBytes)}.`;
         continue;
       }
       accepted.push(file);
       if (!multiple) break;
     }
+    if (rejection) reject(rejection);
     if (accepted.length === 0) return;
+    setRejected(null);
     commit(multiple ? [...files, ...accepted] : accepted);
-    if (inputRef.current) inputRef.current.value = "";
   }
 
   function onDrop(event: DragEvent<HTMLLabelElement>) {
@@ -111,12 +125,12 @@ function FileUpload({
   const showProgress = progress !== null && progress !== undefined;
 
   return (
-    <div data-slot="file-upload" className="grid gap-3">
+    <div data-slot="file-upload" className="grid gap-3" {...zoneProps}>
       <label
         htmlFor={inputId}
         data-dragging={dragging ? "true" : "false"}
         data-disabled={disabled ? "true" : "false"}
-        aria-invalid={invalid || error ? true : undefined}
+        data-invalid={invalid || message ? "true" : undefined}
         className={fileUploadClass}
         onDragEnter={(event) => {
           event.preventDefault();
@@ -138,7 +152,7 @@ function FileUpload({
           <path d="M5 16.5V19a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5" strokeLinecap="round" />
         </svg>
         <span className="text-sm font-medium">{label}</span>
-        <span className="text-xs text-muted-foreground">{hint}</span>
+        <span className="text-xs text-muted-foreground">{shownHint}</span>
         <input
           ref={inputRef}
           id={inputId}
@@ -146,6 +160,8 @@ function FileUpload({
           accept={accept}
           multiple={multiple}
           disabled={disabled}
+          aria-invalid={invalid || message ? true : undefined}
+          aria-describedby={message ? errorId : undefined}
           className="sr-only"
           onChange={onInput}
         />
@@ -165,7 +181,7 @@ function FileUpload({
       ) : null}
 
       {files.length > 0 ? (
-        <ul className="grid gap-2">
+        <ul className="grid gap-2" aria-live="polite">
           {files.map((file, index) => (
             <li key={`${file.name}-${file.size}-${index}`} className={fileUploadFileClass}>
               <span className="min-w-0 flex-1 truncate">{file.name}</span>
@@ -186,7 +202,11 @@ function FileUpload({
         </ul>
       ) : null}
 
-      {error ? <p className="text-sm text-destructive dark:text-[oklch(0.78_0.16_25)]">{error}</p> : null}
+      {message ? (
+        <p id={errorId} role="alert" className="text-sm text-destructive">
+          {message}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { cn } from "@aazenc/utils";
 import { toastCardVariants, toastIconClass, toastViewportClass, type ToastTone } from "./toast-variants";
 
@@ -16,33 +16,78 @@ interface ToastRecord {
   description?: string;
   tone: ToastTone;
   duration: number;
+  remaining: number;
+  startedAt: number;
+  timer: number | null;
 }
 
 const DEFAULT_DURATION = 4000;
 const MAX_TOASTS = 4;
+const EMPTY: ToastRecord[] = [];
 
 let nextId = 1;
 let records: ToastRecord[] = [];
+let mountedToasters = 0;
 const listeners = new Set<() => void>();
 
 function emit() {
   for (const listener of listeners) listener();
 }
 
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function arm(id: number) {
+  const item = records.find((record) => record.id === id);
+  if (!item || item.remaining <= 0 || typeof window === "undefined") return;
+  item.startedAt = Date.now();
+  item.timer = window.setTimeout(() => dismissToast(id), item.remaining);
+}
+
+function pauseToast(id: number) {
+  const item = records.find((record) => record.id === id);
+  if (!item || item.timer == null || typeof window === "undefined") return;
+  item.remaining = Math.max(0, item.remaining - (Date.now() - item.startedAt));
+  window.clearTimeout(item.timer);
+  item.timer = null;
+}
+
+function resumeToast(id: number) {
+  const item = records.find((record) => record.id === id);
+  if (!item || item.duration === 0 || item.timer != null) return;
+  arm(id);
+}
+
 function pushToast(title: string, tone: ToastTone, options?: ToastOptions) {
+  if (typeof window === "undefined") return -1;
+  if (mountedToasters === 0) {
+    console.warn("toast() was called before <Toaster /> mounted.");
+  }
   const id = nextId;
   nextId += 1;
-  const duration = options?.duration ?? DEFAULT_DURATION;
-  records = [...records, { id, title, description: options?.description, tone, duration }].slice(-MAX_TOASTS);
+  const duration = options?.duration ?? (tone === "destructive" ? 0 : DEFAULT_DURATION);
+  const record: ToastRecord = {
+    id,
+    title,
+    description: options?.description,
+    tone,
+    duration,
+    remaining: duration,
+    startedAt: Date.now(),
+    timer: null,
+  };
+  records = [...records, record].slice(-MAX_TOASTS);
   emit();
-  if (duration > 0) {
-    window.setTimeout(() => dismissToast(id), duration);
-  }
+  if (duration > 0) arm(id);
   return id;
 }
 
 function dismissToast(id: number) {
-  const next = records.filter((item) => item.id !== id);
+  const item = records.find((record) => record.id === id);
+  if (item?.timer != null && typeof window !== "undefined") window.clearTimeout(item.timer);
+  const next = records.filter((record) => record.id !== id);
   if (next.length === records.length) return;
   records = next;
   emit();
@@ -63,12 +108,21 @@ function ToastIcon({ tone }: { tone: ToastTone }) {
       </svg>
     );
   }
-  if (tone === "warning" || tone === "destructive") {
+  if (tone === "warning") {
     return (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" data-tone={tone} className={toastIconClass}>
+        <path d="M12 9v4" strokeLinecap="round" />
+        <path d="M12 17h.01" strokeLinecap="round" />
+        <path d="M10.3 4.8 2.8 18a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.8a2 2 0 0 0-3.4 0Z" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  if (tone === "destructive") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" data-tone={tone} className={toastIconClass}>
+        <circle cx="12" cy="12" r="9" />
         <path d="M12 8v5" strokeLinecap="round" />
         <path d="M12 16.5h.01" strokeLinecap="round" />
-        <circle cx="12" cy="12" r="9" />
       </svg>
     );
   }
@@ -82,21 +136,29 @@ function ToastIcon({ tone }: { tone: ToastTone }) {
 }
 
 function Toaster() {
-  const [items, setItems] = useState<ToastRecord[]>(records);
+  const items = useSyncExternalStore(subscribe, () => records, () => EMPTY);
 
   useEffect(() => {
-    const sync = () => setItems(records);
-    listeners.add(sync);
-    sync();
+    mountedToasters += 1;
     return () => {
-      listeners.delete(sync);
+      mountedToasters -= 1;
     };
   }, []);
 
   return (
-    <div data-slot="toaster" className={toastViewportClass} aria-live="polite" aria-relevant="additions">
+    <div data-slot="toaster" className={toastViewportClass} aria-live="polite" aria-atomic="false">
       {items.map((item) => (
-        <div key={item.id} data-slot="toast" data-tone={item.tone} role={item.tone === "destructive" ? "alert" : "status"} className={cn(toastCardVariants({ tone: item.tone }))}>
+        <div
+          key={item.id}
+          data-slot="toast"
+          data-tone={item.tone}
+          aria-atomic="true"
+          className={cn(toastCardVariants({ tone: item.tone }))}
+          onMouseEnter={() => pauseToast(item.id)}
+          onMouseLeave={() => resumeToast(item.id)}
+          onFocusCapture={() => pauseToast(item.id)}
+          onBlurCapture={() => resumeToast(item.id)}
+        >
           <ToastIcon tone={item.tone} />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">{item.title}</p>

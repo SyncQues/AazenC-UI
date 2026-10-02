@@ -4,7 +4,10 @@ import * as SliderPrimitive from "@radix-ui/react-slider";
 import { type ComponentProps } from "react";
 import { meterFillClass, meterTrackClass, sliderRootClass, sliderThumbClass } from "./meter-variants";
 
-export type SliderProps = Omit<ComponentProps<typeof SliderPrimitive.Root>, "className">;
+export interface SliderProps extends Omit<ComponentProps<typeof SliderPrimitive.Root>, "className"> {
+  /** One name per thumb. Used for range sliders. */
+  thumbAriaLabels?: string[];
+}
 
 function Slider({
   value,
@@ -13,6 +16,7 @@ function Slider({
   max = 100,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
+  thumbAriaLabels,
   ...props
 }: SliderProps) {
   const current = value ?? defaultValue ?? [min];
@@ -36,7 +40,14 @@ function Slider({
           key={index}
           data-slot="slider-thumb"
           className={sliderThumbClass}
-          aria-label={thumbs.length === 1 ? ariaLabel : undefined}
+          aria-label={
+            thumbAriaLabels?.[index] ??
+            (thumbs.length === 1
+              ? ariaLabel
+              : ariaLabel
+                ? `${ariaLabel} ${index === 0 ? "minimum" : index === thumbs.length - 1 ? "maximum" : index + 1}`
+                : undefined)
+          }
           aria-labelledby={thumbs.length === 1 ? ariaLabelledBy : undefined}
         />
       ))}

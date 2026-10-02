@@ -4,7 +4,7 @@
  * A dialog palette is this list inside the dialog, not a second skin.
  */
 export const commandClass =
-  "flex h-full w-full flex-col overflow-hidden rounded-[1.125rem] bg-popover text-popover-foreground";
+  "flex h-full w-full flex-col overflow-hidden rounded-[var(--radius-panel)] bg-popover text-popover-foreground";
 
 export const commandInputWrapperClass = "flex h-10 items-center gap-2 border-b border-border px-3";
 
@@ -21,7 +21,7 @@ export const commandGroupClass =
 export const commandSeparatorClass = "bg-border mx-2 h-px";
 
 export const commandItemClass =
-  "relative flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-sm outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
+  "relative flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-sm whitespace-nowrap outline-none select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0";
 
 export const commandShortcutClass = "ml-auto text-xs tracking-widest text-muted-foreground";
 

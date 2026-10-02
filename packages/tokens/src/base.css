@@ -19,6 +19,7 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
+    --radius-panel: 1.125rem;
     --radius-full: 9999px;
 
     /* Controls are height-anchored: sm h-8, default h-9, lg h-10. */
@@ -52,10 +53,11 @@
     --z-dropdown: 50;
     --z-sticky: 100;
     --z-modal: 200;
-    --z-toast: 300;
     --z-overlay: 11000;
     --z-dialog: 11001;
-    --z-popper: 11002;
+    /* Above dialog content, below menus and other poppers. */
+    --z-toast: 11002;
+    --z-popper: 11003;
   }
 
   *,

@@ -1,7 +1,7 @@
 export function GET() {
   const body = `# AazenC UI
 
-Component library skeleton. Components are added one at a time.
+Component library for product UI.
 Catalog: component.md
 `;
   return new Response(body, {

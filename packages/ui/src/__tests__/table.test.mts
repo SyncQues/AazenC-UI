@@ -3,7 +3,7 @@ import test from "node:test";
 import { tableContainerClass, tableFooterClass, tableRowClass } from "../table-variants.ts";
 
 test("table is one bordered grid", () => {
-  assert.match(tableContainerClass, /rounded-\[1\.125rem\]/);
+  assert.match(tableContainerClass, /rounded-\[var\(--radius-panel\)\]/);
   assert.match(tableContainerClass, /border-border/);
   assert.match(tableRowClass, /hover:bg-foreground\/5/);
   assert.match(tableFooterClass, /bg-foreground\/5/);

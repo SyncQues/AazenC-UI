@@ -10,8 +10,9 @@ test("navbar keeps the sticky bar and adds the floating glass pill", () => {
   assert.match(bar, /bg-background\/80/);
   assert.match(floating, /fixed/);
   assert.match(floating, /bg-transparent/);
-  assert.match(navbarGlassSurface, /backdrop-blur-xl/);
-  assert.match(navbarGlassSurface, /rounded-full|border/);
+  assert.match(navbarGlassSurface, /glass-chrome/);
+  assert.doesNotMatch(navbarGlassSurface, /rgba\(/);
+  assert.match(navbarGlassSurface, /glass-chrome-capsule/);
   assert.match(navbarLinkClass, /rounded-full/);
   assert.match(navbarLinkClass, /data-\[active=true\]:text-foreground/);
   assert.doesNotMatch(navbarLinkClass, /data-\[active=true\]:bg-/);

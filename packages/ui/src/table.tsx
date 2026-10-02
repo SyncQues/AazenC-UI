@@ -39,22 +39,35 @@ function TableFooter(props: TableFooterProps) {
   return <tfoot data-slot="table-footer" className={tableFooterClass} {...props} />;
 }
 
-export type TableRowProps = Omit<ComponentProps<"tr">, "className">;
+export type TableRowProps = Omit<ComponentProps<"tr">, "className"> & {
+  selected?: boolean;
+};
 
-function TableRow(props: TableRowProps) {
-  return <tr data-slot="table-row" className={tableRowClass} {...props} />;
+function TableRow({ selected, ...props }: TableRowProps) {
+  return (
+    <tr
+      {...props}
+      data-slot="table-row"
+      className={tableRowClass}
+      {...(selected ? { "data-state": "selected" } : {})}
+    />
+  );
 }
 
-export type TableHeadProps = Omit<ComponentProps<"th">, "className">;
+export type TableHeadProps = Omit<ComponentProps<"th">, "className"> & {
+  wrap?: boolean;
+};
 
-function TableHead(props: TableHeadProps) {
-  return <th data-slot="table-head" className={tableHeadClass} {...props} />;
+function TableHead({ scope = "col", wrap = false, ...props }: TableHeadProps) {
+  return <th scope={scope} data-slot="table-head" data-wrap={wrap ? "true" : undefined} className={tableHeadClass} {...props} />;
 }
 
-export type TableCellProps = Omit<ComponentProps<"td">, "className">;
+export type TableCellProps = Omit<ComponentProps<"td">, "className"> & {
+  wrap?: boolean;
+};
 
-function TableCell(props: TableCellProps) {
-  return <td data-slot="table-cell" className={tableCellClass} {...props} />;
+function TableCell({ wrap = false, ...props }: TableCellProps) {
+  return <td data-slot="table-cell" data-wrap={wrap ? "true" : undefined} className={tableCellClass} {...props} />;
 }
 
 export type TableCaptionProps = Omit<ComponentProps<"caption">, "className">;

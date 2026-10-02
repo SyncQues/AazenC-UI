@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { ThemeProvider } from "@aazenc/themes";
+import { Toaster } from "@aazenc/ui/toast";
+import { TooltipProvider } from "@aazenc/ui/tooltip";
 import { SITE_DESCRIPTION, SITE_NAME } from "../lib/site";
 import "./globals.css";
 
@@ -46,7 +48,10 @@ export default function RootLayout({
           defaultMaterial="solid"
           storageKey="aazenc-ui-theme-v2"
         >
-          {children}
+          <TooltipProvider>
+            {children}
+            <Toaster />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
