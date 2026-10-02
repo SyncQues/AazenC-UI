@@ -3,10 +3,13 @@ import test from "node:test";
 import { cn } from "../../../utils/src/cn.ts";
 import {
   tabsBadgeClass,
+  tabsColorVariants,
   tabsListVariants,
   tabsPillIndicatorClass,
+  tabsSolidMarkColorClass,
   tabsTriggerVariants,
   tabsUnderlineIndicatorClass,
+  tabsWashMarkColorClass,
 } from "../tabs-variants.ts";
 
 test("default tabs are one underline bar", () => {
@@ -75,4 +78,87 @@ test("the count chip is shared by every tab look", () => {
   assert.match(tabsBadgeClass, /text-foreground/);
   assert.match(tabsBadgeClass, /tabular-nums/);
   assert.doesNotMatch(tabsBadgeClass, /text-blue|bg-primary/);
+});
+
+test("a tab without a color stays the neutral tab", () => {
+  assert.equal(cn(tabsColorVariants({})), "");
+  assert.equal(cn(tabsColorVariants({ color: undefined })), "");
+  for (const variant of ["default", "pill", "segmented"] as const) {
+    const trigger = cn(tabsTriggerVariants({ variant }), tabsColorVariants({}));
+    assert.doesNotMatch(trigger, /text-blue|text-teal|bg-surface/);
+  }
+});
+
+test("a color paints the icon in both states and the label only when active", () => {
+  const blue = cn(tabsColorVariants({ color: "blue" }));
+  // The icon is the identity mark, so it keeps the hue before the tab is clicked.
+  assert.match(blue, /\[&_svg\]:text-blue-600/);
+  assert.match(blue, /dark:\[&_svg\]:text-blue-400/);
+  // A solid mark (segmented) fills with the hue, so the icon hands the color back.
+  // The dark twin is the point: without it the 400 ties with this rule on
+  // specificity and lands later, leaving the icon in its own hue on the fill.
+  assert.match(blue, /data-\[state=active\]:\[&_svg\]:text-current/);
+  assert.match(blue, /dark:data-\[state=active\]:\[&_svg\]:text-current/);
+  // The label joins the hue on the underline and on the chip row, and nowhere else.
+  assert.match(blue, /data-\[variant=default\]:data-\[color=blue\]:data-\[state=active\]:text-blue-700/);
+  assert.match(blue, /data-\[variant=pill\]:data-\[color=blue\]:data-\[state=active\]:text-blue-700/);
+  assert.match(
+    blue,
+    /data-\[variant=segmented\]:data-\[color=blue\]:data-\[state=active\]:text-primary-foreground/,
+  );
+  assert.doesNotMatch(blue, /data-\[variant=default\]:data-\[color=blue\]:bg-|rounded-full/);
+});
+
+test("the chip row tints the wash, the border and the hover, and never a solid fill", () => {
+  const purple = cn(tabsColorVariants({ color: "purple" }));
+  assert.match(purple, /data-\[variant=pill\]:data-\[color=purple\]:data-\[state=active\]:border-purple-400\/60/);
+  assert.match(purple, /data-\[variant=pill\]:data-\[color=purple\]:not-data-\[state=active\]:bg-surface/);
+  assert.match(
+    purple,
+    /data-\[variant=pill\]:data-\[color=purple\]:not-data-\[state=active\]:hover:bg-purple-500\/10/,
+  );
+  // An active chip must stay see-through so the sliding mark shows through it.
+  assert.doesNotMatch(purple, /data-\[state=active\]:bg-purple-\d/);
+});
+
+test("every hue ships a light and a dark pair for the icon and the active label", () => {
+  const hues = ["blue", "green", "orange", "teal", "purple", "pink"] as const;
+  for (const hue of hues) {
+    const classes = cn(tabsColorVariants({ color: hue }));
+    assert.match(classes, new RegExp(`\\[&_svg\\]:text-${hue}-600`));
+    assert.match(classes, new RegExp(`dark:\\[&_svg\\]:text-${hue}-400`));
+    assert.match(classes, new RegExp(`data-\\[variant=default\\]:data-\\[color=${hue}\\]:data-\\[state=active\\]:text-${hue}-700`));
+    assert.match(
+      classes,
+      new RegExp(`dark:data-\\[variant=pill\\]:data-\\[color=${hue}\\]:data-\\[state=active\\]:text-${hue}-300`),
+    );
+    // The mark of a colored tab is the same hue as its label.
+    assert.equal(tabsSolidMarkColorClass[hue], `bg-${hue}-500`);
+    assert.equal(tabsWashMarkColorClass[hue], `bg-${hue}-500/10`);
+  }
+});
+
+test("a color never lands on a tab that did not ask for it", () => {
+  const classes = cn(tabsColorVariants({ color: "green" }));
+  for (const other of ["blue", "orange", "teal", "purple", "pink"]) {
+    assert.doesNotMatch(classes, new RegExp(`data-\\[color=${other}\\]`));
+    assert.doesNotMatch(classes, new RegExp(`text-${other}-`));
+  }
+});
+
+test("the mark changes hue on the same clock it slides", () => {
+  // Without background-color in the list the mark slides as one hard color while its
+  // hue snaps on the first frame, which is the only reason a colored row felt rougher.
+  assert.match(tabsPillIndicatorClass, /transition-\[transform,width,height,background-color\]/);
+  assert.match(tabsUnderlineIndicatorClass, /transition-\[transform,width,background-color\]/);
+  for (const mark of [tabsPillIndicatorClass, tabsUnderlineIndicatorClass]) {
+    assert.match(mark, /duration-300/);
+    assert.match(mark, /ease-out/);
+    assert.match(mark, /motion-reduce:transition-none/);
+  }
+  // Every wash is 10%, so the crossfade never dips through transparent on its way
+  // from one hue to the next.
+  for (const wash of Object.values(tabsWashMarkColorClass)) {
+    assert.match(wash, /\/10$/);
+  }
 });

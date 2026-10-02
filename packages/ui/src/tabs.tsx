@@ -14,10 +14,14 @@ import {
 import { cn } from "@aazenc/utils";
 import {
   tabsBadgeClass,
+  tabsColorVariants,
   tabsListVariants,
   tabsPillIndicatorClass,
+  tabsSolidMarkColorClass,
   tabsTriggerVariants,
   tabsUnderlineIndicatorClass,
+  tabsWashMarkColorClass,
+  type TabsColor,
   type TabsVariantProps,
 } from "./tabs-variants";
 
@@ -31,6 +35,16 @@ const TAB_MARK_CLASS: Record<TabsVariant, string> = {
   pill: tabsPillIndicatorClass,
   segmented: tabsPillIndicatorClass,
 };
+
+/** The chip row washes the mark, the underline and the segmented bar fill it. */
+const TAB_MARK_COLOR_CLASS: Record<TabsVariant, Record<TabsColor, string>> = {
+  default: tabsSolidMarkColorClass,
+  pill: tabsWashMarkColorClass,
+  segmented: tabsSolidMarkColorClass,
+};
+
+/** A trigger can carry any attribute, so the mark only trusts a name the color file has. */
+const TAB_COLORS = new Set(Object.keys(tabsSolidMarkColorClass));
 
 type IndicatorBox = { x: number; y: number; w: number; h: number };
 
@@ -46,6 +60,7 @@ export interface TabsTriggerProps
   extends Omit<ComponentProps<typeof TabsPrimitive.Trigger>, "className"> {
   icon?: TabsIcon;
   badge?: ReactNode;
+  color?: TabsColor;
 }
 
 export type TabsContentProps = Omit<ComponentProps<typeof TabsPrimitive.Content>, "className">
@@ -55,6 +70,7 @@ export type TabsItem = {
   label: ReactNode;
   icon?: TabsIcon;
   badge?: ReactNode;
+  color?: TabsColor;
   disabled?: boolean;
 };
 
@@ -62,16 +78,26 @@ export interface TabsItemsListProps extends TabsListProps {
   items: TabsItem[];
 }
 
-function measureIndicator(list: HTMLDivElement): IndicatorBox | null {
+type IndicatorState = { box: IndicatorBox; color: TabsColor | null };
+
+function readColor(trigger: HTMLElement): TabsColor | null {
+  const value = trigger.dataset.color;
+  return value && TAB_COLORS.has(value) ? (value as TabsColor) : null;
+}
+
+function measureIndicator(list: HTMLDivElement): IndicatorState | null {
   const active = list.querySelector<HTMLElement>("[data-slot=tabs-trigger][data-state=active]");
   if (!active) return null;
   const listRect = list.getBoundingClientRect();
   const rect = active.getBoundingClientRect();
   return {
-    x: Math.round(rect.left - listRect.left),
-    y: Math.round(rect.top - listRect.top),
-    w: Math.round(rect.width),
-    h: Math.round(rect.height),
+    box: {
+      x: Math.round(rect.left - listRect.left),
+      y: Math.round(rect.top - listRect.top),
+      w: Math.round(rect.width),
+      h: Math.round(rect.height),
+    },
+    color: readColor(active),
   };
 }
 
@@ -91,7 +117,7 @@ function Tabs({ variant = "default", ...props }: TabsProps) {
 function TabsList({ children, ...props }: TabsListProps) {
   const variant = useContext(TabsVariantContext);
   const listRef = useRef<HTMLDivElement>(null);
-  const [box, setBox] = useState<IndicatorBox | null>(null);
+  const [state, setState] = useState<IndicatorState | null>(null);
 
   useLayoutEffect(() => {
     const list = listRef.current;
@@ -99,14 +125,15 @@ function TabsList({ children, ...props }: TabsListProps) {
 
     const sync = () => {
       const next = measureIndicator(list);
-      setBox((current) => {
+      setState((current) => {
         if (!next) return null;
         if (
           current &&
-          current.x === next.x &&
-          current.y === next.y &&
-          current.w === next.w &&
-          current.h === next.h
+          current.color === next.color &&
+          current.box.x === next.box.x &&
+          current.box.y === next.box.y &&
+          current.box.w === next.box.w &&
+          current.box.h === next.box.h
         ) {
           return current;
         }
@@ -130,6 +157,8 @@ function TabsList({ children, ...props }: TabsListProps) {
     };
   }, []);
 
+  const box = state?.box;
+  const markColor = state?.color;
   const indicatorStyle = box
     ? variant === "default"
       ? { width: box.w, transform: `translateX(${box.x}px)` }
@@ -152,7 +181,10 @@ function TabsList({ children, ...props }: TabsListProps) {
           <span
             aria-hidden
             data-slot="tabs-indicator"
-            className={TAB_MARK_CLASS[variant]}
+            className={cn(
+              TAB_MARK_CLASS[variant],
+              markColor ? TAB_MARK_COLOR_CLASS[variant][markColor] : undefined,
+            )}
             style={indicatorStyle}
           />
         ) : null}
@@ -162,7 +194,7 @@ function TabsList({ children, ...props }: TabsListProps) {
   );
 }
 
-function TabsTrigger({ icon: Icon, badge, children, ...props }: TabsTriggerProps) {
+function TabsTrigger({ icon: Icon, badge, color, children, ...props }: TabsTriggerProps) {
   const variant = useContext(TabsVariantContext);
   const showBadge = badge != null && badge !== false && badge !== "";
 
@@ -170,7 +202,8 @@ function TabsTrigger({ icon: Icon, badge, children, ...props }: TabsTriggerProps
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       data-variant={variant}
-      className={cn(tabsTriggerVariants({ variant }))}
+      data-color={color}
+      className={cn(tabsTriggerVariants({ variant }), tabsColorVariants({ color }))}
       {...props}
     >
       <span className="relative z-20 inline-flex items-center gap-1.5">
@@ -201,6 +234,7 @@ function TabsItemsList({ items, ...listProps }: TabsItemsListProps) {
           value={item.value}
           icon={item.icon}
           badge={item.badge}
+          color={item.color}
           disabled={item.disabled}
         >
           {item.label}
@@ -210,4 +244,14 @@ function TabsItemsList({ items, ...listProps }: TabsItemsListProps) {
   );
 }
 
-export { Tabs, TabsContent, TabsItemsList, TabsList, TabsTrigger, tabsListVariants, tabsTriggerVariants };
+export {
+  Tabs,
+  TabsContent,
+  TabsItemsList,
+  TabsList,
+  TabsTrigger,
+  tabsColorVariants,
+  tabsListVariants,
+  tabsTriggerVariants,
+  type TabsColor,
+};

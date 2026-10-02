@@ -144,6 +144,57 @@ export type {
   EmptyTitleProps,
 } from "./empty";
 export {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+  alertVariants,
+} from "./alert";
+export type {
+  AlertActionProps,
+  AlertDescriptionProps,
+  AlertProps,
+  AlertTitleProps,
+} from "./alert";
+export type { AlertShape, AlertTone } from "./alert-variants";
+export { Separator } from "./separator";
+export type { SeparatorProps } from "./separator";
+export type { SeparatorOrientation } from "./separator-variants";
+export {
+  Sheet,
+  SheetBody,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  sheetContentVariants,
+} from "./sheet";
+export type {
+  SheetBodyProps,
+  SheetCloseProps,
+  SheetContentProps,
+  SheetDescriptionProps,
+  SheetFooterProps,
+  SheetHeaderProps,
+  SheetProps,
+  SheetTitleProps,
+  SheetTriggerProps,
+} from "./sheet";
+export type { SheetContentVariantProps, SheetSide } from "./sheet-variants";
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
+export type {
+  ResizableHandleProps,
+  ResizablePanelGroupProps,
+  ResizablePanelProps,
+} from "./resizable";
+export type {
+  ResizableHandleVariantProps,
+  ResizableOrientation,
+} from "./resizable-variants";
+export {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,

@@ -113,7 +113,7 @@
       "name": "tabs",
       "type": "registry:ui",
       "title": "Tabs",
-      "description": "SyncQues tabs. Underline, pill, or segmented. Pass variant. Icons and counts are props.",
+      "description": "SyncQues tabs. Underline, pill, or segmented. Pass variant, and color for a tab that owns a hue. Icons and counts are props.",
       "dependencies": [
         "@radix-ui/react-tabs",
         "class-variance-authority"
@@ -138,6 +138,14 @@
           "default",
           "pill",
           "segmented"
+        ],
+        "colors": [
+          "blue",
+          "green",
+          "orange",
+          "teal",
+          "purple",
+          "pink"
         ]
       }
     },
@@ -328,6 +336,143 @@
           "target": "components/ui/empty-variants.ts"
         }
       ]
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "Alert",
+      "description": "SyncQues inline message. One box, four tones, one icon that follows the tone. Panel radius by default, pill when the message is one line.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/alert.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/alert.tsx"
+        },
+        {
+          "path": "packages/ui/src/alert-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/alert-variants.ts"
+        }
+      ],
+      "meta": {
+        "tones": [
+          "default",
+          "success",
+          "warning",
+          "destructive"
+        ],
+        "shapes": [
+          "rounded",
+          "pill",
+          "square"
+        ]
+      }
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "SyncQues separator. One hairline, horizontal or vertical. Decorative by default, because a rule inside a paragraph is furniture and a rule between two groups is not.",
+      "dependencies": [
+        "@radix-ui/react-separator",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/separator.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/separator.tsx"
+        },
+        {
+          "path": "packages/ui/src/separator-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/separator-variants.ts"
+        }
+      ],
+      "meta": {
+        "orientations": [
+          "horizontal",
+          "vertical"
+        ]
+      }
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "SyncQues sheet. A panel docked to any edge. Right by default, panel radius on the free edge only, no handle and no drag. Use Drawer when a swipe should close it.",
+      "dependencies": [
+        "@radix-ui/react-dialog",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sheet.tsx"
+        },
+        {
+          "path": "packages/ui/src/sheet-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/sheet-variants.ts"
+        }
+      ],
+      "meta": {
+        "sides": [
+          "top",
+          "right",
+          "bottom",
+          "left"
+        ]
+      }
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "title": "Resizable",
+      "description": "SyncQues resizable. A split you can drag, either way round, on a ten pixel handle that draws a hairline or tints as a band, and collapsible puts a chevron pair on that handle, each chevron shutting the panel behind it and a second press bringing it back.",
+      "dependencies": [
+        "class-variance-authority",
+        "react-resizable-panels"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/resizable.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/resizable.tsx"
+        },
+        {
+          "path": "packages/ui/src/resizable-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/resizable-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/resizable-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/resizable-utils.ts"
+        }
+      ],
+      "meta": {
+        "orientations": [
+          "horizontal",
+          "vertical"
+        ]
+      }
     },
     {
       "name": "dropdown-menu",

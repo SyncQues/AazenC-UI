@@ -139,20 +139,83 @@
   animation: sidebar-slide-in var(--duration-enter) var(--ease-default) forwards;
 }
 
+/* A sheet travels the whole viewport, so its curve is the one that cannot
+   overshoot. --ease-spring peaks at 1.098, which on a three-quarter-width panel
+   is tens of pixels past the resting position before it comes back — the bounce.
+   --ease-panel is monotonic and was sitting in the tokens unused. The exit runs
+   on the plain curve: a panel leaving does not need a flourish either. */
 @utility animate-sheet-slide-in-right {
-  animation: sheet-slide-in-right var(--duration-enter) var(--ease-spring) forwards;
+  animation: sheet-slide-in-right var(--duration-enter) var(--ease-panel) forwards;
 }
 
 @utility animate-sheet-slide-in-left {
-  animation: sheet-slide-in-left var(--duration-enter) var(--ease-spring) forwards;
+  animation: sheet-slide-in-left var(--duration-enter) var(--ease-panel) forwards;
 }
 
 @utility animate-sheet-slide-in-top {
-  animation: sheet-slide-in-top var(--duration-enter) var(--ease-spring) forwards;
+  animation: sheet-slide-in-top var(--duration-enter) var(--ease-panel) forwards;
 }
 
 @utility animate-sheet-slide-in-bottom {
-  animation: sheet-slide-in-bottom var(--duration-enter) var(--ease-spring) forwards;
+  animation: sheet-slide-in-bottom var(--duration-enter) var(--ease-panel) forwards;
+}
+
+/* One class for the whole panel. `data-side` and `data-state` do the picking,
+   so a SheetContent only carries the utility and never four animate- classes. */
+@utility sheet-motion {
+  &[data-state="open"][data-side="right"] {
+    animation: sheet-slide-in-right var(--duration-enter) var(--ease-panel) forwards;
+  }
+
+  &[data-state="open"][data-side="left"] {
+    animation: sheet-slide-in-left var(--duration-enter) var(--ease-panel) forwards;
+  }
+
+  &[data-state="open"][data-side="top"] {
+    animation: sheet-slide-in-top var(--duration-enter) var(--ease-panel) forwards;
+  }
+
+  &[data-state="open"][data-side="bottom"] {
+    animation: sheet-slide-in-bottom var(--duration-enter) var(--ease-panel) forwards;
+  }
+
+  &[data-state="closed"][data-side="right"] {
+    animation: sheet-slide-out-right var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"][data-side="left"] {
+    animation: sheet-slide-out-left var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"][data-side="top"] {
+    animation: sheet-slide-out-top var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"][data-side="bottom"] {
+    animation: sheet-slide-out-bottom var(--duration-normal) var(--ease-default) forwards;
+  }
+}
+
+@utility sheet-overlay-motion {
+  &[data-state="open"] {
+    animation: dialog-overlay-in var(--duration-normal) var(--ease-default) forwards;
+  }
+
+  &[data-state="closed"] {
+    animation: dialog-overlay-out var(--duration-normal) var(--ease-default) forwards;
+  }
+}
+
+/* Keeps the portal wrapper alive until the panel has finished leaving, so the
+   scrim does not vanish out from under a sheet that is still sliding. */
+@utility sheet-presence {
+  &:has([data-state="open"]) {
+    animation: dialog-presence-in var(--duration-normal) linear forwards;
+  }
+
+  &:has([data-state="closed"]) {
+    animation: dialog-presence-out var(--duration-normal) linear forwards;
+  }
 }
 
 @utility animate-badge-pulse {
@@ -343,6 +406,14 @@
   .animate-sheet-slide-in-left,
   .animate-sheet-slide-in-top,
   .animate-sheet-slide-in-bottom,
+  .sheet-motion,
+  .sheet-motion[data-state="open"],
+  .sheet-motion[data-state="closed"],
+  .sheet-overlay-motion,
+  .sheet-overlay-motion[data-state="open"],
+  .sheet-overlay-motion[data-state="closed"],
+  .sheet-presence:has([data-state="open"]),
+  .sheet-presence:has([data-state="closed"]),
   .animate-badge-pulse,
   .animate-content-glow,
   .animate-mesh-drift,

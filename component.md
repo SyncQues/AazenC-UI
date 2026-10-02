@@ -14,7 +14,7 @@ Add each one under `packages/ui/src` (web) and `packages/ui-native/src/component
 -   Avatar
 -   Avatar Group
 -   Breadcrumb
--   Separator
+-   Separator ✅ (`separator`)
 -   Skeleton
 -   Spinner ✅ (`spinner`)
 -   Progress
@@ -90,7 +90,7 @@ Add each one under `packages/ui/src` (web) and `packages/ui-native/src/component
 
 -   Modal
 -   Drawer
--   Sheet
+-   Sheet ✅ (`sheet`)
 -   Popover
 -   Tooltip
 -   Hover Card
@@ -167,7 +167,7 @@ Add each one under `packages/ui/src` (web) and `packages/ui-native/src/component
 
 ## 8. Feedback
 
--   Alert
+-   Alert ✅ (`alert`)
 -   Banner
 -   Callout
 -   Success Message
@@ -181,7 +181,7 @@ Add each one under `packages/ui/src` (web) and `packages/ui-native/src/component
 ## 9. Layout
 
 -   Split Pane
--   Resizable Panel
+-   Resizable Panel ✅ (`resizable`)
 -   Masonry Grid
 -   Bento Grid
 -   Hero Section
