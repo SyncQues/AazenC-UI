@@ -85,6 +85,41 @@
     --pink-600: oklch(59.2% 0.249 0.584);
     --pink-700: oklch(52.5% 0.223 3.958);
 
+    /* The chart data palette — deliberately NOT themeable, and deliberately NOT
+       re-picked per mode. A series slot is an *identity*: slot 3 is the third
+       series in every chart, in every theme, in both modes. Re-picking it per
+       mode is what made a heat map go from orange to blue on a mode switch while
+       the numbers under it stayed put — the encoding changed and the data did
+       not. `--chart-N` is kept and still re-picked per theme for anyone who does
+       want brand-reactive marks; charts just do not default to it.
+
+       Every value sits at oklch L 58% because the palette has to clear 3:1
+       against near-white (slate light `oklch(0.985 …)`) *and* near-black (slate
+       dark `oklch(0.14 0 0)`) at the same time, and equal lightness is what keeps
+       one series from reading louder than its neighbour. The window is real and
+       it is narrow: 3:1 on white caps relative luminance at 0.30, 3:1 on near
+       black floors it at 0.11. Brighter hues (green at L 72% measured 2.13:1 on
+       white) cannot clear it, so chroma is the only dial left — each is the
+       highest in-gamut chroma its hue holds at that lightness. Measured against
+       both slate backgrounds: 4.27/4.46, 4.36/4.37, 4.80/3.97, 3.82/4.99,
+       4.67/4.08. Hues are the base.css ramps above, unchanged, and ordered so
+       no two *adjacent* slots sit within 103.7° of each other — most charts draw
+       two or three series, so that is the pairing that has to read. */
+    --data-1: oklch(58% 0.228 259.815);
+    --data-2: oklch(58% 0.156 47.604);
+    --data-3: oklch(58% 0.284 303.9);
+    --data-4: oklch(58% 0.16 149.579);
+    --data-5: oklch(58% 0.236 354.308);
+
+    /* The down arm of a diverging ramp. Kept off `--destructive` on purpose:
+       that token is re-picked per mode like every other semantic color, so a
+       diverging heat map's negative arm would move while its positive arm held
+       still. Hue 27.3° is slate's own destructive hue and lightness is only
+       nudged 0.577 → 0.59, so light mode looks as it did. Note it is just
+       20.3° from `--data-2`, so a diverging map that uses data-2 as its up arm
+       should pass an explicit `negativeColor` rather than take this default. */
+    --data-negative: oklch(59% 0.24 27.325);
+
     /* Z-index. Dialog stack matches the SyncQues portal contract. */
     --z-dropdown: 50;
     --z-sticky: 100;

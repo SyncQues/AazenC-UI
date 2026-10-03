@@ -119,6 +119,12 @@ const components = [
     description: "SyncQues badge. Solid, soft, outline, or destructive.",
   },
   {
+    href: "/components/segmented-control",
+    name: "Segmented control",
+    description:
+      "SyncQues segmented control. One exclusive answer, with the mark sliding behind it.",
+  },
+  {
     href: "/components/file-upload",
     name: "File upload",
     description: "SyncQues file upload. One drop zone.",
@@ -190,6 +196,30 @@ const components = [
     name: "Code block",
     description:
       "One frame for example source. Filename, copy, and optional line numbers.",
+  },
+  {
+    href: "/components/markdown-viewer",
+    name: "Markdown viewer",
+    description:
+      "Read-only markdown. Headings, lists, tables, and code, with no HTML injection.",
+  },
+  {
+    href: "/components/charts",
+    name: "Charts",
+    description:
+      "Area, bar, line, and pie on one dependency-free engine. Token colors, animated reveals, keyboard and screen-reader readable.",
+  },
+  {
+    href: "/components/heat-map",
+    name: "Heat Map",
+    description:
+      "A matrix on a ramp mixed in oklch, so lightness climbs the whole way. Bands, not a gradient — and a missing reading is a gap, never a zero.",
+  },
+  {
+    href: "/components/metric-card",
+    name: "Metric card",
+    description:
+      "A KPI tile. The trend is coloured by sentiment, not by sign, and never by colour alone.",
   },
 ];
 

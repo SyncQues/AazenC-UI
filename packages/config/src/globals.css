@@ -49,6 +49,16 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  /* The fixed data palette. Mapped so `fill-data-2` resolves to the repo token.
+     Same argument as the brand hue ramps below, and for a sharper reason: these
+     are the slots the charts actually default to, so unlike `--chart-N` they do
+     not change when the mode does. */
+  --color-data-1: var(--data-1);
+  --color-data-2: var(--data-2);
+  --color-data-3: var(--data-3);
+  --color-data-4: var(--data-4);
+  --color-data-5: var(--data-5);
+  --color-data-negative: var(--data-negative);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

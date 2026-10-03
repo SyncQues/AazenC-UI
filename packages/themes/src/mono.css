@@ -28,6 +28,18 @@
     --ring: oklch(0.13 0 0 / 0.35);
     --shadow-color: oklch(0.2 0 0);
 
+    /* The data palette is fixed and mode-independent (see @aazenc/tokens/base.css),
+       which means it does not follow this theme — so mono has to opt out of the
+       hue itself or a monochrome theme ships saturated charts. Lightness is
+       stepped the same way `--destructive` steps below, so a series is still
+       separable from its neighbours and from the surface it sits on. */
+    --data-1: oklch(0.52 0 0);
+    --data-2: oklch(0.64 0 0);
+    --data-3: oklch(0.44 0 0);
+    --data-4: oklch(0.74 0 0);
+    --data-5: oklch(0.36 0 0);
+    --data-negative: oklch(0.38 0 0);
+
     --button-filled-bg: color-mix(in oklch, var(--primary) 95%, transparent);
     --button-filled-text: oklch(0.99 0 0);
     --button-filled-border: color-mix(in oklch, var(--primary) 80%, transparent);
