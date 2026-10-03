@@ -34,8 +34,16 @@ export function Example() {
   },
   tabs: {
     filename: "tabs.tsx",
-    code: `import { Tabs, TabsContent, TabsItemsList, type TabsItem } from "@aazenc/ui/tabs"
+    code: `import {
+  Tabs,
+  TabsContent,
+  TabsItemsList,
+  TabsList,
+  TabsTrigger,
+  type TabsItem,
+} from "@aazenc/ui/tabs"
 
+// variant picks the mark. color gives one tab its own hue.
 const items: TabsItem[] = [
   { value: "feed", label: "Feed", color: "blue" },
   { value: "events", label: "Events", color: "orange", badge: 3 },
@@ -44,12 +52,26 @@ const items: TabsItem[] = [
 
 export function Example() {
   return (
-    <Tabs variant="pill" defaultValue="feed">
-      <TabsItemsList items={items} />
-      <TabsContent value="feed">Community feed.</TabsContent>
-      <TabsContent value="events">Upcoming events.</TabsContent>
-      <TabsContent value="members">Members.</TabsContent>
-    </Tabs>
+    <div className="grid gap-8">
+      {/* The default look is one underline bar. Counts are props. */}
+      <Tabs defaultValue="about">
+        <TabsList>
+          <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="posts" badge={12}>
+            Posts
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="about">About the profile.</TabsContent>
+        <TabsContent value="posts">Posts in this profile.</TabsContent>
+      </Tabs>
+
+      <Tabs variant="pill" defaultValue="feed">
+        <TabsItemsList items={items} />
+        <TabsContent value="feed">Community feed.</TabsContent>
+        <TabsContent value="events">Upcoming events.</TabsContent>
+        <TabsContent value="members">Members.</TabsContent>
+      </Tabs>
+    </div>
   )
 }`,
   },

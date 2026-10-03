@@ -143,22 +143,11 @@
    overshoot. --ease-spring peaks at 1.098, which on a three-quarter-width panel
    is tens of pixels past the resting position before it comes back — the bounce.
    --ease-panel is monotonic and was sitting in the tokens unused. The exit runs
-   on the plain curve: a panel leaving does not need a flourish either. */
-@utility animate-sheet-slide-in-right {
-  animation: sheet-slide-in-right var(--duration-enter) var(--ease-panel) forwards;
-}
+   on the plain curve: a panel leaving does not need a flourish either.
 
-@utility animate-sheet-slide-in-left {
-  animation: sheet-slide-in-left var(--duration-enter) var(--ease-panel) forwards;
-}
-
-@utility animate-sheet-slide-in-top {
-  animation: sheet-slide-in-top var(--duration-enter) var(--ease-panel) forwards;
-}
-
-@utility animate-sheet-slide-in-bottom {
-  animation: sheet-slide-in-bottom var(--duration-enter) var(--ease-panel) forwards;
-}
+   There used to be four `animate-sheet-slide-in-*` utilities here, one per
+   side. Nothing ever picked one — `sheet-motion` below does the same four
+   animations off `data-side` — so they are gone and the keyframes stay. */
 
 /* One class for the whole panel. `data-side` and `data-state` do the picking,
    so a SheetContent only carries the utility and never four animate- classes. */
@@ -402,10 +391,6 @@
   .animate-checkbox-check,
   .animate-select-content-in,
   .animate-sidebar-slide-in,
-  .animate-sheet-slide-in-right,
-  .animate-sheet-slide-in-left,
-  .animate-sheet-slide-in-top,
-  .animate-sheet-slide-in-bottom,
   .sheet-motion,
   .sheet-motion[data-state="open"],
   .sheet-motion[data-state="closed"],

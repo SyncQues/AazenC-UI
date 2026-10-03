@@ -13,6 +13,7 @@ import {
 } from "@aazenc/ui/sheet";
 import type { SheetSide } from "@aazenc/ui/sheet";
 import { Button } from "@aazenc/ui/button";
+import { Checkbox } from "@aazenc/ui/checkbox";
 import { Input } from "@aazenc/ui/input";
 import { Label } from "@aazenc/ui/label";
 import { Separator } from "@aazenc/ui/separator";
@@ -124,11 +125,11 @@ export function SheetPreview() {
               <SheetBody>
                 <div className="grid gap-4 py-4">
                   {["New applications", "Interview reminders", "Weekly digest", "Product updates"].map(
-                    (label) => (
-                      <label key={label} className="flex items-center justify-between gap-4 text-sm">
-                        <span>{label}</span>
-                        <input type="checkbox" defaultChecked className="size-4 accent-[var(--foreground)]" />
-                      </label>
+                    (label, index) => (
+                      <div key={label} className="flex items-center justify-between gap-4 text-sm">
+                        <Label htmlFor={`sheet-notify-${index}`}>{label}</Label>
+                        <Checkbox id={`sheet-notify-${index}`} defaultChecked />
+                      </div>
                     ),
                   )}
                 </div>

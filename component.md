@@ -245,11 +245,11 @@ Add each one under `packages/ui/src` (web) and `packages/ui-native/src/component
 -   File Card
 -   Folder Card
 -   File Explorer
--   Image Preview ✅ (`image-preview`)
+-   Image Preview
 -   PDF Viewer ✅ (`pdf-viewer`)
--   Audio Player ✅ (via `media-player` kind=audio)
--   Video Player ✅ (via `media-player` kind=video; CC + quality)
--   Image Editor ✅ (`image-editor` — crop, rotate, filters)
+-   Audio Player
+-   Video Player
+-   Image Editor
 -   Drag Upload Zone ✅ (via `file-upload`)
 
 ## 15. Authentication

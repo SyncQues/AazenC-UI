@@ -4,10 +4,12 @@ import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { type VariantProps } from "class-variance-authority";
 import { createContext, useContext, type ComponentProps } from "react";
 import { cn } from "@aazenc/utils";
+import { PanelCloseIcon } from "./panel-chrome-icon";
 import {
   sheetBodyClass,
   sheetCloseClass,
   sheetContentVariants,
+  sheetDefaultSide,
   sheetDescriptionClass,
   sheetFooterClass,
   sheetHeaderVariants,
@@ -33,12 +35,17 @@ export interface SheetCloseProps
 }
 
 export interface SheetContentProps
-  extends Omit<ComponentProps<typeof SheetPrimitive.Content>, "className">,
+  extends ComponentProps<typeof SheetPrimitive.Content>,
     VariantProps<typeof sheetContentVariants> {
-  /** Which edge the panel is docked to. */
+  /** Re-declared to drop the `null` the cva's `VariantProps` widens the key with. */
   side?: SheetSide;
   /** Close button. The overlay and the escape key still dismiss the sheet. */
   close?: boolean;
+  /**
+   * An accessible name for a panel with no visible heading. Either this or a
+   * `SheetTitle` is required; never guessed, since an invented name gets read.
+   */
+  title?: string;
 }
 
 export type SheetHeaderProps = Omit<ComponentProps<"div">, "className">
@@ -54,14 +61,6 @@ export type SheetDescriptionProps = Omit<
   "className"
 >
 
-function SheetCloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className="size-4">
-      <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function Sheet({ ...props }: SheetProps) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
@@ -74,8 +73,8 @@ function SheetClose({ asChild = false, ...props }: SheetCloseProps) {
   return <SheetPrimitive.Close data-slot="sheet-close" asChild={asChild} {...props} />;
 }
 
-function SheetContent({ side, close, children, ...props }: SheetContentProps) {
-  const resolvedSide: SheetSide = side ?? "right";
+function SheetContent({ side, close, title, className, children, ...props }: SheetContentProps) {
+  const resolvedSide: SheetSide = side ?? sheetDefaultSide;
   const showClose = close ?? true;
 
   return (
@@ -86,13 +85,14 @@ function SheetContent({ side, close, children, ...props }: SheetContentProps) {
           <SheetPrimitive.Content
             data-slot="sheet-content"
             data-side={resolvedSide}
-            className={cn(sheetContentVariants({ side: resolvedSide }))}
+            className={cn(sheetContentVariants({ side: resolvedSide }), className)}
             {...props}
           >
+            {title ? <SheetPrimitive.Title className="sr-only">{title}</SheetPrimitive.Title> : null}
             {children}
             {showClose ? (
-              <SheetPrimitive.Close data-slot="sheet-close" className={sheetCloseClass}>
-                <SheetCloseIcon />
+              <SheetPrimitive.Close data-slot="sheet-close-button" className={sheetCloseClass}>
+                <PanelCloseIcon />
                 <span className="sr-only">Close</span>
               </SheetPrimitive.Close>
             ) : null}

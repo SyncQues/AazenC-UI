@@ -10,7 +10,11 @@ export interface SeparatorProps
     VariantProps<typeof separatorVariants> {
   /** horizontal draws across its container, vertical draws down it. */
   orientation?: SeparatorOrientation;
-  /** Default true. Pass false for a rule that divides two groups, not a rule inside one. */
+  /**
+   * Default true. Pass false for a rule that divides two groups, not a rule inside
+   * one: that is the difference between role="none" and role="separator", and it is
+   * all the a11y this component has. It still takes no focus — the rule is static.
+   */
   decorative?: boolean;
 }
 

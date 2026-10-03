@@ -4,6 +4,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { type VariantProps } from "class-variance-authority";
 import { createContext, useContext, type ComponentProps } from "react";
 import { cn } from "@aazenc/utils";
+import { PanelCloseIcon } from "./panel-chrome-icon";
 import {
   dialogBodyVariants,
   dialogCloseClass,
@@ -38,12 +39,22 @@ export interface DialogCloseProps
 }
 
 export interface DialogContentProps
-  extends Omit<ComponentProps<typeof DialogPrimitive.Content>, "className">,
+  extends ComponentProps<typeof DialogPrimitive.Content>,
     VariantProps<typeof dialogContentVariants> {
   /** Dialog can be dismissed. Alert stays up until an action closes it. */
   kind?: DialogKind;
   /** Close button. Alerts hide it unless this is set. */
   close?: boolean;
+  /**
+   * An accessible name for the panel, rendered visually hidden.
+   *
+   * Prefer a `DialogTitle` when the panel shows a heading — this exists for the
+   * panel that has no visible one. One of the two is required: without either
+   * the dialog ships unnamed, `aria-labelledby` resolves to nothing, and Radix
+   * logs a dev warning. It is never guessed here, because an invented name is a
+   * lie the screen reader then reads out.
+   */
+  title?: string;
 }
 
 export type DialogHeaderProps = Omit<ComponentProps<"div">, "className">
@@ -55,14 +66,6 @@ export type DialogFooterProps = Omit<ComponentProps<"div">, "className">
 export type DialogTitleProps = Omit<ComponentProps<typeof DialogPrimitive.Title>, "className">
 
 export type DialogDescriptionProps = Omit<ComponentProps<typeof DialogPrimitive.Description>, "className">
-
-function DialogCloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className="size-4">
-      <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function Dialog(props: DialogProps) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -82,6 +85,8 @@ function DialogContent({
   kind = "dialog",
   close,
   role,
+  title,
+  className,
   children,
   onPointerDownOutside,
   onEscapeKeyDown,
@@ -102,7 +107,7 @@ function DialogContent({
             data-padding={resolvedPadding}
             data-kind={kind}
             {...(kind === "alert" || role ? { role: role ?? "alertdialog" } : {})}
-            className={cn(dialogContentVariants({ size, padding: resolvedPadding }))}
+            className={cn(dialogContentVariants({ size, padding: resolvedPadding }), className)}
             onPointerDownOutside={(event) => {
               if (blockDismiss) event.preventDefault();
               onPointerDownOutside?.(event);
@@ -113,10 +118,11 @@ function DialogContent({
             }}
             {...props}
           >
+            {title ? <DialogPrimitive.Title className="sr-only">{title}</DialogPrimitive.Title> : null}
             {children}
             {showClose ? (
-              <DialogPrimitive.Close data-slot="dialog-close" className={dialogCloseClass}>
-                <DialogCloseIcon />
+              <DialogPrimitive.Close data-slot="dialog-close-button" className={dialogCloseClass}>
+                <PanelCloseIcon />
                 <span className="sr-only">Close</span>
               </DialogPrimitive.Close>
             ) : null}

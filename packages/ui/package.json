@@ -50,7 +50,7 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test src/__tests__/*.test.mts"
+    "test": "node --experimental-strip-types --import ./src/__tests__/register-extensionless.mjs --test src/__tests__/*.test.mts"
   },
   "dependencies": {
     "@aazenc/utils": "workspace:*",

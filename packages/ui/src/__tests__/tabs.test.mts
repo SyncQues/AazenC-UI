@@ -94,25 +94,43 @@ test("a color paints the icon in both states and the label only when active", ()
   // The icon is the identity mark, so it keeps the hue before the tab is clicked.
   assert.match(blue, /\[&_svg\]:text-blue-600/);
   assert.match(blue, /dark:\[&_svg\]:text-blue-400/);
-  // A solid mark (segmented) fills with the hue, so the icon hands the color back.
-  // The dark twin is the point: without it the 400 ties with this rule on
-  // specificity and lands later, leaving the icon in its own hue on the fill.
+  // A solid mark fills with the hue, so the icon hands the color back. The dark
+  // twin is the point: without it the 400 ties on specificity and lands later.
   assert.match(blue, /data-\[state=active\]:\[&_svg\]:text-current/);
   assert.match(blue, /dark:data-\[state=active\]:\[&_svg\]:text-current/);
   // The label joins the hue on the underline and on the chip row, and nowhere else.
   assert.match(blue, /data-\[variant=default\]:data-\[color=blue\]:data-\[state=active\]:text-blue-700/);
   assert.match(blue, /data-\[variant=pill\]:data-\[color=blue\]:data-\[state=active\]:text-blue-700/);
-  assert.match(
-    blue,
-    /data-\[variant=segmented\]:data-\[color=blue\]:data-\[state=active\]:text-primary-foreground/,
-  );
   assert.doesNotMatch(blue, /data-\[variant=default\]:data-\[color=blue\]:bg-|rounded-full/);
 });
 
-test("the chip row tints the wash, the border and the hover, and never a solid fill", () => {
+test("the segmented bar keeps its own active foreground, not a restated one", () => {
+  // The base rule already carries it; a color rule restating it would be dead
+  // weight a rename could silently break.
+  for (const color of ["blue", "pink"] as const) {
+    const trigger = cn(tabsTriggerVariants({ variant: "segmented" }), tabsColorVariants({ color }));
+    assert.match(trigger, /data-\[state=active\]:text-primary-foreground/);
+    assert.doesNotMatch(trigger, /data-\[variant=segmented\]:data-\[color=/);
+    assert.doesNotMatch(cn(tabsColorVariants({ color })), /text-primary-foreground/);
+  }
+});
+
+test("a colored chip is still the neutral chip until it is hovered", () => {
+  // The regression: an opaque per-tab fill (bg-surface) won on specificity over
+  // the shared bg-foreground/10 and turned the row into a strip of boxes.
+  for (const color of ["blue", "green", "orange", "teal", "purple", "pink"] as const) {
+    const trigger = cn(tabsTriggerVariants({ variant: "pill" }), tabsColorVariants({ color }));
+    assert.doesNotMatch(trigger, /bg-surface/);
+    assert.match(trigger, /bg-foreground\/10/);
+    // The only fill a hue may add to a resting chip is its own 10% hover.
+    assert.match(trigger, new RegExp(`not-data-\\[state=active\\]:hover:bg-${color}-500\\/10`));
+    assert.match(trigger, new RegExp(`data-\\[state=active\\]:border-${color}-400\\/60`));
+  }
+});
+
+test("the chip row tints the border, the active label and the hover", () => {
   const purple = cn(tabsColorVariants({ color: "purple" }));
   assert.match(purple, /data-\[variant=pill\]:data-\[color=purple\]:data-\[state=active\]:border-purple-400\/60/);
-  assert.match(purple, /data-\[variant=pill\]:data-\[color=purple\]:not-data-\[state=active\]:bg-surface/);
   assert.match(
     purple,
     /data-\[variant=pill\]:data-\[color=purple\]:not-data-\[state=active\]:hover:bg-purple-500\/10/,
@@ -136,6 +154,12 @@ test("every hue ships a light and a dark pair for the icon and the active label"
     assert.equal(tabsSolidMarkColorClass[hue], `bg-${hue}-500`);
     assert.equal(tabsWashMarkColorClass[hue], `bg-${hue}-500/10`);
   }
+  // Both mark tables answer for the same hues, so no hue falls through to
+  // undefined and leaves the mark untinted.
+  assert.deepEqual(
+    Object.keys(tabsSolidMarkColorClass).sort(),
+    Object.keys(tabsWashMarkColorClass).sort(),
+  );
 });
 
 test("a color never lands on a tab that did not ask for it", () => {
@@ -147,8 +171,7 @@ test("a color never lands on a tab that did not ask for it", () => {
 });
 
 test("the mark changes hue on the same clock it slides", () => {
-  // Without background-color in the list the mark slides as one hard color while its
-  // hue snaps on the first frame, which is the only reason a colored row felt rougher.
+  // Without background-color in the list the hue snaps on the first frame.
   assert.match(tabsPillIndicatorClass, /transition-\[transform,width,height,background-color\]/);
   assert.match(tabsUnderlineIndicatorClass, /transition-\[transform,width,background-color\]/);
   for (const mark of [tabsPillIndicatorClass, tabsUnderlineIndicatorClass]) {
@@ -156,8 +179,7 @@ test("the mark changes hue on the same clock it slides", () => {
     assert.match(mark, /ease-out/);
     assert.match(mark, /motion-reduce:transition-none/);
   }
-  // Every wash is 10%, so the crossfade never dips through transparent on its way
-  // from one hue to the next.
+  // Every wash is 10%, so the crossfade never dips through transparent.
   for (const wash of Object.values(tabsWashMarkColorClass)) {
     assert.match(wash, /\/10$/);
   }

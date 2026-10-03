@@ -61,7 +61,20 @@ import { cva, type VariantProps } from "class-variance-authority";
  * grab — which is why `band` is not quietly also a wider target. Paint and size
  * are separate decisions and only one of them is the variant's job.
  */
-export const resizableGroupClass = "h-full w-full overflow-hidden";
+/**
+ * Nothing, on purpose.
+ *
+ * The library sets `height`, `width`, `overflow` and `display` on the group as
+ * inline styles, and an inline style beats a class every time — so anything this
+ * exported here was a line that could never take effect, and reading it in the
+ * source suggested the group's box was ours to set when it is not. It was
+ * `h-full w-full overflow-hidden`, all three of which lose.
+ *
+ * It stays exported because `className={resizableGroupClass}` at the call site
+ * is how this file says "the group is styled entirely by the library, and here
+ * is the marker for it", which is the decision worth being able to grep for.
+ */
+export const resizableGroupClass = "";
 
 export const resizablePanelClass = "min-h-0 min-w-0";
 
@@ -95,12 +108,14 @@ export const resizableHandleVariants = cva(
       {
         orientation: "horizontal",
         variant: "rule",
-        className: "after:inset-y-0 after:left-1/2 after:w-px after:-translate-x-1/2",
+        className:
+          "after:inset-y-0 after:left-1/2 after:w-px after:-translate-x-1/2",
       },
       {
         orientation: "vertical",
         variant: "rule",
-        className: "after:inset-x-0 after:top-1/2 after:h-px after:-translate-y-1/2",
+        className:
+          "after:inset-x-0 after:top-1/2 after:h-px after:-translate-y-1/2",
       },
     ],
     defaultVariants: {
@@ -142,8 +157,9 @@ export const resizableHandleGripVariants = cva(
  * The pill is far wider than the ten pixel handle it lives in and is centred on
  * it, overlapping both panels. That is the arrangement, not an accident: a
  * control the width of the target would put two hit areas in ten pixels. The
- * handle itself carries `z-10`, and a flex item honours z-index even unpositioned,
- * so the pill paints over the panel content it covers.
+ * pill carries `z-10` itself — not the handle, which only does so in the `band`
+ * variant — and a flex item honours z-index even unpositioned, so it paints over
+ * the panel content it covers either way.
  *
  * It is its own thing rather than a mode of the grip because it is a different
  * kind of control: the grip says "this moves", the chevrons say "this closes".
@@ -206,6 +222,9 @@ export const resizableCollapseGripVariants = cva(
   },
 );
 
-export type ResizableHandleVariantProps = VariantProps<typeof resizableHandleVariants>;
-export type ResizableCollapseVariantProps = VariantProps<typeof resizableCollapseVariants>;
-export type ResizableOrientation = NonNullable<ResizableHandleVariantProps["orientation"]>;
+export type ResizableHandleVariantProps = VariantProps<
+  typeof resizableHandleVariants
+>;
+export type ResizableOrientation = NonNullable<
+  ResizableHandleVariantProps["orientation"]
+>;

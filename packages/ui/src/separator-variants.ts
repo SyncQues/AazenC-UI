@@ -8,11 +8,14 @@ import { cva, type VariantProps } from "class-variance-authority";
  * Decorative is the default, and that is the whole design decision. A rule
  * between two paragraphs is furniture: it adds nothing a screen reader would
  * want to hear. A rule between two groups of form fields is structure, and that
- * one needs `decorative={false}` so it can be announced and so it can hold
- * keyboard focus. Guessing wrong in the other direction announces "separator"
- * after every heading in the product, which is how this pattern gets turned off
- * by screen-reader users. So the quiet one is the default and the useful one is
- * one prop away.
+ * one needs `decorative={false}` so it is announced as a separator. Guessing
+ * wrong in the other direction announces "separator" after every heading in the
+ * product, which is how this pattern gets turned off by screen-reader users. So
+ * the quiet one is the default and the useful one is one prop away.
+ *
+ * It is announced and nothing more. A separator here is static, so it has no
+ * behaviour, is not in the tab order and takes no focus. A rule someone can
+ * keyboard-resize is a different component and should say so in its own name.
  *
  * No thickness, colour, or inset options. Anything heavier than a pixel is a
  * border, anything tinted is a surface, and an indented rule is a list — all

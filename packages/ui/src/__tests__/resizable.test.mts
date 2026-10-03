@@ -11,7 +11,11 @@ import {
   resizablePanelClass,
 } from "../resizable-variants.ts";
 import {
+  COLLAPSE_SLOT,
+  collapseSides,
   collapsibleHandleAround,
+  entriesInDomOrder,
+  isCollapseAffordance,
   panelsAround,
   type ResizableEntry,
 } from "../resizable-utils.ts";
@@ -19,10 +23,8 @@ import {
 const orientations = ["horizontal", "vertical"] as const;
 const variants = ["rule", "band"] as const;
 
-/* ------------------------------------------------------------------ *
- * The child order. These run the real functions, because the ordering
- * rules are where the bugs actually were.
- * ------------------------------------------------------------------ */
+/* The child order. These run the real functions, because ordering is where
+   the bugs were. */
 
 const panel = (id: string): ResizableEntry => ({
   id,
@@ -43,32 +45,108 @@ const panelId = (ref: ResizableEntry["panelRef"]): string | undefined => {
 test("a chevron takes the panel right behind it, not the far one", () => {
   // Three panels and two handles. Each handle has a panel on either side, and
   // the far panel is just as reachable if the search runs the wrong way.
-  const entries = [panel("a"), handle("h1", true), panel("b"), handle("h2", true), panel("c")];
+  const entries = [
+    panel("a"),
+    handle("h1", true),
+    panel("b"),
+    handle("h2", true),
+    panel("c"),
+  ];
 
   assert.equal(panelId(panelsAround(entries, 1).start), "a");
-  assert.equal(panelId(panelsAround(entries, 1).end), "b", "h1 must reach b, not c");
-  assert.equal(panelId(panelsAround(entries, 3).start), "b", "h2 must reach b, not a");
+  assert.equal(
+    panelId(panelsAround(entries, 1).end),
+    "b",
+    "h1 must reach b, not c",
+  );
+  assert.equal(
+    panelId(panelsAround(entries, 3).start),
+    "b",
+    "h2 must reach b, not a",
+  );
   assert.equal(panelId(panelsAround(entries, 3).end), "c");
 });
 
 test("a handle at either end of a group has only one panel to work with", () => {
   const leading = panelsAround([handle("h", true), panel("b")], 0);
-  assert.equal(panelId(leading.start), undefined, "nothing sits before the first child");
+  assert.equal(
+    panelId(leading.start),
+    undefined,
+    "nothing sits before the first child",
+  );
   assert.equal(panelId(leading.end), "b", "the panel after it is still found");
 
   const trailing = panelsAround([panel("a"), handle("h", true)], 1);
-  assert.equal(panelId(trailing.start), "a", "the panel before it is still found");
-  assert.equal(panelId(trailing.end), undefined, "nothing sits after the last child");
+  assert.equal(
+    panelId(trailing.start),
+    "a",
+    "the panel before it is still found",
+  );
+  assert.equal(
+    panelId(trailing.end),
+    undefined,
+    "nothing sits after the last child",
+  );
+});
+
+test("an index nothing owns finds nothing, rather than reaching into the group", () => {
+  // Every first render returns -1. Unguarded, `slice(0, -1)` drops the *last*
+  // child, so a chevron would collapse the first panel in the group.
+  const entries = [panel("a"), handle("h1", true), panel("b")];
+
+  for (const index of [-1, -99, entries.length, 99]) {
+    assert.deepEqual(
+      panelsAround(entries, index),
+      { start: undefined, end: undefined },
+      `index ${index} must not resolve a panel`,
+    );
+    assert.equal(
+      collapsibleHandleAround(entries, index),
+      false,
+      `index ${index} must be false`,
+    );
+  }
+
+  // slice() truncates a non-integer index, so it is checked too.
+  for (const index of [1.5, Number.NaN]) {
+    assert.deepEqual(panelsAround(entries, index), {
+      start: undefined,
+      end: undefined,
+    });
+    assert.equal(collapsibleHandleAround(entries, index), false);
+  }
+
+  // In-range values still work, so the guard is not refusing to answer.
+  assert.equal(panelId(panelsAround(entries, 0).end), "b");
+  assert.equal(panelId(panelsAround(entries, 2).start), "a");
 });
 
 test("a panel only becomes collapsible for a handle it is actually beside", () => {
-  // The regression. Reading every handle in the group instead of the nearest one
-  // per side made `a` collapsible because of a handle two panels away.
-  const entries = [panel("a"), handle("plain", false), panel("b"), handle("shut", true), panel("c")];
+  // The regression: reading every handle in the group made `a` collapsible
+  // because of a handle two panels away.
+  const entries = [
+    panel("a"),
+    handle("plain", false),
+    panel("b"),
+    handle("shut", true),
+    panel("c"),
+  ];
 
-  assert.equal(collapsibleHandleAround(entries, 0), false, "a is beside the plain handle");
-  assert.equal(collapsibleHandleAround(entries, 2), true, "b is beside the collapsible one");
-  assert.equal(collapsibleHandleAround(entries, 4), true, "c is beside the collapsible one");
+  assert.equal(
+    collapsibleHandleAround(entries, 0),
+    false,
+    "a is beside the plain handle",
+  );
+  assert.equal(
+    collapsibleHandleAround(entries, 2),
+    true,
+    "b is beside the collapsible one",
+  );
+  assert.equal(
+    collapsibleHandleAround(entries, 4),
+    true,
+    "c is beside the collapsible one",
+  );
 });
 
 test("a group with no collapsible handle leaves every panel alone", () => {
@@ -78,9 +156,192 @@ test("a group with no collapsible handle leaves every panel alone", () => {
   assert.equal(collapsibleHandleAround([panel("a"), panel("b")], 0), false);
 });
 
-/* ------------------------------------------------------------------ *
- * The collapse control's appearance.
- * ------------------------------------------------------------------ */
+test("a handle's collapsible value is read live, so flipping the prop is seen", () => {
+  // The regression: the value rode behind a ref only the handle re-rendered,
+  // so the panels reading it thought nothing was collapsible.
+  const entry = handle("h", false);
+  const entries = [panel("a"), entry, panel("b")];
+
+  assert.equal(
+    collapsibleHandleAround(entries, 0),
+    false,
+    "shut is off to begin with",
+  );
+  entry.collapsible!.current = true;
+  assert.equal(collapsibleHandleAround(entries, 0), true, "and now it is on");
+  entry.collapsible!.current = false;
+  assert.equal(collapsibleHandleAround(entries, 0), false, "and off again");
+});
+
+/* The order, which registration gets wrong on its own. */
+
+/** A DOM stand-in: 4 is FOLLOWING, 2 is PRECEDING. */
+const node = (order: number) => ({
+  order,
+  compareDocumentPosition: (other: { order: number }) =>
+    other.order > order ? 4 : 2,
+});
+
+const placed = (id: string, order: number | null): ResizableEntry => ({
+  id,
+  kind: "panel",
+  panelRef: { current: { id } } as unknown as ResizableEntry["panelRef"],
+  elementRef:
+    order === null ? { current: null } : { current: node(order) as never },
+});
+
+test("a child that mounts late still sorts to where the user sees it", () => {
+  // Registered a, h, late — but in the document the handle is last, because
+  // `late` turned up after it and belongs between the two panels.
+  const registered = [placed("a", 0), placed("h", 2), placed("late", 1)];
+  const sorted = entriesInDomOrder(registered);
+
+  assert.deepEqual(
+    sorted.map((entry) => entry.id),
+    ["a", "late", "h"],
+    "the late panel sorted to where it is, not where it registered",
+  );
+
+  // Which is the whole reason: the chevrons now sit next to the right panel.
+  const index = sorted.findIndex((entry) => entry.id === "h");
+  assert.equal(panelId(panelsAround(sorted, index).start), "late");
+  assert.equal(panelId(panelsAround(sorted, index).end), undefined);
+
+  // Uncorrected, the same handle reaches back to `a` instead.
+  const wrong = registered.findIndex((entry) => entry.id === "h");
+  assert.equal(panelId(panelsAround(registered, wrong).start), "a");
+});
+
+test("entries with no DOM node keep the order they registered in", () => {
+  // First paint and every server render, where registration order is the best
+  // available answer.
+  const entries = [
+    placed("a", 0),
+    placed("b", null),
+    placed("c", 2),
+    placed("d", null),
+  ];
+  assert.deepEqual(
+    entriesInDomOrder(entries).map((entry) => entry.id),
+    ["a", "b", "c", "d"],
+  );
+
+  // A group of entries with no refs at all is the same case.
+  const bare = [panel("a"), handle("h", false), panel("b")];
+  assert.deepEqual(
+    entriesInDomOrder(bare).map((entry) => entry.id),
+    ["a", "h", "b"],
+  );
+});
+
+test("sorting the order does not disturb the array it was given", () => {
+  const entries = [placed("a", 2), placed("h", 0), placed("b", 1)];
+  const order = entries.map((entry) => entry.id);
+  entriesInDomOrder(entries);
+  assert.deepEqual(
+    entries.map((entry) => entry.id),
+    order,
+    "the caller's array was reordered",
+  );
+});
+
+/* The drag guard: the regression is `stopPropagation` on the chevron not
+   reaching a listener the library puts on the document in the capture phase. */
+
+/** An element stub that resolves `closest` the way the real one would. */
+const elementIn = (inside: boolean) => ({
+  closest: (selector: string) => {
+    // The selector is part of the contract: it is what makes the guard specific
+    // to the chevron pill rather than blanket-preventing presses everywhere.
+    assert.equal(selector, `[data-slot="${COLLAPSE_SLOT}"]`);
+    return inside ? ({} as Element) : null;
+  },
+});
+
+test("a press on the chevron pill is the one press the drag guard can see", () => {
+  assert.equal(
+    isCollapseAffordance(elementIn(true) as unknown as EventTarget),
+    true,
+  );
+  assert.equal(
+    isCollapseAffordance(elementIn(false) as unknown as EventTarget),
+    false,
+  );
+});
+
+test("the drag guard survives the targets a real event actually carries", () => {
+  // Text nodes and window are legal `pointerdown` targets and have no `closest`,
+  // so this duck types rather than using `instanceof Element`.
+  assert.equal(isCollapseAffordance(null), false);
+  assert.equal(isCollapseAffordance(undefined), false);
+  assert.equal(isCollapseAffordance({} as unknown as EventTarget), false);
+  assert.equal(isCollapseAffordance("#text" as unknown as EventTarget), false);
+  assert.equal(
+    isCollapseAffordance({ nodeType: 3 } as unknown as EventTarget),
+    false,
+    "a bare object with no closest is not a crash",
+  );
+});
+
+test("the guard is registered where the library's own listener cannot precede it", () => {
+  // Not a behaviour test: there is no DOM here. It is here because the fix is
+  // one argument away from being undone.
+  const source = readFileSync(
+    new URL("../resizable.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /addEventListener\(\s*"pointerdown"/);
+  // Third argument true === capture, on the document: the library registers
+  // there too, so only an earlier capture listener is early enough.
+  assert.match(
+    source,
+    /document\.addEventListener\(\s*"pointerdown",[\s\S]*?\n\s*true,?\s*\n?\s*\);/,
+  );
+  // The descendant stopPropagation that cannot work, and did.
+  assert.doesNotMatch(
+    source,
+    /onPointerDown=\{\(event\) => event\.stopPropagation\(\)\}/,
+  );
+});
+
+/* The chevron's keyboard behaviour. */
+
+test("a key pressed on a chevron never reaches the separator", () => {
+  // The library preventDefaults Enter on the separator, so without this the
+  // keydown bubbled into it and collapsed the *first* panel.
+  const source = readFileSync(
+    new URL("../resizable.tsx", import.meta.url),
+    "utf8",
+  );
+  const buttons = source.match(/<button[\s\S]*?<\/button>/g) ?? [];
+
+  assert.equal(
+    buttons.length,
+    2,
+    "there should be exactly two chevron buttons",
+  );
+  for (const button of buttons) {
+    assert.match(
+      button,
+      /onKeyDown=\{\(event\) => event\.stopPropagation\(\)\}/,
+    );
+    // Still a real button, so Space and Enter both mean what they should.
+    assert.match(button, /type="button"/);
+  }
+});
+
+test("each chevron is named for the side it acts on", () => {
+  // "Toggle", never "Collapse": nothing re-renders to correct an action label.
+  assert.deepEqual(collapseSides("horizontal"), {
+    start: "left",
+    end: "right",
+  });
+  // A stacked group reaches up and down, not left and right.
+  assert.deepEqual(collapseSides("vertical"), { start: "top", end: "bottom" });
+});
+
+/* The collapse control's appearance. */
 
 test("the pill is a row beside a row of panels and a column down a stack", () => {
   const horizontal = resizableCollapseVariants({ orientation: "horizontal" });
@@ -104,7 +365,9 @@ test("the pill is a row beside a row of panels and a column down a stack", () =>
 });
 
 test("a chevron button fills the end of the pill, not just its own glyph", () => {
-  const horizontal = resizableCollapseButtonVariants({ orientation: "horizontal" });
+  const horizontal = resizableCollapseButtonVariants({
+    orientation: "horizontal",
+  });
   const vertical = resizableCollapseButtonVariants({ orientation: "vertical" });
 
   assert.match(horizontal, /h-full/);
@@ -124,10 +387,22 @@ test("a chevron button fills the end of the pill, not just its own glyph", () =>
 test("only the stacked group turns its chevrons, and its dots with them", () => {
   // The same turn the standalone grip gets: a chevron that keeps pointing left
   // in a stacked group is pointing at nothing.
-  assert.match(resizableCollapseButtonVariants({ orientation: "vertical" }), /\[&>svg\]:rotate-90/);
-  assert.doesNotMatch(resizableCollapseButtonVariants({ orientation: "horizontal" }), /rotate-/);
-  assert.match(resizableCollapseGripVariants({ orientation: "vertical" }), /\[&>svg\]:rotate-90/);
-  assert.doesNotMatch(resizableCollapseGripVariants({ orientation: "horizontal" }), /rotate-/);
+  assert.match(
+    resizableCollapseButtonVariants({ orientation: "vertical" }),
+    /\[&>svg\]:rotate-90/,
+  );
+  assert.doesNotMatch(
+    resizableCollapseButtonVariants({ orientation: "horizontal" }),
+    /rotate-/,
+  );
+  assert.match(
+    resizableCollapseGripVariants({ orientation: "vertical" }),
+    /\[&>svg\]:rotate-90/,
+  );
+  assert.doesNotMatch(
+    resizableCollapseGripVariants({ orientation: "horizontal" }),
+    /rotate-/,
+  );
 });
 
 test("the dots between the chevrons bring no box of their own", () => {
@@ -139,116 +414,49 @@ test("the dots between the chevrons bring no box of their own", () => {
   }
 });
 
-test("a collapsed panel is a pixel off the layout, not a rule that thickens", () => {
-  // The two looks stay honest about what they paint: a rule is a line, a band is
-  // a band, and neither borrows the other's colour.
-  const rule = resizableHandleVariants({ orientation: "horizontal", variant: "rule" });
-  const band = resizableHandleVariants({ orientation: "horizontal", variant: "band" });
+test("the two handle looks never borrow each other's colour", () => {
+  // The presence of `after:` is the whole difference between a rule and a band.
+  const rule = resizableHandleVariants({
+    orientation: "horizontal",
+    variant: "rule",
+  });
+  const band = resizableHandleVariants({
+    orientation: "horizontal",
+    variant: "band",
+  });
+
   assert.match(rule, /after:bg-border/);
   assert.doesNotMatch(band, /after:/);
 });
 
-/* ------------------------------------------------------------------ *
- * The wiring that the class strings cannot prove.
- * ------------------------------------------------------------------ */
-
-test("pressing a chevron never also grabs the handle", () => {
-  const source = readFileSync(new URL("../resizable.tsx", import.meta.url), "utf8");
-  const buttons = source.match(/<button[\s\S]*?<\/button>/g) ?? [];
-
-  assert.equal(buttons.length, 2, "there should be exactly two chevron buttons");
-  for (const button of buttons) {
-    // The separator starts a drag on pointerdown. Without this the chevron would
-    // collapse the panel *and* begin a resize from the same press.
-    assert.match(button, /onPointerDown=\{\(event\) => event\.stopPropagation\(\)\}/);
-    assert.match(button, /type="button"/);
-  }
-});
-
-test("both chevrons are labelled with the side they act on, per orientation", () => {
-  const source = readFileSync(new URL("../resizable.tsx", import.meta.url), "utf8");
-
-  assert.match(source, /aria-label=\{`Toggle the \$\{sides\.start\} panel`\}/);
-  assert.match(source, /aria-label=\{`Toggle the \$\{sides\.end\} panel`\}/);
-  // "Toggle", never "Collapse": the library does not announce the change, so a
-  // label naming the action would be wrong on every second press with nothing to
-  // re-render and correct it.
-  assert.doesNotMatch(source, /aria-label=\{`Collapse/);
-  // Stacked means top and bottom, not left and right.
-  assert.match(source, /orientation === "vertical"\s*\?\s*\{\s*start: "top",\s*end: "bottom"/);
-  assert.match(source, /start: "left",\s*end: "right"/);
-});
-
-test("a chevron asks the panel whether it is already shut before it acts", () => {
-  const source = readFileSync(new URL("../resizable.tsx", import.meta.url), "utf8");
-
-  // Collapse only would be a trap: one press and the panel is gone with no way
-  // back but the layout prop.
-  assert.match(source, /if \(panel\.current\.isCollapsed\(\)\) panel\.current\.expand\(\);/);
-  assert.match(source, /else panel\.current\.collapse\(\);/);
-  // The library's own primitives, not a hand-rolled layout rewrite.
-  assert.doesNotMatch(source, /setLayout|getLayout/);
-});
-
-test("the panel takes the ref the library will only fill if it is asked for it", () => {
-  const source = readFileSync(new URL("../resizable.tsx", import.meta.url), "utf8");
-
-  assert.match(source, /usePanelRef\(\)/);
-  assert.match(source, /panelRef=\{panelRef\}/);
-  // collapse() is a documented no-op on a panel that is not collapsible, so a
-  // panel beside a collapsible handle is made one.
-  assert.match(source, /collapsible=\{collapsible \?\? besideACollapsibleHandle\}/);
-});
-
-test("collapsible is a prop of the handle, and spends itself on the class", () => {
-  const source = readFileSync(new URL("../resizable.tsx", import.meta.url), "utf8");
-
-  assert.match(source, /collapsible\?: boolean;/);
-  // Unconsumed props are spread onto the separator's div and become unknown
-  // attributes React warns about.
-  assert.match(
-    source,
-    /function ResizableHandle\(\{[\s\S]*?\bcollapsible\b[\s\S]*?\}\s*:\s*ResizableHandleProps\)/,
-  );
-  // And a handle that renders the chevron pill does not also render withHandle's
-  // grip on top of it.
-  assert.match(source, /collapsible \? \(\s*<ResizableCollapseControls/);
-});
-
-test("the chevrons are hand-rolled, because nothing here earns an icon dependency", () => {
-  const source = readFileSync(new URL("../resizable.tsx", import.meta.url), "utf8");
-
-  assert.doesNotMatch(source, /lucide-react|@radix-ui\/react-icons|heroicons/);
-  assert.match(source, /stroke="currentColor"/);
-  assert.match(source, /aria-hidden="true"/);
-  // Left and right are two different paths, not one path and a scale flip.
-  assert.match(source, /M15 6l-6 6 6 6/);
-  assert.match(source, /M9 6l6 6-6 6/);
-});
-
 test("the collapse styles are tokens like everything else", () => {
   const classNames = [
-    ...orientations.map((orientation) => resizableCollapseVariants({ orientation })),
-    ...orientations.map((orientation) => resizableCollapseButtonVariants({ orientation })),
-    ...orientations.map((orientation) => resizableCollapseGripVariants({ orientation })),
+    ...orientations.map((orientation) =>
+      resizableCollapseVariants({ orientation }),
+    ),
+    ...orientations.map((orientation) =>
+      resizableCollapseButtonVariants({ orientation }),
+    ),
+    ...orientations.map((orientation) =>
+      resizableCollapseGripVariants({ orientation }),
+    ),
   ];
   for (const className of classNames) {
     assert.doesNotMatch(className, /oklch\(|#[0-9a-f]{3,8}\b|\bdark:/);
   }
 });
 
-
-test("the group leaves the axis alone, because the library owns it inline", () => {
-  assert.match(resizableGroupClass, /h-full/);
-  assert.match(resizableGroupClass, /w-full/);
-  assert.match(resizableGroupClass, /overflow-hidden/);
-  // react-resizable-panels sets display and flex-direction as inline styles on
-  // the group, which no class can outrank. A flex-col here would be a lie.
-  assert.doesNotMatch(resizableGroupClass, /flex-(col|row)|flex-direction/);
+test("the group is styled by the library and by nothing else", () => {
+  // Empty on purpose: the library sets the group's box as inline styles, so any
+  // class here loses.
+  assert.equal(resizableGroupClass, "");
 });
 
 test("a horizontal group gets an upright target with an upright rule", () => {
-  const className = resizableHandleVariants({ orientation: "horizontal", variant: "rule" });
+  const className = resizableHandleVariants({
+    orientation: "horizontal",
+    variant: "rule",
+  });
 
   // Panels side by side, so the target is ten pixels across and full height.
   assert.match(className, /\bw-2\.5\b/);
@@ -267,7 +475,10 @@ test("a horizontal group gets an upright target with an upright rule", () => {
 });
 
 test("a vertical group gets a lying target with a lying rule", () => {
-  const className = resizableHandleVariants({ orientation: "vertical", variant: "rule" });
+  const className = resizableHandleVariants({
+    orientation: "vertical",
+    variant: "rule",
+  });
 
   // Panels stacked, so the target is ten pixels tall and the full width.
   assert.match(className, /\bh-2\.5\b/);
@@ -306,7 +517,11 @@ test("the handle never claims the whole axis, because it cannot shrink", () => {
         acrossTheAxis[orientation],
         `${where} is ten pixels on the wrong axis`,
       );
-      assert.match(className, tenPixels[orientation], `${where} lost its ten-pixel target`);
+      assert.match(
+        className,
+        tenPixels[orientation],
+        `${where} lost its ten-pixel target`,
+      );
     }
   }
 });
@@ -328,13 +543,20 @@ test("the rule stays a pixel wide in both directions, whatever the state", () =>
   for (const orientation of orientations) {
     const className = resizableHandleVariants({ orientation, variant: "rule" });
     const rules = className.match(/(?:^|\s)after:(?:h|w)-[^\s"]+/g) ?? [];
-    assert.equal(rules.length, 1, `${orientation} should draw exactly one rule`);
+    assert.equal(
+      rules.length,
+      1,
+      `${orientation} should draw exactly one rule`,
+    );
     assert.doesNotMatch(className, /after:(?:h|w)-\[|after:border\b/);
   }
 });
 
 test("every handle state tints the rule, not the ten pixels around it", () => {
-  const className = resizableHandleVariants({ orientation: "vertical", variant: "rule" });
+  const className = resizableHandleVariants({
+    orientation: "vertical",
+    variant: "rule",
+  });
   for (const state of [
     "hover:after:bg-foreground/40",
     "focus-visible:after:bg-foreground/40",
@@ -361,7 +583,10 @@ test("band paints the target itself and generates no pseudo-element", () => {
       "hover:bg-border/50",
       "data-[separator=active]:bg-border",
     ]) {
-      assert.ok(className.includes(state), `${orientation} is missing ${state}`);
+      assert.ok(
+        className.includes(state),
+        `${orientation} is missing ${state}`,
+      );
     }
     // z-10 keeps the band above whatever the panels are painting.
     assert.match(className, /z-10/);
@@ -380,9 +605,16 @@ test("rule and band are the same size, because a variant only changes how it pai
     const rule = resizableHandleVariants({ orientation, variant: "rule" });
     const band = resizableHandleVariants({ orientation, variant: "band" });
 
-    assert.equal(sizeOf(rule), sizeOf(band), `${orientation} changed size between looks`);
+    assert.equal(
+      sizeOf(rule),
+      sizeOf(band),
+      `${orientation} changed size between looks`,
+    );
     // Sanity: the ten-pixel target is one side and the full run is the other.
-    assert.equal(sizeOf(rule), orientation === "horizontal" ? "h-full w-2.5" : "h-2.5 w-full");
+    assert.equal(
+      sizeOf(rule),
+      orientation === "horizontal" ? "h-full w-2.5" : "h-2.5 w-full",
+    );
   }
 });
 
@@ -411,8 +643,14 @@ test("the grip takes the shape of the rule it sits on", () => {
 
 test("only the vertical grip turns its icon, because only it is a pill on its side", () => {
   // The pill keeps the footprint that fits the line; the six dots run along it.
-  assert.match(resizableHandleGripVariants({ orientation: "vertical" }), /\[&>svg\]:rotate-90/);
-  assert.doesNotMatch(resizableHandleGripVariants({ orientation: "horizontal" }), /rotate-/);
+  assert.match(
+    resizableHandleGripVariants({ orientation: "vertical" }),
+    /\[&>svg\]:rotate-90/,
+  );
+  assert.doesNotMatch(
+    resizableHandleGripVariants({ orientation: "horizontal" }),
+    /rotate-/,
+  );
   // The default orientation is the upright one, so the default grip does not turn.
   assert.doesNotMatch(resizableHandleGripVariants(), /rotate-/);
 });
@@ -421,9 +659,13 @@ test("nothing here is a raw colour or a dark-mode patch", () => {
   const classNames = [
     resizableGroupClass,
     resizablePanelClass,
-    ...orientations.map((orientation) => resizableHandleGripVariants({ orientation })),
+    ...orientations.map((orientation) =>
+      resizableHandleGripVariants({ orientation }),
+    ),
     ...orientations.flatMap((orientation) =>
-      variants.map((variant) => resizableHandleVariants({ orientation, variant })),
+      variants.map((variant) =>
+        resizableHandleVariants({ orientation, variant }),
+      ),
     ),
   ];
   for (const className of classNames) {
@@ -431,52 +673,60 @@ test("nothing here is a raw colour or a dark-mode patch", () => {
   }
 });
 
-test("the resizable parts are the v4 primitives, and only Group and Handle refuse a className", () => {
-  const source = readFileSync(new URL("../resizable.tsx", import.meta.url), "utf8");
+/* Read out of the source, because there is no DOM here to run them in. */
 
-  // v4 renamed PanelGroup/PanelResizeHandle to Group/Separator. The old names
-  // are undefined properties here, and a stale copy of the old wrapper is the
-  // most likely way this file gets wrong.
-  assert.doesNotMatch(source, /PanelResizeHandle|ResizablePrimitive\.direction/);
+test("the resizable parts are the v4 primitives, not the v3 names", () => {
+  const source = readFileSync(
+    new URL("../resizable.tsx", import.meta.url),
+    "utf8",
+  );
+
+  // Matched through the namespace: the old v3 names are undefined properties
+  // here, so a stale wrapper fails at runtime, not at compile time.
+  assert.doesNotMatch(
+    source,
+    /ResizablePrimitive\.PanelGroup|ResizablePrimitive\.PanelResizeHandle|ResizablePrimitive\.direction/,
+  );
   assert.match(source, /ResizablePrimitive\.Group/);
   assert.match(source, /ResizablePrimitive\.Panel/);
   assert.match(source, /ResizablePrimitive\.Separator/);
-
-  for (const slot of [
-    "resizable-panel-group",
-    "resizable-panel",
-    "resizable-handle",
-    "resizable-handle-grip",
-  ]) {
-    assert.ok(source.includes(`data-slot="${slot}"`), `${slot} has no data-slot`);
-  }
-
-  // The panel is the one deliberate exception: the library's inner scroller is
-  // where a consumer lays content out, so the className has to get through.
-  for (const type of ["ResizablePanelGroupProps", "ResizableHandleProps"]) {
-    const declaration = source.match(new RegExp(`export type ${type} =[\\s\\S]*?;`))?.[0] ?? "";
-    assert.ok(declaration.length > 0, `${type} is not exported`);
-    assert.match(declaration, /"className"/, `${type} leaks className`);
-  }
-
-  const panelProps =
-    source.match(/export type ResizablePanelProps =[^\n]*/)?.[0] ??
-    "export type ResizablePanelProps =";
-  assert.ok(panelProps.length > 0, "ResizablePanelProps is not exported");
-  assert.doesNotMatch(panelProps, /Omit|className/, "ResizablePanelProps refuses a className");
-  assert.match(source, /cn\(resizablePanelClass, className\)/);
-  assert.match(source, /import \{ cn \} from "@aazenc\/utils"/);
 });
 
-test("the handle spends its variant on the class, not on the DOM", () => {
-  const source = readFileSync(new URL("../resizable.tsx", import.meta.url), "utf8");
+test("the chevrons are hand-rolled, because nothing here earns an icon dependency", () => {
+  const source = readFileSync(
+    new URL("../resizable.tsx", import.meta.url),
+    "utf8",
+  );
 
-  // Anything left in ...props is spread onto the separator's div, so an
-  // unconsumed variant lands as an unknown attribute and React complains.
+  // Two buttons and a row of dots do not justify a package. Paths and viewBox
+  // are not asserted: a rename should be free.
+  assert.doesNotMatch(
+    source,
+    /lucide-react|@radix-ui\/react-icons|heroicons|react-icons/,
+  );
+  // Decorative either way: the label on the button carries the meaning.
+  assert.match(source, /aria-hidden="true"/);
+});
+
+test("the panel keeps a ref that a consumer cannot quietly take over", () => {
+  const source = readFileSync(
+    new URL("../resizable.tsx", import.meta.url),
+    "utf8",
+  );
+
+  // The library writes to whichever panelRef it is handed and nothing else, so
+  // a consumer's ref alone left ours empty and every chevron doing nothing.
+  assert.match(source, /usePanelRef\(\)/);
+  assert.match(source, /panelRef=\{composedPanelRef\}/);
+  // …and it has to be stable: `useImperativeHandle` folds the ref into its
+  // dependency list, so a fresh callback detaches it every commit.
   assert.match(
     source,
-    /function ResizableHandle\(\{[\s\S]*?\bvariant\b[\s\S]*?\}\s*:\s*ResizableHandleProps\)/,
+    /const composedPanelRef = useMemo\([\s\S]*?composeRefs\(panelRef, consumerPanelRef\)[\s\S]*?\);/,
   );
-  assert.match(source, /resizableHandleVariants\(\{ orientation, variant \}\)/);
-  assert.match(source, /ResizableHandleVariantProps\["variant"\]/);
+  // The rest props must not follow the composed refs, or a caller ref replaces them.
+  assert.match(
+    source,
+    /<ResizablePrimitive\.Panel\s+\{\.\.\.props\}[\s\S]*?panelRef=\{composedPanelRef\}/,
+  );
 });

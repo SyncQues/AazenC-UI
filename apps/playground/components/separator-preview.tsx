@@ -59,8 +59,9 @@ export function SeparatorPreview() {
         <p className="text-sm font-medium">Decorative, and not</p>
         <p className="text-sm text-muted-foreground">
           A rule inside a paragraph is furniture and is hidden from a screen reader. A rule between two groups of
-          fields is structure, and there it needs <code className="font-mono text-foreground">decorative=&#123;false&#125;</code> so
-          it can be announced and can hold focus.
+          fields is structure, and there it needs{" "}
+          <code className="font-mono text-foreground">decorative=&#123;false&#125;</code> so it is announced as a
+          separator. It never takes focus either way: the line is read in the flow of the page, not tabbed to.
         </p>
         <div className="grid gap-6 rounded-lg border border-border p-6 sm:grid-cols-2">
           <fieldset className="grid gap-3">

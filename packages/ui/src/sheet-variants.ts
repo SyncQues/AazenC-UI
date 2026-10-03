@@ -19,6 +19,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 export const sheetSides = ["top", "right", "bottom", "left"] as const;
 export type SheetSide = (typeof sheetSides)[number];
 
+/**
+ * The edge a sheet takes when nobody says. It lives here rather than in the cva
+ * alone because `data-side` picks the animation and the layout class has to move
+ * with it: two copies of "right" drift, and the panel animates in from the wrong
+ * edge while its classes say otherwise.
+ */
+export const sheetDefaultSide: SheetSide = "right";
+
+/**
+ * Keyed off `SheetSide` so a side added to `sheetSides` without a layout here is
+ * a compile error rather than a panel that mounts unstyled and unanimated.
+ */
+const sheetSideClass = {
+  top: "inset-x-0 top-0 max-h-[85vh] rounded-b-[var(--radius-panel)] border-b border-border",
+  right:
+    "inset-y-0 right-0 h-full w-3/4 rounded-l-[var(--radius-panel)] border-l border-border sm:max-w-md",
+  bottom:
+    "inset-x-0 bottom-0 max-h-[85vh] rounded-t-[var(--radius-panel)] border-t border-border",
+  left: "inset-y-0 left-0 h-full w-3/4 rounded-r-[var(--radius-panel)] border-r border-border sm:max-w-md",
+} satisfies Record<SheetSide, string>;
+
 export const sheetOverlayClass =
   "sheet-overlay-motion pointer-events-auto fixed inset-0 z-[var(--z-overlay)] bg-black/50";
 
@@ -26,17 +47,10 @@ export const sheetContentVariants = cva(
   "sheet-motion pointer-events-auto fixed z-[var(--z-dialog)] flex flex-col overflow-hidden bg-background text-foreground shadow-lg outline-none",
   {
     variants: {
-      side: {
-        top: "inset-x-0 top-0 max-h-[85vh] rounded-b-[var(--radius-panel)] border-b border-border",
-        right:
-          "inset-y-0 right-0 h-full w-3/4 rounded-l-[var(--radius-panel)] border-l border-border sm:max-w-md",
-        bottom:
-          "inset-x-0 bottom-0 max-h-[85vh] rounded-t-[var(--radius-panel)] border-t border-border",
-        left: "inset-y-0 left-0 h-full w-3/4 rounded-r-[var(--radius-panel)] border-r border-border sm:max-w-md",
-      },
+      side: sheetSideClass,
     },
     defaultVariants: {
-      side: "right",
+      side: sheetDefaultSide,
     },
   },
 );
@@ -60,14 +74,10 @@ export const sheetHeaderVariants = cva("flex flex-col gap-1 px-5 pt-5 pb-4 text-
  */
 export const sheetBodyClass = "min-h-0 flex-1 overflow-y-auto px-5 py-1 text-sm";
 
-export const sheetFooterClass =
-  "mt-auto flex flex-col gap-2 border-t border-border px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:flex-row sm:justify-end";
-
-export const sheetTitleClass = "text-lg leading-snug font-semibold text-foreground";
-
-export const sheetDescriptionClass = "text-sm leading-relaxed text-muted-foreground";
-
-export const sheetCloseClass =
-  "absolute top-3.5 right-3.5 inline-flex size-8 items-center justify-center rounded-full text-muted-foreground transition-[color,background-color,opacity] duration-150 ease-out hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none";
+// shared with the drawer — see ./panel-chrome for why these live in one place.
+export { panelCloseClass as sheetCloseClass } from "./panel-chrome";
+export { panelDescriptionClass as sheetDescriptionClass } from "./panel-chrome";
+export { panelFooterClass as sheetFooterClass } from "./panel-chrome";
+export { panelTitleClass as sheetTitleClass } from "./panel-chrome";
 
 export type SheetContentVariantProps = VariantProps<typeof sheetContentVariants>;

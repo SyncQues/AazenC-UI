@@ -104,14 +104,14 @@ const dashboardItems: TabsItem[] = [
   { value: "settings", label: "Settings" },
 ];
 
-/** One hue per section, the way a community page reads. */
+/** One hue per section, all six, no repeats. */
 const communityItems: TabsItem[] = [
   { value: "feed", label: "Feed", icon: FeedIcon, color: "blue" },
   { value: "events", label: "Events", icon: CalendarIcon, color: "orange", badge: 3 },
   { value: "resources", label: "Resources", icon: BookIcon, color: "teal" },
   { value: "assessments", label: "Assessments", icon: ClipboardIcon, color: "purple" },
   { value: "members", label: "Members", icon: PeopleIcon, color: "green" },
-  { value: "about", label: "About", icon: InfoIcon, color: "teal" },
+  { value: "about", label: "About", icon: InfoIcon, color: "pink" },
 ];
 
 const coloredSegments: TabsItem[] = [
@@ -121,9 +121,18 @@ const coloredSegments: TabsItem[] = [
   { value: "settings", label: "Settings", color: "green" },
 ];
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+/** mt-10 for the first section, mt-12 for the rest, as elsewhere. */
+function Section({
+  title,
+  className = "mt-10",
+  children,
+}: {
+  title: string;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="mt-10">
+    <section className={className}>
       <h2 className="text-lg font-semibold">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -171,7 +180,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Underline with icons">
+      <Section title="Underline with icons" className="mt-12">
         <Tabs defaultValue="explore">
           <TabsList>
             <TabsTrigger value="explore">
@@ -193,7 +202,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Pill">
+      <Section title="Pill" className="mt-12">
         <Tabs variant="pill" value={company} onValueChange={setCompany}>
           <TabsItemsList items={companyItems} />
           <TabsContent value="overview">Company overview.</TabsContent>
@@ -205,7 +214,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Segmented">
+      <Section title="Segmented" className="mt-12">
         <Tabs variant="segmented" value={dashboard} onValueChange={setDashboard}>
           <TabsItemsList items={dashboardItems} />
           <TabsContent value="overview">Workspace overview.</TabsContent>
@@ -215,7 +224,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Segmented with icons and counts">
+      <Section title="Segmented with icons and counts" className="mt-12">
         <Tabs variant="segmented" defaultValue="overview">
           <TabsItemsList items={companyItems} />
           <TabsContent value="overview">Company overview.</TabsContent>
@@ -227,7 +236,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Pill with colors">
+      <Section title="Pill with colors" className="mt-12">
         <p className="-mt-2 max-w-2xl text-sm text-muted-foreground">
           A tab color is a section identity, not a state. The icon keeps the hue in both states, the label and
           the wash take it on the active chip, and the mark slides into the next hue with it.
@@ -243,7 +252,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Segmented with colors">
+      <Section title="Segmented with colors" className="mt-12">
         <Tabs variant="segmented" value={coloredBar} onValueChange={setColoredBar}>
           <TabsItemsList items={coloredSegments} />
           <TabsContent value="overview">Workspace overview.</TabsContent>
@@ -253,7 +262,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Underline with colors">
+      <Section title="Underline with colors" className="mt-12">
         <Tabs value={coloredSection} onValueChange={setColoredSection}>
           <TabsList>
             <TabsTrigger value="feed" icon={FeedIcon} color="blue">

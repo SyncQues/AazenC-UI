@@ -43,8 +43,16 @@ const TAB_MARK_COLOR_CLASS: Record<TabsVariant, Record<TabsColor, string>> = {
   segmented: tabsSolidMarkColorClass,
 };
 
-/** A trigger can carry any attribute, so the mark only trusts a name the color file has. */
-const TAB_COLORS = new Set(Object.keys(tabsSolidMarkColorClass));
+/**
+ * A trigger can carry any attribute, so the mark only trusts a name the color files
+ * have. Both are read, not just the solid one: the chip row looks the hue up in the
+ * wash table, and validating against one table while indexing the other is how a hue
+ * gets accepted and then silently left untinted.
+ */
+const TAB_COLORS: ReadonlySet<string> = new Set([
+  ...Object.keys(tabsSolidMarkColorClass),
+  ...Object.keys(tabsWashMarkColorClass),
+]);
 
 type IndicatorBox = { x: number; y: number; w: number; h: number };
 
@@ -145,7 +153,10 @@ function TabsList({ children, ...props }: TabsListProps) {
     const mutations = new MutationObserver(sync);
     mutations.observe(list, {
       attributes: true,
-      attributeFilter: ["data-state"],
+      // data-color matters as much as data-state: a tab that changes hue while it is
+      // the active one has to repaint the mark, and without it the mark keeps the old
+      // colour until the next tab switch or resize.
+      attributeFilter: ["data-state", "data-color"],
       childList: true,
       subtree: true,
     });
@@ -202,9 +213,12 @@ function TabsTrigger({ icon: Icon, badge, color, children, ...props }: TabsTrigg
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       data-variant={variant}
-      data-color={color}
       className={cn(tabsTriggerVariants({ variant }), tabsColorVariants({ color }))}
       {...props}
+      // After the spread on purpose. The mark reads this attribute off the DOM, so a
+      // raw data-color arriving through props would tint the mark on a trigger whose
+      // own color classes never arrived. The color prop is the only way in.
+      data-color={color}
     >
       <span className="relative z-20 inline-flex items-center gap-1.5">
         {Icon ? <Icon className="size-3.5" /> : null}

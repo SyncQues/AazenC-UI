@@ -25,10 +25,12 @@ export {
   TabsItemsList,
   TabsList,
   TabsTrigger,
+  tabsColorVariants,
   tabsListVariants,
   tabsTriggerVariants,
 } from "./tabs";
 export type {
+  TabsColor,
   TabsContentProps,
   TabsIcon,
   TabsItem,
@@ -37,7 +39,7 @@ export type {
   TabsProps,
   TabsTriggerProps,
 } from "./tabs";
-export type { TabsVariantProps } from "./tabs-variants";
+export type { TabsColorVariantProps, TabsVariantProps } from "./tabs-variants";
 export {
   Dialog,
   DialogBody,
@@ -159,7 +161,8 @@ export type {
 export type { AlertShape, AlertTone } from "./alert-variants";
 export { Separator } from "./separator";
 export type { SeparatorProps } from "./separator";
-export type { SeparatorOrientation } from "./separator-variants";
+export { separatorVariants } from "./separator-variants";
+export type { SeparatorOrientation, SeparatorVariantProps } from "./separator-variants";
 export {
   Sheet,
   SheetBody,

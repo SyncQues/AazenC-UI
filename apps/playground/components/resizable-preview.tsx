@@ -141,7 +141,7 @@ export function ResizablePreview() {
           <ResizablePanelGroup
             id="preview-three"
             defaultLayout={{ inbox: 26, list: 40, detail: 34 }}
-            onLayoutChanged={(next) => setLayout(next as Record<string, number>)}
+            onLayoutChanged={setLayout}
           >
             <ResizablePanel id="inbox" className="flex flex-col">
               <p className="p-3 pb-1 text-xs font-medium text-muted-foreground">Inbox</p>

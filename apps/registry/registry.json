@@ -171,6 +171,11 @@
           "path": "packages/ui/src/dialog-variants.ts",
           "type": "registry:ui",
           "target": "components/ui/dialog-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/panel-chrome-icon.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/panel-chrome-icon.tsx"
         }
       ],
       "meta": {
@@ -211,6 +216,16 @@
           "path": "packages/ui/src/drawer-variants.ts",
           "type": "registry:ui",
           "target": "components/ui/drawer-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/panel-chrome.ts",
+          "type": "registry:ui",
+          "target": "components/ui/panel-chrome.ts"
+        },
+        {
+          "path": "packages/ui/src/panel-chrome-icon.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/panel-chrome-icon.tsx"
         }
       ],
       "meta": {
@@ -358,6 +373,16 @@
           "path": "packages/ui/src/alert-variants.ts",
           "type": "registry:ui",
           "target": "components/ui/alert-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/alert-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/alert-utils.ts"
+        },
+        {
+          "path": "packages/ui/src/tone-icon.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tone-icon.tsx"
         }
       ],
       "meta": {
@@ -383,9 +408,7 @@
         "@radix-ui/react-separator",
         "class-variance-authority"
       ],
-      "registryDependencies": [
-        "utils"
-      ],
+      "registryDependencies": [],
       "files": [
         {
           "path": "packages/ui/src/separator.tsx",
@@ -427,6 +450,16 @@
           "path": "packages/ui/src/sheet-variants.ts",
           "type": "registry:ui",
           "target": "components/ui/sheet-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/panel-chrome.ts",
+          "type": "registry:ui",
+          "target": "components/ui/panel-chrome.ts"
+        },
+        {
+          "path": "packages/ui/src/panel-chrome-icon.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/panel-chrome-icon.tsx"
         }
       ],
       "meta": {
@@ -733,6 +766,11 @@
           "path": "packages/ui/src/toast-variants.ts",
           "type": "registry:ui",
           "target": "components/ui/toast-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/tone-icon.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tone-icon.tsx"
         }
       ],
       "dependencies": [
