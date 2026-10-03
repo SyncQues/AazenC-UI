@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * SyncQues card.
- * Default is the product panel. Glass is the frosted community card. Plain is a group.
+ * Default is the product panel. Plain is a group.
  * A second gray panel, a mid radius, and a stronger shadow read as the same card, so they are not options.
  * Corners are the standard 10px, or the round 24px sidebar.
  * Padding lives on the parts. After a header, the next part drops its top padding
@@ -34,9 +34,6 @@ export const cardVariants = cva("animate-fade-in overflow-hidden text-card-foreg
     variant: {
       default:
         "border border-border bg-card shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-md motion-reduce:translate-none motion-reduce:scale-none",
-      /* Glass chrome comes from .premium-glass-card. Background utilities would paint over it. */
-      glass:
-        "premium-glass-card transition-[translate,scale,box-shadow,border-color,background-color] duration-300 ease-out hover:-translate-y-1 motion-reduce:translate-none motion-reduce:scale-none",
       plain: "border-0 bg-transparent shadow-none",
     },
     radius: {
@@ -63,11 +60,6 @@ export const cardVariants = cva("animate-fade-in overflow-hidden text-card-foreg
       interactive: true,
       className:
         "cursor-pointer transition-[translate,scale,background-color] duration-300 ease-out hover:-translate-y-1 hover:bg-accent/40 active:scale-[0.985] motion-reduce:translate-none motion-reduce:scale-none",
-    },
-    {
-      variant: "glass",
-      interactive: true,
-      className: "cursor-pointer active:scale-[0.985]",
     },
   ],
   defaultVariants: {

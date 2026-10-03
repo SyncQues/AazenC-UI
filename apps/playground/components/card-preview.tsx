@@ -42,7 +42,7 @@ export function CardPreview() {
           <p className="text-sm text-muted-foreground">Component</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Card</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            Default, glass, or plain. Corners are standard or round. Padding is flush, compact, or comfortable.
+            Default or plain. Corners are standard or round. Padding is flush, compact, or comfortable.
           </p>
         </div>
         <Button type="button" variant="outline" onClick={toggleMode}>
@@ -61,22 +61,20 @@ export function CardPreview() {
           </CardContent>
         </Card>
 
-        <div className="rounded-xl bg-muted/40 p-4">
-          <Card variant="glass">
-            <CardHeader layout="row">
-              <CardTitle size="sm">
-                <TrendIcon />
-                Community
-              </CardTitle>
-              <Button type="button" variant="ghost" size="sm">
-                Follow
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm">Frosted community surface.</p>
-            </CardContent>
-          </Card>
-        </div>
+        <Card variant="plain">
+          <CardHeader layout="row">
+            <CardTitle size="sm">
+              <TrendIcon />
+              Community
+            </CardTitle>
+            <Button type="button" variant="ghost" size="sm">
+              Follow
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm">Nested community group.</p>
+          </CardContent>
+        </Card>
 
         <Card variant="plain">
           <CardHeader>

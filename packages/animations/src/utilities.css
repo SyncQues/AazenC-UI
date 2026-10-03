@@ -349,10 +349,6 @@
     content: none;
     display: none;
   }
-
-  .glass-shimmer-hover:hover::after {
-    animation: none !important;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

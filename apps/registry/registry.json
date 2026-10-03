@@ -69,7 +69,7 @@
       "name": "card",
       "type": "registry:ui",
       "title": "Card",
-      "description": "SyncQues product card. Default, glass, or plain. Pass padding, radius, and align.",
+      "description": "SyncQues product card. Default or plain. Pass padding, radius, and align.",
       "dependencies": [
         "class-variance-authority"
       ],
@@ -91,7 +91,6 @@
       "meta": {
         "variants": [
           "default",
-          "glass",
           "plain"
         ],
         "paddings": [
@@ -973,7 +972,7 @@
       "name": "navbar",
       "type": "registry:ui",
       "title": "Navbar",
-      "description": "Sticky bar and floating glass navbar.",
+      "description": "Sticky bar and floating pill navbar.",
       "registryDependencies": [
         "utils"
       ],

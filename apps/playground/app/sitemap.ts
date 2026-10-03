@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { themes } from "@aazenc/themes";
 
 const componentSlugs = [
   "button",
@@ -43,7 +44,10 @@ const routes = [
   "/getting-started",
   "/components",
   ...componentSlugs.map((slug) => `/components/${slug}`),
-  "/native",
+  "/themes",
+  // One showcase per theme, straight from the manifest, so a newly registered
+  // theme is discoverable without editing this file.
+  ...themes.map((item) => `/themes/${item.id}`),
   "/guides",
   "/about",
   "/sitemap",

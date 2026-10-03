@@ -11,10 +11,6 @@ const packageCss = {
   "@aazenc/animations/globals.css": "packages/animations/src/index.css",
   "@aazenc/themes/slate.css": "packages/themes/src/slate.css",
   "@aazenc/themes/mono.css": "packages/themes/src/mono.css",
-  "@aazenc/themes/aurora.css": "packages/themes/src/aurora.css",
-  "@aazenc/themes/sunset.css": "packages/themes/src/sunset.css",
-  "@aazenc/themes/frost.css": "packages/themes/src/frost.css",
-  "@aazenc/themes/ocean.css": "packages/themes/src/ocean.css",
 };
 
 function read(rel) {

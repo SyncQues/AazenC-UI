@@ -30,18 +30,12 @@ test("default card is a bordered panel with the standard radius", () => {
   assert.doesNotMatch(value, /(^|\s)shadow-md(\s|$)/);
 });
 
-test("glass and plain are the other two surfaces", () => {
-  const glass = card({ variant: "glass" });
-  assert.match(glass, /premium-glass-card/);
-  assert.match(glass, /rounded-lg/);
-  assert.match(glass, /hover:-translate-y-1/);
-  assert.doesNotMatch(glass, /bg-card|shadow-lg|border-0|bg-transparent/);
-
+test("plain is the other surface", () => {
   const plain = card({ variant: "plain" });
   assert.match(plain, /bg-transparent/);
   assert.match(plain, /border-0/);
   assert.match(plain, /shadow-none/);
-  assert.doesNotMatch(plain, /bg-card|shadow-sm|premium-glass-card/);
+  assert.doesNotMatch(plain, /bg-card|shadow-sm/);
 });
 
 test("round, align, and interactive do not need utility classes", () => {

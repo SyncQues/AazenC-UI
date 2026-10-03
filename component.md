@@ -1,7 +1,7 @@
 # AazenC UI Component Catalog
 
 Build list for this library. Component source is not in the repo yet.
-Add each one under `packages/ui/src` (web) and `packages/ui-native/src/components` (native).
+Add each one under `packages/ui/src`.
 
 ## 1. Foundation
 

@@ -13,7 +13,7 @@
     --secondary: oklch(0.96 0 0);
     --secondary-foreground: oklch(0.2 0 0);
     --muted: oklch(0.95 0 0);
-    /* 0.38 ≈ WCAG AA on frosted glass / mesh (was 0.45 — failed contrast audits) */
+    /* 0.38 ≈ WCAG AA on the mesh background (was 0.45 — failed contrast audits) */
     --muted-foreground: oklch(0.38 0 0);
     --accent: oklch(0.2 0 0);
     --accent-foreground: oklch(0.99 0 0);
@@ -27,17 +27,6 @@
     --input: oklch(0.92 0 0 / 0.9);
     --ring: oklch(0.13 0 0 / 0.35);
     --shadow-color: oklch(0.2 0 0);
-
-    --glass-blur: 3px;
-    --glass-saturation: 140%;
-    --glass-blur-heavy: 5px;
-    --glass-border: color-mix(in oklch, var(--foreground) 12%, transparent);
-    --glass-highlight: color-mix(in oklch, white 90%, transparent);
-    --glass-shadow: 0 2px 18px color-mix(in oklch, var(--shadow-color) 9%, transparent);
-    --glass-shadow-hover: 0 6px 28px color-mix(in oklch, var(--shadow-color) 14%, transparent);
-    --glass-shadow-pressed: inset 0 2px 4px color-mix(in oklch, var(--shadow-color) 10%, transparent);
-    --glass-inset: inset 0 1px 0 var(--glass-highlight);
-    --glass-shimmer: color-mix(in oklch, white 55%, transparent);
 
     --button-filled-bg: color-mix(in oklch, var(--primary) 95%, transparent);
     --button-filled-text: oklch(0.99 0 0);
@@ -91,17 +80,6 @@
     --input: oklch(0.24 0 0 / 0.65);
     --ring: oklch(0.97 0 0 / 0.3);
     --shadow-color: oklch(0 0 0);
-
-    --glass-blur: 3px;
-    --glass-saturation: 150%;
-    --glass-blur-heavy: 5px;
-    --glass-border: color-mix(in oklch, var(--foreground) 14%, transparent);
-    --glass-highlight: color-mix(in oklch, white 14%, transparent);
-    --glass-shadow: 0 6px 28px color-mix(in oklch, black 42%, transparent);
-    --glass-shadow-hover: 0 10px 36px color-mix(in oklch, black 52%, transparent);
-    --glass-shadow-pressed: inset 0 2px 6px color-mix(in oklch, black 35%, transparent);
-    --glass-inset: inset 0 1px 0 var(--glass-highlight);
-    --glass-shimmer: color-mix(in oklch, white 12%, transparent);
 
     --button-filled-bg: color-mix(in oklch, var(--primary) 88%, transparent);
     --button-filled-text: oklch(0.1 0 0);

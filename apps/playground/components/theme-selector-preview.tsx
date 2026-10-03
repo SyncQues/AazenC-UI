@@ -5,7 +5,7 @@ import { ThemeSelector } from "@aazenc/ui/theme-selector";
 import { useTheme } from "@aazenc/themes";
 
 export function ThemeSelectorPreview() {
-  const { theme, mode, material, setTheme, setMode, setMaterial, availableThemes, toggleMode } = useTheme();
+  const { theme, mode, setTheme, setMode, availableThemes, toggleMode } = useTheme();
   const label = availableThemes.find((item) => item.id === theme)?.label ?? theme;
 
   return (
@@ -15,7 +15,7 @@ export function ThemeSelectorPreview() {
           <p className="text-sm text-muted-foreground">Component</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Theme selector</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            One menu. Light or dark, solid or glass, then the palette. The same control sits in the navbar.
+            One menu. Light or dark, then the palette. The same control sits in the navbar.
           </p>
         </div>
         <Button type="button" variant="outline" onClick={toggleMode}>
@@ -28,16 +28,14 @@ export function ThemeSelectorPreview() {
           theme={theme}
           themes={availableThemes}
           mode={mode}
-          material={material}
           onTheme={(id) => {
             const next = availableThemes.find((item) => item.id === id);
             if (next) setTheme(next.id);
           }}
           onMode={setMode}
-          onMaterial={setMaterial}
         />
         <p className="text-sm text-muted-foreground">
-          {label} · {mode} · {material}
+          {label} · {mode}
         </p>
       </div>
     </main>

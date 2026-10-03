@@ -9,16 +9,16 @@ import { useTheme } from "@aazenc/themes";
 const links = [
   { href: "/getting-started", label: "Getting started" },
   { href: "/components", label: "Components" },
+  { href: "/themes", label: "Themes" },
   { href: "/categories/foundation", label: "Categories" },
   { href: "/guides", label: "Guides" },
-  { href: "/native", label: "Native" },
   { href: "/about", label: "About" },
   { href: "/sitemap", label: "Sitemap" },
 ];
 
 export function PlaygroundNav() {
   const pathname = usePathname();
-  const { theme, mode, material, setTheme, setMode, setMaterial, availableThemes } = useTheme();
+  const { theme, mode, setTheme, setMode, availableThemes } = useTheme();
 
   return (
     <Navbar variant="floating">
@@ -40,13 +40,11 @@ export function PlaygroundNav() {
           theme={theme}
           themes={availableThemes}
           mode={mode}
-          material={material}
           onTheme={(id) => {
             const next = availableThemes.find((item) => item.id === id);
             if (next) setTheme(next.id);
           }}
           onMode={setMode}
-          onMaterial={setMaterial}
         />
       </NavbarActions>
     </Navbar>

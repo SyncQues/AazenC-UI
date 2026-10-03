@@ -19,7 +19,7 @@ export function NavbarPreview() {
           <p className="text-sm text-muted-foreground">Component</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Navbar</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            The bar is the sticky header. Floating is the SyncQues glass pill: a clear header, the brand and the links each sit in a frosted capsule, and the current page washes with the theme color.
+            The bar is the sticky header. Floating is the SyncQues pill: a clear header, the brand and the links each sit in a solid capsule, and the current page washes with the theme color.
           </p>
         </div>
         <Button type="button" variant="outline" onClick={toggleMode}>
