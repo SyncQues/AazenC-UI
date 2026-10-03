@@ -17,10 +17,6 @@ permissions:
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  # Pinned Vercel CLI version — never deploy with a floating `vercel@latest`:
-  # pull/build/deploy must all run on the exact same CLI, and upgrades are an
-  # explicit, reviewable change (bump this line in a PR).
-  VERCEL_CLI_VERSION: "62.2.0"
 
 jobs:
   lint:
@@ -118,30 +114,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # --- Vercel prebuilt artifact -------------------------------------
-      # The deploy jobs upload this instead of running a second `vercel
-      # build` on the runner. One build, one CLI version, no double pnpm
-      # install mutating node_modules between CI and deploy.
-      - name: Validate Vercel secrets
-        run: |
-          test -n "${{ secrets.VERCEL_TOKEN }}" || { echo "::error::VERCEL_TOKEN secret is required"; exit 1; }
-          test -n "${{ secrets.VERCEL_ORG_ID }}" || { echo "::error::VERCEL_ORG_ID secret is required"; exit 1; }
-          test -n "${{ secrets.VERCEL_PROJECT_ID }}" || { echo "::error::VERCEL_PROJECT_ID secret is required"; exit 1; }
-
-      - name: Pull Vercel environment (preview)
-        run: pnpm dlx vercel@${{ env.VERCEL_CLI_VERSION }} pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build for Vercel (prebuilt)
-        run: pnpm dlx vercel@${{ env.VERCEL_CLI_VERSION }} build --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Upload Vercel prebuilt artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: vercel-prebuilt
-          path: .vercel/
-          if-no-files-found: error
-          retention-days: 1
-
   deploy-preview:
     name: Deploy Preview
     needs: [lint, typecheck, test, build]
@@ -167,20 +139,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Reuse the artifact produced by the Build job — do NOT re-run
-      # `vercel build` here. The preview environment settings were pulled
-      # in the Build job, matching the pinned CLI exactly.
-      - name: Download Vercel prebuilt artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: vercel-prebuilt
-          path: .vercel/
+      - name: Validate Vercel secrets
+        run: |
+          test -n "${{ secrets.VERCEL_TOKEN }}" || { echo "::error::VERCEL_TOKEN secret is required"; exit 1; }
+          test -n "${{ secrets.VERCEL_ORG_ID }}" || { echo "::error::VERCEL_ORG_ID secret is required"; exit 1; }
+          test -n "${{ secrets.VERCEL_PROJECT_ID }}" || { echo "::error::VERCEL_PROJECT_ID secret is required"; exit 1; }
+
+      - name: Pull Vercel environment
+        run: pnpm dlx vercel@latest pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build for Vercel
+        run: pnpm dlx vercel@latest build --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy preview to Vercel
         id: deploy
         run: |
           # --archive=tgz uploads one tarball (avoids free-tier api-upload-free 5k file limit)
-          url=$(pnpm dlx vercel@${{ env.VERCEL_CLI_VERSION }} deploy --prebuilt --archive=tgz --token=${{ secrets.VERCEL_TOKEN }})
+          url=$(pnpm dlx vercel@latest deploy --prebuilt --archive=tgz --token=${{ secrets.VERCEL_TOKEN }})
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Comment preview URL on PR
@@ -241,9 +216,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Production gets its own build (production env vars differ from preview),
-      # but still on the pinned CLI and uploaded as a prebuilt artifact so the
-      # deploy uploads exactly what was built here.
       - name: Validate Vercel secrets
         run: |
           test -n "${{ secrets.VERCEL_TOKEN }}" || { echo "::error::VERCEL_TOKEN secret is required"; exit 1; }
@@ -251,11 +223,11 @@ jobs:
           test -n "${{ secrets.VERCEL_PROJECT_ID }}" || { echo "::error::VERCEL_PROJECT_ID secret is required"; exit 1; }
 
       - name: Pull Vercel environment
-        run: pnpm dlx vercel@${{ env.VERCEL_CLI_VERSION }} pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm dlx vercel@latest pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Build for Vercel
-        run: pnpm dlx vercel@${{ env.VERCEL_CLI_VERSION }} build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm dlx vercel@latest build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy production to Vercel
         # --archive=tgz uploads one tarball (avoids free-tier api-upload-free 5k file limit)
-        run: pnpm dlx vercel@${{ env.VERCEL_CLI_VERSION }} deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
+        run: pnpm dlx vercel@latest deploy --prebuilt --prod --archive=tgz --token=${{ secrets.VERCEL_TOKEN }}
