@@ -25,10 +25,12 @@ export {
   TabsItemsList,
   TabsList,
   TabsTrigger,
+  tabsColorVariants,
   tabsListVariants,
   tabsTriggerVariants,
 } from "./tabs";
 export type {
+  TabsColor,
   TabsContentProps,
   TabsIcon,
   TabsItem,
@@ -37,7 +39,7 @@ export type {
   TabsProps,
   TabsTriggerProps,
 } from "./tabs";
-export type { TabsVariantProps } from "./tabs-variants";
+export type { TabsColorVariantProps, TabsVariantProps } from "./tabs-variants";
 export {
   Dialog,
   DialogBody,
@@ -143,6 +145,58 @@ export type {
   EmptyProps,
   EmptyTitleProps,
 } from "./empty";
+export {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+  alertVariants,
+} from "./alert";
+export type {
+  AlertActionProps,
+  AlertDescriptionProps,
+  AlertProps,
+  AlertTitleProps,
+} from "./alert";
+export type { AlertShape, AlertTone } from "./alert-variants";
+export { Separator } from "./separator";
+export type { SeparatorProps } from "./separator";
+export { separatorVariants } from "./separator-variants";
+export type { SeparatorOrientation, SeparatorVariantProps } from "./separator-variants";
+export {
+  Sheet,
+  SheetBody,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  sheetContentVariants,
+} from "./sheet";
+export type {
+  SheetBodyProps,
+  SheetCloseProps,
+  SheetContentProps,
+  SheetDescriptionProps,
+  SheetFooterProps,
+  SheetHeaderProps,
+  SheetProps,
+  SheetTitleProps,
+  SheetTriggerProps,
+} from "./sheet";
+export type { SheetContentVariantProps, SheetSide } from "./sheet-variants";
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "./resizable";
+export type {
+  ResizableHandleProps,
+  ResizablePanelGroupProps,
+  ResizablePanelProps,
+} from "./resizable";
+export type {
+  ResizableHandleVariantProps,
+  ResizableOrientation,
+} from "./resizable-variants";
 export {
   DropdownMenu,
   DropdownMenuCheckboxItem,

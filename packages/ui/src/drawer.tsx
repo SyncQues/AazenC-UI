@@ -3,6 +3,7 @@
 import { createContext, useContext, type ComponentProps } from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { cn } from "@aazenc/utils";
+import { PanelCloseIcon } from "./panel-chrome-icon";
 import {
   drawerBodyClass,
   drawerCloseClass,
@@ -70,14 +71,6 @@ function DrawerClose({ asChild = false, ...props }: DrawerCloseProps) {
   return <DrawerPrimitive.Close data-slot="drawer-close" asChild={asChild} {...props} />;
 }
 
-function DrawerCloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className="size-4">
-      <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function DrawerContent({ children, close = true, ...props }: DrawerContentProps) {
   return (
     <DrawerPrimitive.Portal>
@@ -87,8 +80,8 @@ function DrawerContent({ children, close = true, ...props }: DrawerContentProps)
         <DrawerChromeContext.Provider value={{ close }}>
           {children}
           {close ? (
-            <DrawerPrimitive.Close data-slot="drawer-close" className={drawerCloseClass}>
-              <DrawerCloseIcon />
+            <DrawerPrimitive.Close data-slot="drawer-close-button" className={drawerCloseClass}>
+              <PanelCloseIcon />
               <span className="sr-only">Close</span>
             </DrawerPrimitive.Close>
           ) : null}

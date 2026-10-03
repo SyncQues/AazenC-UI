@@ -42,6 +42,52 @@ function JobsIcon(props: { className?: string }) {
   );
 }
 
+function FeedIcon(props: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className={props.className}>
+      <path d="M21 12a8 8 0 0 1-8 8H4l2.2-2.9A8 8 0 1 1 21 12z" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CalendarIcon(props: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className={props.className}>
+      <rect x="3" y="5" width="18" height="16" rx="3" />
+      <path d="M8 3v4M16 3v4M3 11h18" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BookIcon(props: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className={props.className}>
+      <path d="M12 6c-1.5-1.2-3.4-1.6-6-1.4v13c2.6-.2 4.5.2 6 1.4 1.5-1.2 3.4-1.6 6-1.4v-13c-2.6-.2-4.5.2-6 1.4z" strokeLinejoin="round" />
+      <path d="M12 6v13" />
+    </svg>
+  );
+}
+
+function ClipboardIcon(props: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className={props.className}>
+      <path d="M9 4h6v3H9z" strokeLinejoin="round" />
+      <path d="M9 5.5H6.5A1.5 1.5 0 0 0 5 7v12.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7a1.5 1.5 0 0 0-1.5-1.5H15" strokeLinecap="round" />
+      <path d="M9 13l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function InfoIcon(props: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true" className={props.className}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5" strokeLinecap="round" />
+      <circle cx="12" cy="7.8" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 const companyItems: TabsItem[] = [
   { value: "overview", label: "Overview", icon: CompassIcon },
   { value: "people", label: "People", icon: PeopleIcon, badge: 48 },
@@ -58,9 +104,35 @@ const dashboardItems: TabsItem[] = [
   { value: "settings", label: "Settings" },
 ];
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+/** One hue per section, all six, no repeats. */
+const communityItems: TabsItem[] = [
+  { value: "feed", label: "Feed", icon: FeedIcon, color: "blue" },
+  { value: "events", label: "Events", icon: CalendarIcon, color: "orange", badge: 3 },
+  { value: "resources", label: "Resources", icon: BookIcon, color: "teal" },
+  { value: "assessments", label: "Assessments", icon: ClipboardIcon, color: "purple" },
+  { value: "members", label: "Members", icon: PeopleIcon, color: "green" },
+  { value: "about", label: "About", icon: InfoIcon, color: "pink" },
+];
+
+const coloredSegments: TabsItem[] = [
+  { value: "overview", label: "Overview", color: "blue" },
+  { value: "analytics", label: "Analytics", color: "orange" },
+  { value: "reports", label: "Reports", color: "purple" },
+  { value: "settings", label: "Settings", color: "green" },
+];
+
+/** mt-10 for the first section, mt-12 for the rest, as elsewhere. */
+function Section({
+  title,
+  className = "mt-10",
+  children,
+}: {
+  title: string;
+  className?: string;
+  children: ReactNode;
+}) {
   return (
-    <section className="mt-10">
+    <section className={className}>
       <h2 className="text-lg font-semibold">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -72,6 +144,9 @@ export function TabsPreview() {
   const [section, setSection] = useState("posts");
   const [company, setCompany] = useState("people");
   const [dashboard, setDashboard] = useState("overview");
+  const [community, setCommunity] = useState("feed");
+  const [coloredBar, setColoredBar] = useState("overview");
+  const [coloredSection, setColoredSection] = useState("feed");
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
@@ -82,6 +157,7 @@ export function TabsPreview() {
           <p className="mt-3 max-w-2xl text-muted-foreground">
             Underline, pill, or segmented. The segmented bar is one pill track with a single inset pill on the
             active tab. The underline and pill marks use the primary color. Icons and counts belong on the tab.
+            Pass color to give a tab its own hue: blue, green, orange, teal, purple, or pink.
           </p>
         </div>
         <Button type="button" variant="outline" onClick={toggleMode}>
@@ -104,7 +180,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Underline with icons">
+      <Section title="Underline with icons" className="mt-12">
         <Tabs defaultValue="explore">
           <TabsList>
             <TabsTrigger value="explore">
@@ -126,7 +202,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Pill">
+      <Section title="Pill" className="mt-12">
         <Tabs variant="pill" value={company} onValueChange={setCompany}>
           <TabsItemsList items={companyItems} />
           <TabsContent value="overview">Company overview.</TabsContent>
@@ -138,7 +214,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Segmented">
+      <Section title="Segmented" className="mt-12">
         <Tabs variant="segmented" value={dashboard} onValueChange={setDashboard}>
           <TabsItemsList items={dashboardItems} />
           <TabsContent value="overview">Workspace overview.</TabsContent>
@@ -148,7 +224,7 @@ export function TabsPreview() {
         </Tabs>
       </Section>
 
-      <Section title="Segmented with icons and counts">
+      <Section title="Segmented with icons and counts" className="mt-12">
         <Tabs variant="segmented" defaultValue="overview">
           <TabsItemsList items={companyItems} />
           <TabsContent value="overview">Company overview.</TabsContent>
@@ -157,6 +233,51 @@ export function TabsPreview() {
           <TabsContent value="updates">Company updates.</TabsContent>
           <TabsContent value="analytics">Company analytics.</TabsContent>
           <TabsContent value="archive">Archived pages.</TabsContent>
+        </Tabs>
+      </Section>
+
+      <Section title="Pill with colors" className="mt-12">
+        <p className="-mt-2 max-w-2xl text-sm text-muted-foreground">
+          A tab color is a section identity, not a state. The icon keeps the hue in both states, the label and
+          the wash take it on the active chip, and the mark slides into the next hue with it.
+        </p>
+        <Tabs variant="pill" value={community} onValueChange={setCommunity}>
+          <TabsItemsList items={communityItems} />
+          <TabsContent value="feed">Community feed.</TabsContent>
+          <TabsContent value="events">Upcoming events.</TabsContent>
+          <TabsContent value="resources">Shared resources.</TabsContent>
+          <TabsContent value="assessments">Community assessments.</TabsContent>
+          <TabsContent value="members">Members.</TabsContent>
+          <TabsContent value="about">About this community.</TabsContent>
+        </Tabs>
+      </Section>
+
+      <Section title="Segmented with colors" className="mt-12">
+        <Tabs variant="segmented" value={coloredBar} onValueChange={setColoredBar}>
+          <TabsItemsList items={coloredSegments} />
+          <TabsContent value="overview">Workspace overview.</TabsContent>
+          <TabsContent value="analytics">Workspace analytics.</TabsContent>
+          <TabsContent value="reports">Saved reports.</TabsContent>
+          <TabsContent value="settings">Workspace settings.</TabsContent>
+        </Tabs>
+      </Section>
+
+      <Section title="Underline with colors" className="mt-12">
+        <Tabs value={coloredSection} onValueChange={setColoredSection}>
+          <TabsList>
+            <TabsTrigger value="feed" icon={FeedIcon} color="blue">
+              Feed
+            </TabsTrigger>
+            <TabsTrigger value="events" icon={CalendarIcon} color="orange">
+              Events
+            </TabsTrigger>
+            <TabsTrigger value="resources" icon={BookIcon} color="teal">
+              Resources
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="feed">Community feed.</TabsContent>
+          <TabsContent value="events">Upcoming events.</TabsContent>
+          <TabsContent value="resources">Shared resources.</TabsContent>
         </Tabs>
       </Section>
     </main>

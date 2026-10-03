@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { cn } from "@aazenc/utils";
 import { toastCardVariants, toastIconClass, toastViewportClass, type ToastTone } from "./toast-variants";
+import { ToneIcon } from "./tone-icon";
 
 export interface ToastOptions {
   description?: string;
@@ -100,41 +101,6 @@ export const toast = Object.assign((title: string, options?: ToastOptions) => pu
   dismiss: dismissToast,
 });
 
-function ToastIcon({ tone }: { tone: ToastTone }) {
-  if (tone === "success") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" data-tone={tone} className={toastIconClass}>
-        <path d="M5 12.5 9.2 17 19 7" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-  if (tone === "warning") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" data-tone={tone} className={toastIconClass}>
-        <path d="M12 9v4" strokeLinecap="round" />
-        <path d="M12 17h.01" strokeLinecap="round" />
-        <path d="M10.3 4.8 2.8 18a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 4.8a2 2 0 0 0-3.4 0Z" strokeLinejoin="round" />
-      </svg>
-    );
-  }
-  if (tone === "destructive") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" data-tone={tone} className={toastIconClass}>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 8v5" strokeLinecap="round" />
-        <path d="M12 16.5h.01" strokeLinecap="round" />
-      </svg>
-    );
-  }
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true" data-tone={tone} className={toastIconClass}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 11v5" strokeLinecap="round" />
-      <path d="M12 8h.01" strokeLinecap="round" />
-    </svg>
-  );
-}
-
 function Toaster() {
   const items = useSyncExternalStore(subscribe, () => records, () => EMPTY);
 
@@ -159,7 +125,7 @@ function Toaster() {
           onFocusCapture={() => pauseToast(item.id)}
           onBlurCapture={() => resumeToast(item.id)}
         >
-          <ToastIcon tone={item.tone} />
+          <ToneIcon tone={item.tone} className={toastIconClass} strokeWidth={2.5} />
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">{item.title}</p>
             {item.description ? <p className="mt-0.5 text-sm text-muted-foreground">{item.description}</p> : null}

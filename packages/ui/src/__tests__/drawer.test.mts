@@ -1,13 +1,21 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  panelCloseClass,
+  panelDescriptionClass,
+  panelFooterClass,
+  panelTitleClass,
+} from "../panel-chrome.ts";
+import {
   drawerBodyClass,
   drawerCloseClass,
   drawerContentClass,
+  drawerDescriptionClass,
   drawerFooterClass,
   drawerHandleClass,
   drawerHeaderClass,
   drawerOverlayClass,
+  drawerTitleClass,
 } from "../drawer-variants.ts";
 
 test("drawer is one sheet from any edge", () => {
@@ -35,4 +43,13 @@ test("drawer is one sheet from any edge", () => {
   assert.match(drawerFooterClass, /sm:justify-end/);
   assert.match(drawerFooterClass, /safe-area-inset-bottom/);
   assert.match(drawerCloseClass, /rounded-full/);
+});
+
+test("the drawer re-exports the shared panel chrome rather than copying it", () => {
+  // Asserted, not assumed: the re-export only pays off while these names ARE
+  // the shared ones. Dialog keeps its own and must not drift into this pair.
+  assert.equal(drawerFooterClass, panelFooterClass);
+  assert.equal(drawerTitleClass, panelTitleClass);
+  assert.equal(drawerDescriptionClass, panelDescriptionClass);
+  assert.equal(drawerCloseClass, panelCloseClass);
 });

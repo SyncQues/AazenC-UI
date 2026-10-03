@@ -13,6 +13,10 @@ import { DialogPreview } from "../../../../components/dialog-preview";
 import { DrawerPreview } from "../../../../components/drawer-preview";
 import { DropdownPreview } from "../../../../components/dropdown-preview";
 import { EmptyPreview } from "../../../../components/empty-preview";
+import { AlertPreview } from "../../../../components/alert-preview";
+import { SeparatorPreview } from "../../../../components/separator-preview";
+import { SheetPreview } from "../../../../components/sheet-preview";
+import { ResizablePreview } from "../../../../components/resizable-preview";
 import { FileUploadPreview } from "../../../../components/file-upload-preview";
 import { InputPreview } from "../../../../components/input-preview";
 import { LabelPreview } from "../../../../components/label-preview";
@@ -50,6 +54,10 @@ export async function generateMetadata({
     skeleton: "Skeleton",
     spinner: "Spinner",
     empty: "Empty",
+    alert: "Alert",
+    separator: "Separator",
+    sheet: "Sheet",
+    resizable: "Resizable",
     dropdown: "Dropdown",
     input: "Input",
     select: "Select",
@@ -92,6 +100,10 @@ export default async function ComponentPage({
     skeleton: SkeletonPreview,
     spinner: SpinnerPreview,
     empty: EmptyPreview,
+    alert: AlertPreview,
+    separator: SeparatorPreview,
+    sheet: SheetPreview,
+    resizable: ResizablePreview,
     dropdown: DropdownPreview,
     input: InputPreview,
     select: SelectPreview,

@@ -34,20 +34,44 @@ export function Example() {
   },
   tabs: {
     filename: "tabs.tsx",
-    code: `import { Tabs, TabsContent, TabsList, TabsTrigger } from "@aazenc/ui/tabs"
+    code: `import {
+  Tabs,
+  TabsContent,
+  TabsItemsList,
+  TabsList,
+  TabsTrigger,
+  type TabsItem,
+} from "@aazenc/ui/tabs"
+
+// variant picks the mark. color gives one tab its own hue.
+const items: TabsItem[] = [
+  { value: "feed", label: "Feed", color: "blue" },
+  { value: "events", label: "Events", color: "orange", badge: 3 },
+  { value: "members", label: "Members", color: "green" },
+]
 
 export function Example() {
   return (
-    <Tabs defaultValue="about">
-      <TabsList>
-        <TabsTrigger value="about">About</TabsTrigger>
-        <TabsTrigger value="posts" badge={12}>
-          Posts
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent value="about">About the profile.</TabsContent>
-      <TabsContent value="posts">Posts in this profile.</TabsContent>
-    </Tabs>
+    <div className="grid gap-8">
+      {/* The default look is one underline bar. Counts are props. */}
+      <Tabs defaultValue="about">
+        <TabsList>
+          <TabsTrigger value="about">About</TabsTrigger>
+          <TabsTrigger value="posts" badge={12}>
+            Posts
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="about">About the profile.</TabsContent>
+        <TabsContent value="posts">Posts in this profile.</TabsContent>
+      </Tabs>
+
+      <Tabs variant="pill" defaultValue="feed">
+        <TabsItemsList items={items} />
+        <TabsContent value="feed">Community feed.</TabsContent>
+        <TabsContent value="events">Upcoming events.</TabsContent>
+        <TabsContent value="members">Members.</TabsContent>
+      </Tabs>
+    </div>
   )
 }`,
   },
@@ -182,6 +206,100 @@ export function Example() {
         <EmptyDescription>Published jobs will show up here.</EmptyDescription>
       </EmptyHeader>
     </Empty>
+  )
+}`,
+  },
+  alert: {
+    filename: "alert.tsx",
+    code: `import { Alert, AlertAction, AlertDescription, AlertTitle } from "@aazenc/ui/alert"
+import { Button } from "@aazenc/ui/button"
+
+export function Example() {
+  return (
+    <Alert tone="warning">
+      <AlertTitle>This link expires today</AlertTitle>
+      <AlertDescription>Share it before midnight or ask for a new one.</AlertDescription>
+      <AlertAction>
+        <Button type="button" variant="outline" size="sm">
+          Renew link
+        </Button>
+      </AlertAction>
+    </Alert>
+  )
+}`,
+  },
+  separator: {
+    filename: "separator.tsx",
+    code: `import { Separator } from "@aazenc/ui/separator"
+
+export function Example() {
+  return (
+    <div className="grid gap-3">
+      <p className="text-sm">Public profile</p>
+      <Separator />
+      <p className="text-sm text-muted-foreground">Private draft</p>
+    </div>
+  )
+}`,
+  },
+  sheet: {
+    filename: "sheet.tsx",
+    code: `import { Button } from "@aazenc/ui/button"
+import {
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@aazenc/ui/sheet"
+
+export function Example() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button type="button" variant="outline">
+          Notification settings
+        </Button>
+      </SheetTrigger>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Notifications</SheetTitle>
+          <SheetDescription>Choose what lands in your inbox.</SheetDescription>
+        </SheetHeader>
+        <SheetBody>
+          <p className="py-4 text-sm text-muted-foreground">
+            Only the body scrolls, so the action row never leaves the screen.
+          </p>
+        </SheetBody>
+        <SheetFooter>
+          <Button type="button">Save</Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  )
+}`,
+  },
+  resizable: {
+    filename: "resizable.tsx",
+    code: `import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@aazenc/ui/resizable"
+
+export function Example() {
+  return (
+    <div className="h-72 overflow-hidden rounded-[var(--radius-panel)] border border-border">
+      <ResizablePanelGroup defaultLayout={{ list: 35, detail: 65 }}>
+        <ResizablePanel id="list" className="flex flex-col">
+          <p className="p-4 text-sm">Roles</p>
+          <p className="mt-auto p-4 text-sm text-muted-foreground">32 results</p>
+        </ResizablePanel>
+        <ResizableHandle variant="band" collapsible />
+        <ResizablePanel id="detail">
+          <p className="p-4 text-sm">Senior Frontend Engineer</p>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
   )
 }`,
   },

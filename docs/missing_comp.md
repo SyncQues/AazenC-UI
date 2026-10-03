@@ -17,17 +17,17 @@ Source root: `SyncQues-Frontend/src/components`.
 
 ## Layout and navigation
 
-- Separator — `ui/separator.tsx`
+- Separator — `ui/separator.tsx` ✅ (`separator` — Separator)
 - Scroll Area — `ui/scroll-area.tsx`
-- Sheet — `ui/sheet.tsx`
+- Sheet — `ui/sheet.tsx` ✅ (`sheet` — Sheet, SheetTrigger, SheetContent, SheetHeader, SheetBody, SheetFooter, SheetTitle, SheetDescription, SheetClose)
 - Sidebar — `ui/sidebar.tsx`
 - Navigation Menu — `ui/navigation-menu.tsx`
-- Resizable — `ui/resizable.tsx`
+- Resizable — `ui/resizable.tsx` ✅ (`resizable` — ResizablePanelGroup, ResizablePanel, ResizableHandle)
 - Pagination — `shared/PaginationButtons.tsx`
 
 ## Feedback and text
 
-- Alert — `ui/alert.tsx`
+- Alert — `ui/alert.tsx` ✅ (`alert` — Alert, AlertTitle, AlertDescription, AlertAction)
 - Spinner — `ui/LoadingSpinner.tsx` ✅ (`spinner` — Spinner, SpinnerLabel, SpinnerOverlay)
 - Expandable Text — `ui/expandable-text.tsx`
 

@@ -54,6 +54,30 @@ const components = [
     description: "SyncQues empty state. One dashed layout.",
   },
   {
+    href: "/components/alert",
+    name: "Alert",
+    description:
+      "SyncQues alert. One inline message, four tones, rounded by default. Actions at the end.",
+  },
+  {
+    href: "/components/separator",
+    name: "Separator",
+    description:
+      "SyncQues separator. One hairline, either way. Decorative until you say otherwise.",
+  },
+  {
+    href: "/components/sheet",
+    name: "Sheet",
+    description:
+      "SyncQues sheet. A panel from any edge, right by default. No handle, no drag.",
+  },
+  {
+    href: "/components/resizable",
+    name: "Resizable",
+    description:
+      "SyncQues resizable. A split you can drag, either way round. Hairline rule, ten pixel target.",
+  },
+  {
     href: "/components/dropdown",
     name: "Dropdown",
     description: "SyncQues dropdown. One menu. Destructive is the only tone.",
