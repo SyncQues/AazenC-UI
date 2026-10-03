@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { themes } from "@aazenc/themes";
 import { PlaceholderPage } from "../../../../components/placeholder-page";
-import { SyncquesThemePreview } from "../../../../components/syncques-theme-preview";
+import { ThemePreview } from "../../../../components/theme-preview";
 
 /** Pre-render one showcase per theme in the manifest. */
 export function generateStaticParams() {
@@ -38,5 +38,5 @@ export default async function ThemePage({
     );
   }
 
-  return <SyncquesThemePreview themeId={match.id} />;
+  return <ThemePreview themeId={match.id} />;
 }

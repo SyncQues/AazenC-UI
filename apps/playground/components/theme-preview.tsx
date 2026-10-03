@@ -446,7 +446,7 @@ function MiniSample({ mode }: { mode: "light" | "dark" }) {
 /* The showcase                                                               */
 /* -------------------------------------------------------------------------- */
 
-export function SyncquesThemePreview({ themeId }: { themeId?: ThemeId }) {
+export function ThemePreview({ themeId }: { themeId?: ThemeId }) {
   const { theme, mode, setTheme, setMode, availableThemes, toggleMode } = useTheme();
   const [copied, setCopied] = useState<string | null>(null);
 
