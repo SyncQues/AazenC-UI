@@ -23,6 +23,9 @@
  * between `1,284` and `1,285`, and a min-height per size stops the whole tile
  * from resizing when the value slot holds a node with a different line box — in
  * a grid, one tile growing pushes every tile under it.
+ *
+ * One entrance, on by default: the card rises, its parts settle top to bottom,
+ * the graph draws last. It runs on *mount*; `enter="none"` is the off switch.
  */
 
 import { Slot } from "@radix-ui/react-slot";
@@ -31,6 +34,7 @@ import {
   createContext,
   useContext,
   type ComponentProps,
+  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react";
@@ -46,6 +50,7 @@ import {
 
 export type MetricCardSize = "sm" | "md" | "lg";
 export type MetricCardAlign = "start" | "center" | "end";
+export type MetricCardEnter = "rise" | "none";
 export type MetricCardTrendDirection = "up" | "down" | "flat";
 export type MetricCardTrendTone = "positive" | "negative" | "neutral";
 
@@ -84,12 +89,23 @@ const metricCardVariants = cva(
         true: "cursor-pointer transition-[translate,scale,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-md focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none active:scale-[0.985] motion-reduce:translate-none motion-reduce:scale-none",
         false: "",
       },
+      /**
+       * The mount entrance. Both values carry `!`: the base inherits Card's
+       * `animate-fade-in`, and two `animation` declarations is stylesheet order.
+       */
+      enter: {
+        rise: "metric-card-in! metric-card-parts-in",
+        // `animate-none`, not an empty string: `none` has to cancel the fade the
+        // base already applies, so "off" never means "a gentler fade".
+        none: "animate-none!",
+      },
     },
     defaultVariants: {
       variant: "panel",
       size: "md",
       align: "start",
       interactive: false,
+      enter: "rise",
     },
   },
 );
@@ -273,10 +289,14 @@ export interface MetricCardProps
   /** Renders under the value. */
   footer?: ReactNode;
   /** A sparkline slot. A `<Sparkline>` does not exist yet — accept a ReactNode
-   *  so callers can drop one in later. */
+   *  so callers can drop one in later. The slot passes its own cascade beat to
+   *  the graph inside it as `--chart-delay`. */
   chart?: ReactNode;
   /** Overrides the default formatting for a numeric value. */
   format?: ChartFormatOptions;
+  /** The mount entrance: `rise` (default) or `none`. Re-declared without the
+   *  `null` cva allows, for the same reason `size` is. */
+  enter?: MetricCardEnter;
   /** Re-declared without the `null` cva allows, because a null size has to
    *  resolve to the default rather than reach a lookup keyed on it. */
   size?: MetricCardSize;
@@ -304,6 +324,7 @@ function MetricCard({
   align = "start",
   variant,
   interactive = false,
+  enter = "rise",
   asChild = false,
   onClick,
   className,
@@ -351,12 +372,13 @@ function MetricCard({
         data-slot="metric-card"
         data-size={size}
         data-variant={variant ?? "panel"}
+        data-enter={enter}
         role={asChild ? undefined : onClick ? "button" : undefined}
         tabIndex={asChild || !onClick ? undefined : 0}
         onClick={onClick}
         onKeyDown={asChild ? undefined : handleKeyDown}
         className={cn(
-          metricCardVariants({ variant, size, align, interactive: lifted }),
+          metricCardVariants({ variant, size, align, interactive: lifted, enter }),
           className,
         )}
         {...props}
@@ -486,6 +508,7 @@ function MetricCardTrend({
 function MetricCardChart({
   className,
   children,
+  style,
   ...props
 }: MetricCardChartProps) {
   return (
@@ -498,6 +521,14 @@ function MetricCardChart({
         "min-w-0 [&>svg]:block [&>svg]:h-auto [&>svg]:w-full",
         className,
       )}
+      style={
+        {
+          // The slot's own beat, passed to the graph: every reveal utility takes
+          // its offset from `--chart-delay`. A caller's `style` lands after this.
+          "--chart-delay": "calc(var(--duration-stagger) * 3)",
+          ...style,
+        } as CSSProperties
+      }
       {...props}
     >
       {children}

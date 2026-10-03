@@ -92,8 +92,10 @@ function TargetIcon() {
   );
 }
 
-/** A drop-in sparkline for the `chart` slot. The slot takes any node, so this
- *  can be a bare `<svg>` with no wrapper and still fill its box. */
+/**
+ * A drop-in sparkline: a bare `<svg>`, which is the contract the `chart` slot
+ * promises. Area, line and dot, all on the library's own reveal utilities.
+ */
 function Sparkline({
   values,
   color = "var(--primary)",
@@ -106,13 +108,18 @@ function Sparkline({
   const min = Math.min(...values);
   const max = Math.max(...values);
   const span = max - min || 1;
-  const points = values
-    .map((value, index) => {
-      const x = (index / (values.length - 1)) * width;
-      const y = height - ((value - min) / span) * (height - 4) - 2;
-      return `${x.toFixed(1)} ${y.toFixed(1)}`;
-    })
-    .join(" L ");
+  const coords = values.map((value, index) => ({
+    x: (index / (values.length - 1)) * width,
+    y: height - ((value - min) / span) * (height - 4) - 2,
+  }));
+  const line = `M ${coords
+    .map((point) => `${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
+    .join(" L ")}`;
+  // The fill is the line closed along the baseline, which is the only way to get
+  // an area under a path that was already drawn to its own geometry.
+  const area = `${line} L ${width} ${height} L 0 ${height} Z`;
+  // The dot marks the last point. `.at(-1)` so an empty series still renders.
+  const end = coords.at(-1) ?? { x: width, y: height };
 
   return (
     <svg
@@ -123,13 +130,43 @@ function Sparkline({
       className="text-primary"
     >
       <path
-        d={`M ${points}`}
+        d={area}
+        fill={color}
+        fillOpacity={0.12}
+        stroke="none"
+        className="chart-area-in"
+      />
+      <path
+        d={line}
         fill="none"
         stroke={color}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
+        // The reveal is a dash offset against `pathLength=1`, so the draw maths
+        // is one unit long whatever the real geometry is.
+        pathLength={1}
+        // The stroke is measured in screen units, so a card that scales the
+        // sparkline down to its own width keeps a 2px line, not a hairline.
         vectorEffect="non-scaling-stroke"
+        className="chart-draw-in"
+      />
+      <circle
+        cx={end.x}
+        cy={end.y}
+        r={2.25}
+        // The card's own surface behind the dot, or the line runs through it.
+        fill="var(--card)"
+        stroke={color}
+        strokeWidth="2"
+        vectorEffect="non-scaling-stroke"
+        className="chart-point-in"
+        style={{
+          // The dot lands as the line does. The longhand, not `--chart-delay`:
+          // redefining that to a value containing itself is a cycle.
+          animationDelay:
+            "calc(var(--chart-delay, 0ms) + var(--duration-enter) * 1.6 - 90ms)",
+        }}
       />
     </svg>
   );
@@ -182,6 +219,9 @@ export function MetricCardPreview() {
   const { mode, toggleMode } = useTheme();
   const [invert, setInvert] = useState(false);
   const [size, setSize] = useState<"sm" | "md" | "lg">("md");
+  // The entrance is a mount animation, so a `key` change is the only honest way
+  // to watch it again — and it demos why `enter="none"` exists.
+  const [replay, setReplay] = useState(0);
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12">
@@ -203,9 +243,9 @@ export function MetricCardPreview() {
 
       <Section
         title="A row of tiles"
-        description="A dashboard row. Each tile rises and deepens its shadow on hover, the same motion a Card uses."
+        description="A dashboard row. Each tile arrives once — the card rises as one plane, its parts settle top to bottom, the graph draws last — and then behaves like any other Card under the pointer."
       >
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" key={replay}>
           <MetricCard
             label="Monthly revenue"
             value={48210}
@@ -245,6 +285,81 @@ export function MetricCardPreview() {
             changeLabel="vs last month"
             format={{ suffix: "%", precision: 1 }}
             icon={<TargetIcon />}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="The entrance"
+        description="The card lifts, then its parts settle a beat apart — the graph last, because the number is the point of the tile. `enter='none'` cancels it outright, for a dashboard that re-keys its tiles on every poll."
+      >
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="xs"
+            onClick={() => setReplay((count) => count + 1)}
+          >
+            Replay the entrance
+          </Button>
+          <span className="text-xs text-muted-foreground">
+            Remounts the tiles. Under `prefers-reduced-motion` it is already off.
+          </span>
+        </div>
+        <div
+          className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          key={`enter-${replay}`}
+        >
+          <MetricCard
+            label="Monthly revenue"
+            value={48210}
+            change={0.124}
+            changeLabel="vs last month"
+            icon={<ArrowUpIcon />}
+            chart={<Sparkline values={[28, 31, 29, 36, 34, 41, 44, 48]} />}
+          />
+          <MetricCard
+            label="Active members"
+            value={1284}
+            change={0.087}
+            changeLabel="vs last month"
+            icon={<UsersIcon />}
+            chart={
+              <Sparkline
+                values={[9, 9, 10, 10, 11, 11, 12, 12]}
+                color="var(--chart-2)"
+              />
+            }
+          />
+          {/* Same tile, no entrance: the animation is cancelled outright. */}
+          <MetricCard
+            enter="none"
+            label="p95 latency"
+            value={184}
+            change={-0.031}
+            changeLabel="vs last week"
+            format={{ suffix: "ms" }}
+            icon={<ClockIcon />}
+            chart={
+              <Sparkline
+                values={[31, 27, 29, 24, 22, 25, 21, 20]}
+                color="var(--chart-3)"
+              />
+            }
+          />
+          <MetricCard
+            enter="none"
+            label="Open invoices"
+            value={1240}
+            change={0.02}
+            changeLabel="vs last month"
+            icon={<TargetIcon />}
+            chart={
+              <Sparkline
+                values={[12, 14, 13, 16, 15, 18, 19, 21]}
+                color="var(--chart-4)"
+              />
+            }
           />
         </div>
       </Section>

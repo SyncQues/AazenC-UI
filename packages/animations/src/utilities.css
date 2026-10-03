@@ -530,6 +530,48 @@
   transition: opacity var(--duration-normal) var(--ease-default);
 }
 
+/* --------------------------------------------------------- metric card --
+   `backwards`, never `forwards`: these end on a transform, and a forwards fill
+   would pin it over the tile's `hover:-translate-y-1` and `active:scale`. */
+@utility metric-card-in {
+  animation: metric-card-in var(--duration-enter) var(--ease-panel) backwards;
+}
+
+@utility metric-card-parts-in {
+  & > [data-slot="metric-card-header"],
+  & > [data-slot="metric-card-value"],
+  & > [data-slot="metric-card-trend"],
+  & > [data-slot="metric-card-chart"],
+  & > [data-slot="metric-card-footer"] {
+    animation: metric-card-part-in var(--duration-slow) var(--ease-panel)
+      backwards;
+  }
+
+  /* Beats key off `data-slot`, not `nth-child`: a tile may have no trend, and a
+     positional selector slides every part below the gap up one. */
+  & > [data-slot="metric-card-header"] {
+    animation-delay: 0ms;
+  }
+
+  & > [data-slot="metric-card-value"] {
+    animation-delay: calc(var(--duration-stagger) * 1);
+  }
+
+  & > [data-slot="metric-card-trend"] {
+    animation-delay: calc(var(--duration-stagger) * 2);
+  }
+
+  /* The graph is last: the number is what the tile is for. This beat is also the
+     `--chart-delay` the card hands the slot, so a draw starts as the slot rises. */
+  & > [data-slot="metric-card-chart"] {
+    animation-delay: calc(var(--duration-stagger) * 3);
+  }
+
+  & > [data-slot="metric-card-footer"] {
+    animation-delay: calc(var(--duration-stagger) * 4);
+  }
+}
+
 /*
  * Mobile: kill infinite filter/opacity loops (content-glow, pulse, shimmer).
  * Enter animations stay — they are one-shot and cheap. Desktop unchanged.
@@ -615,6 +657,12 @@
   .heat-scale-in,
   .animate-segmented-mark-in,
   .segmented-items-in > [data-slot="segmented-control-item"],
+  .metric-card-in,
+  .metric-card-parts-in > [data-slot="metric-card-header"],
+  .metric-card-parts-in > [data-slot="metric-card-value"],
+  .metric-card-parts-in > [data-slot="metric-card-trend"],
+  .metric-card-parts-in > [data-slot="metric-card-chart"],
+  .metric-card-parts-in > [data-slot="metric-card-footer"],
   .chart-shimmer {
     animation: none !important;
     transition: none !important;
