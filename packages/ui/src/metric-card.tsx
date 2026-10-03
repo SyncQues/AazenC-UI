@@ -50,14 +50,13 @@ export type MetricCardTrendDirection = "up" | "down" | "flat";
 export type MetricCardTrendTone = "positive" | "negative" | "neutral";
 
 /**
- * Card's chrome, minus the hover.
+ * Card's chrome, including the hover.
  *
- * `cardVariants`' panel always lifts on hover, which is right for a card you
- * can click and wrong for a row of twelve read-only tiles: the pointer crosses
- * the whole row on its way somewhere and the entire row appears to move. So the
- * base is Card's plain reset — the radius, the overflow, the foreground, the
- * fade — the panel border is re-stated here, and the lift moves behind
- * `interactive` where it belongs.
+ * The base is Card's plain reset — the radius, the overflow, the foreground,
+ * the fade. The panel then restates Card's default surface, including the same
+ * lift: a short rise and a deeper shadow. `interactive` only adds the pointer,
+ * the focus ring, and the press, because a tile you cannot activate should
+ * still feel like the card it is.
  */
 const metricCardVariants = cva(
   [
@@ -68,7 +67,7 @@ const metricCardVariants = cva(
     variants: {
       variant: {
         panel:
-          "border border-border bg-card shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-out motion-reduce:transition-none",
+          "border border-border bg-card shadow-sm transition-[translate,scale,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:shadow-md motion-reduce:translate-none motion-reduce:scale-none",
         plain: "bg-transparent",
       },
       size: {

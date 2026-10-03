@@ -203,7 +203,7 @@ export function MetricCardPreview() {
 
       <Section
         title="A row of tiles"
-        description="A dashboard row. None of them lift on hover — the pointer crosses the whole row on its way somewhere, and twelve tiles that all move is a row that looks broken."
+        description="A dashboard row. Each tile rises and deepens its shadow on hover, the same motion a Card uses."
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <MetricCard
