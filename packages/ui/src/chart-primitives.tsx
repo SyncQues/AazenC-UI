@@ -492,11 +492,16 @@ export function useChartPointer(options: {
   const valuesRef = useRef(values);
   valuesRef.current = values;
 
-  /** The value's own y, so the crosshair ring lands on the reading, not the cursor. */
-  const valueYAt = useCallback((index: number): number | null => {
-    if (index < 0) return null;
-    return valuesRef.current?.[index] ?? null;
-  }, []);
+  /** The value's own y, so the crosshair ring lands on the reading, not the cursor.
+   *  A band running down the page has no value y — only the two charts that draw
+   *  a crosshair ever read this, and both run their band left to right. */
+  const valueYAt = useCallback(
+    (index: number): number | null => {
+      if (index < 0 || axis === "y") return null;
+      return valuesRef.current?.[index] ?? null;
+    },
+    [axis],
+  );
 
   const step =
     centers.length > 1
@@ -591,7 +596,7 @@ export function useChartPointer(options: {
             ...current,
             ...placed,
             index: next,
-            valueY: axis === "y" ? null : cross,
+            valueY: valueYAt(next),
           };
         });
       },
@@ -610,7 +615,7 @@ export function useChartPointer(options: {
             ...current,
             ...placed,
             index,
-            valueY: axis === "y" ? null : cross,
+            valueY: valueYAt(index),
           };
         });
       },
