@@ -6,11 +6,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./slate.css": "./src/slate.css",
-    "./mono.css": "./src/mono.css",
-    "./aurora.css": "./src/aurora.css",
-    "./sunset.css": "./src/sunset.css",
-    "./frost.css": "./src/frost.css",
-    "./ocean.css": "./src/ocean.css"
+    "./mono.css": "./src/mono.css"
   },
   "scripts": {
     "check-types": "tsc --noEmit",

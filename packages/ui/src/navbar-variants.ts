@@ -1,12 +1,13 @@
 import { cva, type VariantProps } from "class-variance-authority";
 
-/** SyncQues desktop chrome: transparent header, one frosted pill around the links. */
-export const navbarGlassSurface = "glass-chrome glass-chrome-capsule";
+/** SyncQues desktop chrome: transparent header, one solid pill around the links. */
+export const navbarPillSurface =
+  "inline-flex items-center rounded-full border border-border bg-card text-card-foreground shadow-sm";
 
 export const navbarVariants = cva("z-[var(--z-sticky)]", {
   variants: {
     variant: {
-      bar: "sticky top-0 border-b border-border bg-background/80 backdrop-blur-md",
+      bar: "sticky top-0 border-b border-border bg-background",
       floating: "pointer-events-none fixed inset-x-0 top-0 bg-transparent",
     },
   },
@@ -21,7 +22,7 @@ export const navbarBrandVariants = cva(
     variants: {
       variant: {
         bar: "",
-        floating: `pointer-events-auto inline-flex h-11 items-center rounded-full px-3.5 ${navbarGlassSurface}`,
+        floating: `pointer-events-auto h-11 px-3.5 ${navbarPillSurface}`,
       },
     },
     defaultVariants: { variant: "bar" },
@@ -32,7 +33,7 @@ export const navbarLinksVariants = cva("relative flex min-w-0 items-center gap-1
   variants: {
     variant: {
       bar: "flex-1 overflow-x-auto",
-      floating: `pointer-events-auto h-11 w-fit rounded-full px-1 ${navbarGlassSurface}`,
+      floating: `pointer-events-auto h-11 w-fit px-1 ${navbarPillSurface}`,
     },
   },
   defaultVariants: { variant: "bar" },

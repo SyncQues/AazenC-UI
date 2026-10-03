@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { themes } from "@aazenc/themes";
 
 export const metadata: Metadata = { title: "Sitemap" };
 
@@ -7,7 +8,8 @@ const routes = [
   "/",
   "/getting-started",
   "/components",
-  "/native",
+  "/themes",
+  ...themes.map((item) => `/themes/${item.id}`),
   "/guides",
   "/about",
   "/sitemap",

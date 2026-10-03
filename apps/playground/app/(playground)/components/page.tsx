@@ -13,7 +13,7 @@ const components = [
   {
     href: "/components/card",
     name: "Card",
-    description: "SyncQues panels. Default, glass, or plain.",
+    description: "SyncQues panels. Default or plain.",
   },
   {
     href: "/components/tabs",

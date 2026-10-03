@@ -6,7 +6,7 @@ export interface ThemeDefinition {
 }
 
 /** Surface treatment, orthogonal to color theme (`data-theme`). */
-export type MaterialId = "glass" | "solid";
+export type MaterialId = "solid";
 
 export interface MaterialDefinition {
   id: MaterialId;
@@ -16,14 +16,9 @@ export interface MaterialDefinition {
 
 export const materials: MaterialDefinition[] = [
   {
-    id: "glass",
-    label: "Liquid Glass",
-    description: "Frosted translucent chrome with backdrop blur and specular edges",
-  },
-  {
     id: "solid",
     label: "Solid",
-    description: "Opaque paper fills and hairline borders. Product chrome for the slate theme.",
+    description: "Opaque paper fills and hairline borders.",
   },
 ];
 
@@ -39,30 +34,6 @@ export const themes: ThemeDefinition[] = [
     label: "Mono Basic",
     description: "Pure black and white — foundational minimal UI",
     cssFile: "./mono.css",
-  },
-  {
-    id: "aurora",
-    label: "Cool Aurora",
-    description: "Deep navy base with cyan-violet aurora accents",
-    cssFile: "./aurora.css",
-  },
-  {
-    id: "sunset",
-    label: "Warm Sunset",
-    description: "Amber-coral gradients with rose-gold glass",
-    cssFile: "./sunset.css",
-  },
-  {
-    id: "frost",
-    label: "Neutral Frost",
-    description: "Icy slate surfaces with crystalline clarity",
-    cssFile: "./frost.css",
-  },
-  {
-    id: "ocean",
-    label: "Deep Ocean",
-    description: "Teal depths with bioluminescent aqua accents",
-    cssFile: "./ocean.css",
   },
 ];
 

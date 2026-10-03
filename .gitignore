@@ -43,6 +43,3 @@ yarn-error.log*
 
 # Qoder local config
 .qoder/
-
-# Expo
-.expo/

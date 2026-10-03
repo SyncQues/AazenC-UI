@@ -30,7 +30,7 @@ const NavbarVariantContext = createContext<NavbarVariant>("bar");
 
 export interface NavbarProps extends Omit<ComponentProps<"header">, "className" | "children"> {
   children: ReactNode;
-  /** `bar` is the sticky docs header. `floating` is the SyncQues glass pill. */
+  /** `bar` is the sticky docs header. `floating` is the SyncQues pill. */
   variant?: NavbarVariant;
 }
 

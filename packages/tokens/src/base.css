@@ -40,11 +40,6 @@
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --ease-panel: cubic-bezier(0.16, 1, 0.3, 1);
 
-    /* Glass primitives — Apple Liquid Glass defaults (opaque bases; alpha applied once in utilities) */
-    --glass-blur: 3px;
-    --glass-saturation: 180%;
-    --glass-blur-heavy: 5px;
-
     /* Content layer — expressive saturated surfaces (Apple content-first) */
     --content-text: oklch(0.99 0 0);
     --content-text-muted: oklch(0.99 0 0 / 0.72);

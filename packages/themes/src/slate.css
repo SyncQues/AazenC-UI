@@ -6,8 +6,8 @@
  * Hex swatches in design.md are approximations — do not substitute them.
  *
  * Layered selectors are the palette. Unlayered `[data-theme="slate"]`
- * rules only replace the library's neutral glass fills, and only for this
- * theme, so mono / aurora / sunset / frost / ocean keep their own glass.
+ * rules only replace the library's neutral fills, and only for this
+ * theme, so mono keeps its own.
  */
 
 @layer theme {
@@ -74,38 +74,7 @@
     --mesh-2: rgba(6, 182, 212, 0.04);
     --mesh-3: transparent;
 
-    /* .premium-glass-card */
-    --premium-card-bg: rgba(255, 255, 255, 0.95);
-    --premium-card-blur: 8px;
-    --premium-card-border: rgba(203, 213, 225, 0.9);
-    --premium-card-border-hover: rgba(203, 213, 225, 0.8);
-    --premium-card-shadow:
-      0 4px 20px -2px rgba(148, 163, 184, 0.12),
-      0 2px 8px -1px rgba(148, 163, 184, 0.06);
-    --premium-card-shadow-hover:
-      0 10px 25px -3px rgba(148, 163, 184, 0.12),
-      0 4px 12px -2px rgba(148, 163, 184, 0.06);
-
-    /* Floating navbar pill (NAVBAR_GLASS_SURFACE). */
-    --navbar-bg: color-mix(in oklch, var(--background) 90%, transparent);
-    --navbar-border: rgb(0 0 0 / 0.15);
-    --navbar-shadow: 0 8px 28px rgb(0 0 0 / 0.1);
-    --navbar-ring: rgb(0 0 0 / 0.05);
-    --navbar-blur: 24px;
-    --navbar-indicator: rgb(59 130 246 / 0.1);
-
     /* shadcn button recipes. Hover opacity stays in the component. */
-    --glass-blur: 8px;
-    --glass-saturation: 100%;
-    --glass-blur-heavy: 8px;
-    --glass-border: var(--premium-card-border);
-    --glass-highlight: rgb(255 255 255 / 0.95);
-    --glass-shadow: var(--premium-card-shadow);
-    --glass-shadow-hover: var(--premium-card-shadow-hover);
-    --glass-shadow-pressed: inset 0 1px 2px rgb(148 163 184 / 0.16);
-    --glass-inset: none;
-    --glass-shimmer: transparent;
-
     --button-filled-bg: var(--primary);
     --button-filled-text: var(--primary-foreground);
     --button-filled-border: transparent;
@@ -182,29 +151,6 @@
     --mesh-2: rgba(6, 182, 212, 0.03);
     --mesh-3: transparent;
 
-    --premium-card-bg: var(--card);
-    --premium-card-blur: 8px;
-    --premium-card-border: var(--border);
-    --premium-card-border-hover: var(--border);
-    --premium-card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
-    --premium-card-shadow-hover: 0 8px 30px -5px rgba(0, 0, 0, 0.4);
-
-    /* zinc-900/80 */
-    --navbar-bg: rgb(24 24 27 / 0.8);
-    --navbar-border: rgb(255 255 255 / 0.15);
-    --navbar-shadow: 0 8px 32px rgb(0 0 0 / 0.45);
-    --navbar-ring: rgb(255 255 255 / 0.1);
-    --navbar-blur: 24px;
-    --navbar-indicator: rgb(96 165 250 / 0.15);
-
-    --glass-border: var(--border);
-    --glass-highlight: rgb(255 255 255 / 0.08);
-    --glass-shadow: var(--premium-card-shadow);
-    --glass-shadow-hover: var(--premium-card-shadow-hover);
-    --glass-shadow-pressed: inset 0 1px 2px rgb(0 0 0 / 0.35);
-    --glass-inset: none;
-    --glass-shimmer: transparent;
-
     --button-filled-bg: var(--primary);
     --button-filled-text: var(--primary-foreground);
     --button-filled-border: transparent;
@@ -225,96 +171,13 @@
   }
 }
 
-/*
- * Product glass fills. Higher specificity than the neutral :root.light / :root.dark
- * fills in @aazenc/config. Solid material is declared later at the same specificity
- * and keeps opaque paper when data-material="solid".
- */
-:root[data-theme="slate"].light {
-  --glass-surface-fill: var(--card);
-  --glass-panel-bg: var(--premium-card-bg);
-  --glass-header-bg: var(--navbar-bg);
-  --glass-dialog-bg: var(--card);
-  --glass-dialog-elevated-bg: var(--card);
-  --glass-surface-bg: var(--card);
-  --glass-surface-thin-bg: var(--navbar-bg);
-  --glass-surface-subtle-bg: var(--muted);
-  --glass-field-bg: var(--background);
-  --glass-chrome-bg: var(--navbar-bg);
-  --glass-chrome-bg-env: var(--navbar-bg);
-  --glass-chrome-fg: var(--foreground);
-  --glass-chrome-fg-muted: var(--muted-foreground);
-  --glass-chrome-border: var(--navbar-border);
-  --glass-chrome-blur: var(--navbar-blur);
-  --glass-chrome-shadow: var(--navbar-shadow);
-  --glass-chrome-inset: none;
-  --glass-chrome-rim: 0 0 0 1px var(--navbar-ring);
-  --glass-chrome-indicator-bg: var(--navbar-indicator);
-  --glass-chrome-indicator-border: transparent;
-  --glass-chrome-indicator-shadow: none;
-  --glass-button-ui-bg: rgb(255 255 255 / 0.5);
-  --glass-button-ui-bg-hover: rgb(255 255 255 / 0.8);
-  --glass-button-ui-fg: var(--foreground);
-  --glass-button-ui-border: rgb(255 255 255 / 0.2);
-}
-
+/* Slate scrollbar — a touch darker than the neutral default so it reads on paper. */
 :root[data-theme="slate"].dark {
-  --glass-surface-fill: var(--card);
-  --glass-panel-bg: var(--card);
-  --glass-header-bg: var(--navbar-bg);
-  --glass-dialog-bg: var(--card);
-  --glass-dialog-elevated-bg: var(--card);
-  --glass-surface-bg: var(--card);
-  --glass-surface-thin-bg: var(--navbar-bg);
-  --glass-surface-subtle-bg: var(--muted);
-  --glass-field-bg: color-mix(in oklch, var(--input) 30%, transparent);
-  --glass-chrome-bg: var(--navbar-bg);
-  --glass-chrome-bg-env: var(--navbar-bg);
-  --glass-chrome-fg: var(--foreground);
-  --glass-chrome-fg-muted: var(--muted-foreground);
-  --glass-chrome-border: var(--navbar-border);
-  --glass-chrome-blur: var(--navbar-blur);
-  --glass-chrome-shadow: var(--navbar-shadow);
-  --glass-chrome-inset: none;
-  --glass-chrome-rim: 0 0 0 1px var(--navbar-ring);
-  --glass-chrome-indicator-bg: var(--navbar-indicator);
-  --glass-chrome-indicator-border: transparent;
-  --glass-chrome-indicator-shadow: none;
-  --glass-button-ui-bg: rgb(255 255 255 / 0.05);
-  --glass-button-ui-bg-hover: rgb(255 255 255 / 0.1);
-  --glass-button-ui-fg: var(--foreground);
-  --glass-button-ui-border: rgb(255 255 255 / 0.05);
-  --glass-scroll-thumb: oklch(0.30 0 0);
-  --glass-scroll-thumb-hover: oklch(0.40 0 0);
+  --scrollbar-thumb: oklch(0.3 0 0);
+  --scrollbar-thumb-hover: oklch(0.4 0 0);
 }
 
 @layer components {
-  /* Literal blur: backdrop-filter: var(...) is unreliable in Safari/Chromium. */
-  .navbar-glass {
-    border: 1px solid var(--navbar-border);
-    background-color: var(--navbar-bg);
-    box-shadow: var(--navbar-shadow), 0 0 0 1px var(--navbar-ring);
-    -webkit-backdrop-filter: blur(24px);
-    backdrop-filter: blur(24px);
-  }
-
-  .premium-glass-card {
-    background-color: var(--premium-card-bg);
-    border: 1px solid var(--premium-card-border);
-    box-shadow: var(--premium-card-shadow);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    transition:
-      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .premium-glass-card:hover {
-    border-color: var(--premium-card-border-hover);
-    box-shadow: var(--premium-card-shadow-hover);
-  }
-
   .community-page-bg {
     background-image:
       radial-gradient(circle at top right, var(--mesh-1), transparent 50%),

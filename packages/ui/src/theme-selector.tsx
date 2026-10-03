@@ -21,13 +21,11 @@ export interface ThemeSelectorProps extends Omit<ComponentProps<"button">, "clas
   theme: string;
   themes: ThemeChoice[];
   mode: "light" | "dark";
-  material: "solid" | "glass";
   onTheme: (theme: string) => void;
   onMode: (mode: "light" | "dark") => void;
-  onMaterial: (material: "solid" | "glass") => void;
 }
 
-function ThemeSelector({ theme, themes, mode, material, onTheme, onMode, onMaterial, ...triggerProps }: ThemeSelectorProps) {
+function ThemeSelector({ theme, themes, mode, onTheme, onMode, ...triggerProps }: ThemeSelectorProps) {
   const current = themes.find((item) => item.id === theme)?.label ?? theme;
 
   return (
@@ -42,12 +40,6 @@ function ThemeSelector({ theme, themes, mode, material, onTheme, onMode, onMater
         <DropdownMenuRadioGroup value={mode} onValueChange={(value) => onMode(value === "dark" ? "dark" : "light")}>
           <DropdownMenuRadioItem value="light">Light</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="dark">Dark</DropdownMenuRadioItem>
-        </DropdownMenuRadioGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Surface</DropdownMenuLabel>
-        <DropdownMenuRadioGroup value={material} onValueChange={(value) => onMaterial(value === "glass" ? "glass" : "solid")}>
-          <DropdownMenuRadioItem value="solid">Solid</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="glass">Glass</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Theme</DropdownMenuLabel>
