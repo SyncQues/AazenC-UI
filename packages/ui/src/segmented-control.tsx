@@ -130,21 +130,27 @@ function SegmentedControl<T extends string = string>({
   size = "default",
   label,
   className,
+  onKeyDown,
   ...props
 }: SegmentedControlProps<T>) {
   const trackRef = useRef<HTMLDivElement>(null);
+  // Latched on the first render. A parent whose `value` arrives with its data must
+  // not flip the row controlled mid-life and throw away the user's own pick.
+  const [controlled] = useState(value !== undefined);
   const [uncontrolled, setUncontrolled] = useState<T | undefined>(defaultValue);
   const [box, setBox] = useState<MarkBox | null>(null);
 
-  const controlled = value !== undefined;
   const active = controlled ? value : uncontrolled;
 
   const select = useCallback(
     (next: T) => {
+      // A re-click of the selected option is not a change. Callers wire this to
+      // the URL and to refetching effects, and a no-op must not run them again.
+      if (next === active) return;
       if (!controlled) setUncontrolled(next);
       onValueChange?.(next);
     },
-    [controlled, onValueChange],
+    [active, controlled, onValueChange],
   );
 
   useLayoutEffect(() => {
@@ -179,7 +185,7 @@ function SegmentedControl<T extends string = string>({
     };
   }, [active, variant, size]);
 
-  function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+  function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     if (!NAVIGATION_KEYS.has(event.key)) return;
     const track = trackRef.current;
     if (!track) return;
@@ -221,6 +227,12 @@ function SegmentedControl<T extends string = string>({
   // answer yet hands it to the first option that can be reached.
   const selectedIndex = options.findIndex((option) => option.value === active);
   const fallbackIndex = options.findIndex((option) => !option.disabled);
+  // A disabled button cannot take focus. Giving it the only tab stop makes the
+  // whole radiogroup unreachable, so the stop moves to the first enabled option.
+  const rovingIndex =
+    selectedIndex !== -1 && !options[selectedIndex]?.disabled
+      ? selectedIndex
+      : fallbackIndex;
 
   return (
     <div
@@ -231,8 +243,17 @@ function SegmentedControl<T extends string = string>({
       data-slot="segmented-control"
       data-variant={variant}
       data-size={size}
-      onKeyDown={onKeyDown}
-      className={cn(segmentedControlVariants({ variant }), className)}
+      // Internal first, then the caller's, and the caller's runs either way: the
+      // roving focus is the component's contract and a rest-spread cannot drop it.
+      onKeyDown={(event) => {
+        handleKeyDown(event);
+        onKeyDown?.(event);
+      }}
+      className={cn(
+        segmentedControlItemsInClass,
+        segmentedControlVariants({ variant }),
+        className,
+      )}
       {...props}
     >
       {box ? (
@@ -251,18 +272,13 @@ function SegmentedControl<T extends string = string>({
             type="button"
             role="radio"
             aria-checked={selected}
-            tabIndex={
-              index === (selectedIndex === -1 ? fallbackIndex : selectedIndex) ? 0 : -1
-            }
+            tabIndex={index === rovingIndex ? 0 : -1}
             disabled={option.disabled}
             data-slot="segmented-control-item"
             data-selected={selected}
             data-value={option.value}
             onClick={() => select(option.value)}
-            className={cn(
-              segmentedControlItemsInClass,
-              segmentedControlItemVariants({ variant, size, selected }),
-            )}
+            className={segmentedControlItemVariants({ variant, size, selected })}
           >
             {option.label}
           </button>

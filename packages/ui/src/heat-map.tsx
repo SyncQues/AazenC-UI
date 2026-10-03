@@ -671,9 +671,18 @@ function HeatMap({
 
   const { pointer, handlers, focused } = useHeatPointer({ matrix });
 
+  // Reported through an effect rather than during render, and never on the first
+  // run: a mount-time (-1, -1) would wipe a selection the parent had set.
+  const onCell = onCellChange;
+  const reportedRow = useRef(pointer.row);
+  const reportedCol = useRef(pointer.col);
   useEffect(() => {
-    onCellChange?.(pointer.row, pointer.col);
-  }, [onCellChange, pointer.row, pointer.col]);
+    if (reportedRow.current === pointer.row && reportedCol.current === pointer.col)
+      return;
+    reportedRow.current = pointer.row;
+    reportedCol.current = pointer.col;
+    onCell?.(pointer.row, pointer.col);
+  }, [onCell, pointer.row, pointer.col]);
 
   const activeCell = useMemo(
     () => (matrix && pointer.active ? cellAt(matrix, pointer.row, pointer.col) : null),

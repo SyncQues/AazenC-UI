@@ -6,6 +6,8 @@ import { segmentedControlItemVariants } from "../segmented-control-variants.ts";
 import { segmentedControlMarkClass } from "../segmented-control-variants.ts";
 import { segmentedControlVariants } from "../segmented-control-variants.ts";
 
+const component = readFileSync(new URL("../segmented-control.tsx", import.meta.url), "utf8");
+
 test("segmented is one track and outline is none", () => {
   const segmented = cn(segmentedControlVariants({ variant: "segmented" }));
   const outline = cn(segmentedControlVariants({ variant: "outline" }));
@@ -183,4 +185,61 @@ test("all three tracks stay borderless or bordered on purpose", () => {
   assert.doesNotMatch(pill, /bg-muted/);
   assert.doesNotMatch(outline, /bg-muted/);
   assert.doesNotMatch(pill, /p-0/, "pill keeps the track's breathing room");
+});
+
+test("the entrance class is on the track, where the utility can actually reach it", () => {
+  const track = component.slice(
+    component.indexOf('role="radiogroup"'),
+    component.indexOf("</div>", component.indexOf('role="radiogroup"')),
+  );
+  const item = component.slice(component.indexOf("<button"), component.indexOf("</button>"));
+
+  // The utility is `& > [data-slot="segmented-control-item"]` and an option button
+  // has no element children, so on the button the animation, the whole stagger,
+  // and the reduced-motion override are all unreachable. The class has to be the
+  // track's — a source grep of utilities.css cannot see this.
+  assert.match(track, /segmentedControlItemsInClass/, "the track must carry the entrance");
+  assert.doesNotMatch(item, /segmentedControlItemsInClass/, "the option cannot carry it");
+
+  // And the reduced-motion override has to be that same track-child selector, or
+  // the cascade never reaches the options either.
+  const source = readFileSync(
+    new URL("../../../animations/src/utilities.css", import.meta.url),
+    "utf8",
+  );
+  const reduced = source.slice(source.indexOf("@media (prefers-reduced-motion: reduce)"));
+  assert.match(reduced, /\.segmented-items-in > \[data-slot="segmented-control-item"\]/);
+});
+
+test("a caller's onKeyDown composes with the roving focus instead of replacing it", () => {
+  // The rest-spread came after `onKeyDown`, and `onKeyDown` was never destructured,
+  // so a caller passing one silently deleted the arrows, Home/End and the one tab
+  // stop — the row stayed a `radiogroup` and could no longer be moved through.
+  assert.match(component, /\n {2}onKeyDown,\n {2}\.\.\.props/);
+  assert.match(
+    component,
+    /onKeyDown=\{\(event\) => \{\s*handleKeyDown\(event\);\s*onKeyDown\?\.\(event\);\s*\}\}/,
+  );
+});
+
+test("a disabled selection does not take the only tab stop", () => {
+  // A natively disabled button cannot be focused. If it still holds tabIndex 0,
+  // every other option is -1 and the radiogroup has no tab stop.
+  assert.match(
+    component,
+    /const rovingIndex =\s*selectedIndex !== -1 && !options\[selectedIndex\]\?\.disabled\s*\? selectedIndex\s*: fallbackIndex/,
+  );
+  assert.match(component, /tabIndex=\{index === rovingIndex \? 0 : -1\}/);
+});
+
+test("selecting the current value does not notify", () => {
+  assert.match(component, /if \(next === active\) return;/);
+});
+
+test("the controlled mode is latched on the first render", () => {
+  // Recomputed every render, a parent that starts with `value === undefined` and
+  // supplies a real one later flipped the row controlled and discarded the option
+  // the user had already picked.
+  assert.match(component, /const \[controlled\] = useState\(value !== undefined\)/);
+  assert.doesNotMatch(component, /const controlled = value !== undefined/);
 });

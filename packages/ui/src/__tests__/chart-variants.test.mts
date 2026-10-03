@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { cn } from "../../../utils/src/cn.ts";
+import { toFiniteNumber } from "../chart-utils.ts";
 import {
   chartAxisLabelVariants,
   chartBodyVariants,
@@ -179,4 +181,72 @@ test("the legend can sit between a start and an end", () => {
   // ChartContainerFooter already offers the same three positions.
   assert.match(classes(chartLegendVariants, { align: "between" as never }), /justify-between/);
   assert.doesNotMatch(classes(chartLegendVariants, { align: "between" as never }), /justify-start|justify-end/);
+});
+
+/* --------------------------------------- chart-primitives, read from source -- */
+
+// The runner strips types, not JSX, so `chart-primitives.tsx` cannot be
+// imported here; these contracts are one line from being undone.
+const primitives = readFileSync(
+  new URL("../chart-primitives.tsx", import.meta.url),
+  "utf8",
+);
+
+/** One function's body, from its `export function` line to the next top-level one. */
+function functionSource(name: string): string {
+  const start = primitives.indexOf(`function ${name}(`);
+  assert.ok(start !== -1, `${name} is missing from chart-primitives.tsx`);
+  const end = primitives.indexOf("\nexport function ", start + 1);
+  return primitives.slice(start, end === -1 ? undefined : end);
+}
+
+test("a missing reading is a gap in the tooltip too, not a zero", () => {
+  const body = functionSource("buildTooltipRows");
+
+  // `Number(raw)` reads "" as 0, so the tooltip printed a zero under the cursor
+  // for exactly the rows the plot left as holes.
+  assert.doesNotMatch(body, /Number\(raw\)/);
+  assert.match(body, /toFiniteNumber\(/);
+  assert.match(body, /if \(value === null\) continue;/);
+
+  // The coercion the plot uses decides it, and it is the one that treats "",
+  // " ", true and [] as no reading at all.
+  assert.equal(toFiniteNumber(""), null);
+  assert.equal(toFiniteNumber("   "), null);
+  assert.equal(toFiniteNumber(true), null);
+  assert.equal(toFiniteNumber([]), null);
+  assert.equal(toFiniteNumber("12"), 12);
+  assert.equal(toFiniteNumber(12), 12);
+});
+
+test("the crosshair ring rides the value, not the cursor", () => {
+  // Two rings on a sloped line: one from the crosshair at the mouse, one from
+  // the chart's own active dot on the reading.
+  const crosshair = functionSource("ChartCrosshair");
+  assert.doesNotMatch(crosshair, /cy=\{pointer\.y\}/);
+  assert.match(crosshair, /cy=\{valueY\}/);
+  // No reading means no ring — the dashed rule still draws.
+  assert.match(crosshair, /valueY === null \? null : \(/);
+
+  const hook = functionSource("useChartPointer");
+  // The state carries the value's own y alongside the pointer's position.
+  assert.match(primitives, /valueY: number \| null/);
+  // `values` is read from a ref so the pointer callback is not rebuilt on every
+  // move, and it is set on the keyboard path so mouse and keys agree.
+  assert.match(hook, /const valuesRef = useRef\(values\)/);
+  assert.doesNotMatch(hook, /void values/);
+  const assignments = hook.match(/valueY: valueYAt\(/g) ?? [];
+  assert.equal(assignments.length, 3, "pointer, keydown and focus must all set valueY");
+});
+
+test("the tooltip is measured, so a wider row still flips and clamps correctly", () => {
+  const tooltip = functionSource("ChartTooltip");
+  // Measuring on the title and row count alone left bubbleWidth stale when only
+  // the values changed, and the edge clamp was computed from that stale width.
+  assert.doesNotMatch(tooltip, /\[title, rows\.length\]/);
+  assert.match(tooltip, /new ResizeObserver\(measure\)/);
+  assert.match(tooltip, /return \(\) => observer\.disconnect\(\)/);
+  // The pre-measurement fallbacks the flip and clamp rely on are still there.
+  assert.match(tooltip, /size\?\.width \?\? 144/);
+  assert.match(tooltip, /size\?\.height \?\? 64/);
 });

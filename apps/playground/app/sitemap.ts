@@ -39,6 +39,9 @@ const componentSlugs = [
   "calendar",
   "code-block",
   "markdown-viewer",
+  "charts",
+  "heat-map",
+  "metric-card",
 ];
 
 const routes = [

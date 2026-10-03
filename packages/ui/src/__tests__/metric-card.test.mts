@@ -158,3 +158,18 @@ test("reduced motion cancels the entrance and the whole cascade", () => {
     );
   }
 });
+
+test("the card's own keyboard handling is only on a clickable card", () => {
+  // Keydown bubbles, so a presentational card with a focusable descendant in
+  // `footer` or `chart` was cancelling that descendant's Space and the page scroll.
+  assert.match(component, /if \(event\.target !== event\.currentTarget\) return;/);
+  assert.match(component, /!asChild && clickable/);
+  assert.doesNotMatch(component, /onKeyDown=\{asChild \? undefined : handleKeyDown\}/);
+});
+
+test("a caller's onKeyDown runs after the card's, not instead of it", () => {
+  // The rest-spread came last and `onKeyDown` was never destructured, so a caller
+  // passing one left a `role="button"` with a tab stop that ignored Enter and Space.
+  assert.match(component, /\n {2}onKeyDown,\n {2}className,/);
+  assert.match(component, /handleKeyDown\(event\);\s*onKeyDown\?\.\(event\);/);
+});

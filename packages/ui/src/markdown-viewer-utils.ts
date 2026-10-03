@@ -63,7 +63,7 @@ export type MarkdownBlockNode =
     }
   | { kind: "rule" };
 
-const HEADING = /^ {0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$/;
+const HEADING = /^ {0,3}(#{1,6})[ \t]+(.+?)(?:[ \t]+#+)?[ \t]*$/;
 const FENCE = /^ {0,3}(`{3,}|~{3,})[ \t]*(.*)$/;
 const RULE = /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,})$/;
 const QUOTE = /^ {0,3}>[ \t]?(.*)$/;
@@ -82,7 +82,8 @@ const UNSAFE_SCHEMES = new Set([
   "about",
   "blob",
 ]);
-const SAFE_IMAGE_DATA = /^data:image\/(?:png|jpe?g|gif|webp|avif);/i;
+// Only raster subtypes, and only up to the `;` or `,` that ends the header.
+const SAFE_IMAGE_DATA = /^data:image\/(?:png|jpe?g|gif|webp|avif)[;,]/i;
 
 const NAMED_ENTITIES: Record<string, string> = {
   amp: "&",
@@ -123,12 +124,14 @@ const CODE_LANGUAGE_ALIASES: Record<string, CodeBlockLanguage> = {
  */
 export function parseMarkdown(source: string): MarkdownBlockNode[] {
   const lines = source.replace(/\r\n?/g, "\n").split("\n");
-  return parseBlocks(lines);
+  return parseBlocks(lines, new Map());
 }
 
-function parseBlocks(lines: string[]): MarkdownBlockNode[] {
+function parseBlocks(
+  lines: string[],
+  usedIds: Map<string, number>,
+): MarkdownBlockNode[] {
   const blocks: MarkdownBlockNode[] = [];
-  const usedIds = new Map<string, number>();
   let index = 0;
 
   while (index < lines.length) {
@@ -195,7 +198,7 @@ function parseBlocks(lines: string[]): MarkdownBlockNode[] {
         quoted.push(current);
         index += 1;
       }
-      blocks.push({ kind: "quote", children: parseBlocks(quoted) });
+      blocks.push({ kind: "quote", children: parseBlocks(quoted, usedIds) });
       continue;
     }
 
@@ -206,7 +209,7 @@ function parseBlocks(lines: string[]): MarkdownBlockNode[] {
       continue;
     }
 
-    const list = readList(lines, index);
+    const list = readList(lines, index, usedIds);
     if (list) {
       blocks.push(list.node);
       index = list.next;
@@ -225,6 +228,9 @@ function parseBlocks(lines: string[]): MarkdownBlockNode[] {
         kind: "paragraph",
         children: parseInline(paragraph.join("\n")),
       });
+    } else {
+      // No block claimed the line, so it is skipped; never sit on it again.
+      index += 1;
     }
   }
 
@@ -286,7 +292,10 @@ function readTable(
   }
 
   // A short row is padded to the header, so every row keeps the same columns.
-  const width = Math.max(head.length, ...rows.map((row) => row.length), 0);
+  const width = rows.reduce(
+    (max, row) => Math.max(max, row.length),
+    Math.max(head.length, 0),
+  );
   const pad = (cells: MarkdownInlineNode[][]) => [
     ...cells,
     ...Array.from({ length: width - cells.length }, () => []),
@@ -368,6 +377,7 @@ function matchListItem(line: string): ListItemMatch | null {
 function readList(
   lines: string[],
   from: number,
+  usedIds: Map<string, number>,
 ): { node: MarkdownBlockNode & { kind: "list" }; next: number } | null {
   const first = matchListItem(lines[from] ?? "");
   if (!first) return null;
@@ -444,6 +454,7 @@ function readList(
       checked: task ? task[1] !== " " : null,
       blocks: parseBlocks(
         task ? [task[2] ?? "", ...itemLines.slice(1)] : itemLines,
+        usedIds,
       ),
     });
   }
@@ -452,11 +463,18 @@ function readList(
   return { node: { kind: "list", ordered, start, items }, next: index };
 }
 
+/** The suffixed id is reserved too, so a later heading can never be handed it. */
 function uniqueId(used: Map<string, number>, text: string): string {
   const base = slugifyHeading(text);
-  const seen = used.get(base) ?? 0;
-  used.set(base, seen + 1);
-  return seen === 0 ? base : `${base}-${seen}`;
+  let suffix = 0;
+  let id = base;
+  while (used.has(id)) {
+    suffix += 1;
+    id = `${base}-${suffix}`;
+  }
+  used.set(base, suffix + 1);
+  used.set(id, 1);
+  return id;
 }
 
 /** "Install the CLI" becomes "install-the-cli". Empty text still gets an id. */
@@ -494,11 +512,26 @@ function parseInline(source: string): MarkdownInlineNode[] {
   const nodes: MarkdownInlineNode[] = [];
   let buffer = "";
   let index = 0;
+  // Delimiter tables are built on first use, so plain text pays nothing.
+  let ticks: BacktickRun[] | null = null;
+  let brackets: Map<number, number> | null = null;
+  let runIndex = 0;
 
   const flush = () => {
     if (buffer === "") return;
     nodes.push({ kind: "text", text: decodeEntities(buffer) });
     buffer = "";
+  };
+
+  /** The run covering `at`, found by a cursor that only ever moves forward. */
+  const runAt = (at: number) => {
+    const list = ticks ?? (ticks = backtickRuns(source));
+    while (runIndex < list.length) {
+      const run = list[runIndex];
+      if (run && run.end > at) break;
+      runIndex += 1;
+    }
+    return { list, from: runIndex };
   };
 
   while (index < source.length) {
@@ -535,7 +568,8 @@ function parseInline(source: string): MarkdownInlineNode[] {
     }
 
     if (char === "`") {
-      const span = readCodeSpan(source, index);
+      const { list, from } = runAt(index);
+      const span = readCodeSpan(source, index, list, from);
       if (span) {
         flush();
         nodes.push({ kind: "code", text: span.text });
@@ -565,7 +599,12 @@ function parseInline(source: string): MarkdownInlineNode[] {
     }
 
     if (char === "!" && source[index + 1] === "[") {
-      const image = readLinkLike(source, index + 1, true);
+      const image = readLinkLike(
+        source,
+        index + 1,
+        true,
+        (brackets ??= matchBrackets(source)),
+      );
       if (image) {
         flush();
         nodes.push({
@@ -583,7 +622,12 @@ function parseInline(source: string): MarkdownInlineNode[] {
     }
 
     if (char === "[") {
-      const link = readLinkLike(source, index, false);
+      const link = readLinkLike(
+        source,
+        index,
+        false,
+        (brackets ??= matchBrackets(source)),
+      );
       if (link) {
         flush();
         nodes.push({
@@ -618,6 +662,33 @@ function parseInline(source: string): MarkdownInlineNode[] {
 
     if (char === "*" || char === "_") {
       const width = source[index + 1] === char ? 2 : 1;
+      // A run of exactly three is emphasis over strong, and eats all three.
+      const triple =
+        width === 2 && source[index + 2] === char && source[index + 3] !== char;
+      if (triple) {
+        const close = findClosingRun(source, index + 3, char, 3);
+        const inner = close > 0 ? source.slice(index + 3, close) : "";
+        if (
+          close > 0 &&
+          inner !== "" &&
+          !/^\s|\s$/.test(inner) &&
+          (char === "*" || !isWordCharacter(source[index - 1])) &&
+          (char === "*" || !isWordCharacter(source[close + 3]))
+        ) {
+          flush();
+          nodes.push({
+            kind: "emphasis",
+            children: [
+              { kind: "strong", children: parseInline(inner) },
+            ],
+          });
+          index = close + 3;
+          continue;
+        }
+        buffer += char;
+        index += 1;
+        continue;
+      }
       if (width === 2 && char === "_" && source[index + 2] === "_") {
         buffer += char;
         index += 1;
@@ -656,15 +727,60 @@ function parseInline(source: string): MarkdownInlineNode[] {
   return nodes;
 }
 
+type BacktickRun = {
+  start: number;
+  end: number;
+  /** Widest run strictly after this one, so a search that fails can stop. */
+  widestAfter: number;
+};
+
+/** Every maximal backtick run, found in one pass over the source. */
+function backtickRuns(source: string): BacktickRun[] {
+  const runs: BacktickRun[] = [];
+  let index = 0;
+  while (index < source.length) {
+    if (source[index] !== "`") {
+      index += 1;
+      continue;
+    }
+    const start = index;
+    while (index < source.length && source[index] === "`") index += 1;
+    runs.push({ start, end: index, widestAfter: 0 });
+  }
+  let widest = 0;
+  for (let at = runs.length - 1; at >= 0; at -= 1) {
+    const run = runs[at];
+    if (!run) continue;
+    run.widestAfter = widest;
+    widest = Math.max(widest, run.end - run.start);
+  }
+  return runs;
+}
+
 function readCodeSpan(
   source: string,
   start: number,
+  runs: readonly BacktickRun[],
+  from: number,
 ): { text: string; next: number } | null {
-  let width = 0;
-  while (source[start + width] === "`") width += 1;
-  const marker = "`".repeat(width);
-  const close = source.indexOf(marker, start + width);
-  if (close < 0 || source[close + width] === "`") return null;
+  const open = runs[from];
+  if (!open || open.end <= start) return null;
+  const width = open.end - start;
+
+  let close = -1;
+  for (let at = from + 1; at < runs.length; at += 1) {
+    const run = runs[at];
+    if (!run) break;
+    // A run closes only from its own last `width` backticks, so a shorter one
+    // is passed over — and once no wider run is left, the scan is done.
+    if (run.end - run.start < width) {
+      if (run.widestAfter < width) break;
+      continue;
+    }
+    close = run.end - width;
+    break;
+  }
+  if (close < 0) return null;
 
   let text = source.slice(start + width, close).replace(/\n/g, " ");
   // CommonMark strips one space on each side, so `` ` `` can hold a backtick.
@@ -683,6 +799,7 @@ function readLinkLike(
   source: string,
   bracketStart: number,
   isImage: boolean,
+  brackets: Map<number, number>,
 ): {
   href: string;
   label: string;
@@ -690,7 +807,7 @@ function readLinkLike(
   title?: string;
   next: number;
 } | null {
-  const labelEnd = matchBracket(source, bracketStart);
+  const labelEnd = brackets.get(bracketStart) ?? -1;
   if (labelEnd < 0) return null;
   if (source[labelEnd + 1] !== "(") return null;
 
@@ -712,21 +829,26 @@ function readLinkLike(
   };
 }
 
-function matchBracket(source: string, start: number): number {
-  let depth = 0;
-  for (let index = start; index < source.length; index += 1) {
+/**
+ * Where every `[` closes, paired in one pass. A stack matches the same pairs a
+ * per-opener scan would, and an unclosed `[` is simply left out.
+ */
+function matchBrackets(source: string): Map<number, number> {
+  const ends = new Map<number, number>();
+  const open: number[] = [];
+  for (let index = 0; index < source.length; index += 1) {
     const char = source[index];
     if (char === "\\") {
       index += 1;
       continue;
     }
-    if (char === "[") depth += 1;
+    if (char === "[") open.push(index);
     else if (char === "]") {
-      depth -= 1;
-      if (depth === 0) return index;
+      const start = open.pop();
+      if (start !== undefined) ends.set(start, index);
     }
   }
-  return -1;
+  return ends;
 }
 
 function matchParen(source: string, start: number): number {

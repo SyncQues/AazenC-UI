@@ -624,20 +624,18 @@ import { ThemeSelector } from "@aazenc/ui/theme-selector"
 import { useTheme } from "@aazenc/themes"
 
 export function Example() {
-  const { theme, mode, material, setTheme, setMode, setMaterial, availableThemes } = useTheme()
+  const { theme, mode, setTheme, setMode, availableThemes } = useTheme()
 
   return (
     <ThemeSelector
       theme={theme}
       themes={availableThemes}
       mode={mode}
-      material={material}
       onTheme={(id) => {
         const next = availableThemes.find((item) => item.id === id)
         if (next) setTheme(next.id)
       }}
       onMode={setMode}
-      onMaterial={setMaterial}
     />
   )
 }`,
@@ -703,6 +701,13 @@ const revenue = [
   { month: "Jan", revenue: 18200, refunds: 900 },
   { month: "Feb", revenue: 20340, refunds: 1240 },
   { month: "Mar", revenue: 22480, refunds: 1100 },
+]
+
+const team = [
+  { name: "Platform engineering", headcount: 14 },
+  { name: "Payments", headcount: 9 },
+  { name: "Design systems", headcount: 6 },
+  { name: "Support", headcount: 21 },
 ]
 
 

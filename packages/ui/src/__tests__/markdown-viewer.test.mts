@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import {
   inlineToText,
   isExternalHref,
@@ -52,6 +54,49 @@ function listItems(source: string): MarkdownListItem[] {
   const block = one(source);
   if (block.kind !== "list") assert.fail(`expected a list, got ${block.kind}`);
   return block.items;
+}
+
+/** Every heading id in a document, including the ones inside quotes and items. */
+function headingIds(source: string): string[] {
+  const walk = (nodes: MarkdownBlockNode[]): string[] =>
+    nodes.flatMap((block) => {
+      if (block.kind === "heading") return [block.id];
+      if (block.kind === "quote") return walk(block.children);
+      if (block.kind === "list")
+        return block.items.flatMap((item) => walk(item.blocks));
+      return [];
+    });
+  return walk(blocks(source));
+}
+
+/**
+ * Parses in a child process and gives up on it, so a parser that stops
+ * advancing fails this test instead of hanging the whole run. A timer in this
+ * process cannot help: a spin here never yields to the event loop.
+ */
+function parseWithin(source: string): MarkdownBlockNode[] | null {
+  const parser = new URL("../markdown-viewer-utils.ts", import.meta.url).href;
+  const loader = fileURLToPath(
+    new URL("./register-extensionless.mjs", import.meta.url),
+  );
+  try {
+    const output = execFileSync(
+      process.execPath,
+      [
+        "--experimental-strip-types",
+        "--import",
+        loader,
+        "--input-type=module",
+        "--eval",
+        `import { parseMarkdown } from ${JSON.stringify(parser)};` +
+          `process.stdout.write(JSON.stringify(parseMarkdown(${JSON.stringify(source)})));`,
+      ],
+      { encoding: "utf8", timeout: 10_000, stdio: ["ignore", "pipe", "ignore"] },
+    );
+    return JSON.parse(output) as MarkdownBlockNode[];
+  } catch {
+    return null;
+  }
 }
 
 test("the viewer is one prose column on the product tokens", () => {
@@ -349,4 +394,110 @@ test("windows line endings read the same", () => {
     parsed.map((block) => block.kind),
     ["heading", "paragraph"],
   );
+});
+
+test("a line no block claims is skipped, not looped on", { timeout: 60000 }, () => {
+  // Each of these used to spin forever: the paragraph read nothing, so it never moved.
+  for (const [source, expected] of [
+    ["| --- |", []],
+    ["|---|", []],
+    ["text\n:---\nmore", ["paragraph", "paragraph"]],
+  ] as const) {
+    const parsed = parseWithin(source);
+    assert.notEqual(
+      parsed,
+      null,
+      `parseMarkdown(${JSON.stringify(source)}) did not return`,
+    );
+    assert.deepEqual(parsed?.map((block) => block.kind), expected);
+  }
+  // A real table is still a table, header and body and all.
+  const table = one("| a | b |\n| --- | --- |\n| 1 | 2 |");
+  assert.equal(table.kind, "table");
+  assert.equal(table.kind === "table" && table.rows.length, 1);
+});
+
+test("heading ids stay unique across quotes and list items", () => {
+  const quoted = headingIds("## Usage\n\n> ## Usage\n\n## Usage");
+  assert.equal(quoted[0], "usage");
+  assert.equal(new Set(quoted).size, quoted.length);
+  const nested = headingIds("## A\n\n- ## A\n  - ## A\n\n> ## A");
+  assert.equal(new Set(nested).size, nested.length);
+  // A suffix that is already spoken for is stepped past rather than reused.
+  const suffixed = headingIds("## Usage\n## Usage\n## Usage 1");
+  assert.equal(suffixed[0], "usage");
+  assert.equal(new Set(suffixed).size, suffixed.length);
+});
+
+test("a triple delimiter run is emphasis over strong", () => {
+  assert.equal(text("***text***"), "text");
+  assert.equal(text("___foo___"), "foo");
+  for (const source of ["***text***", "___foo___"]) {
+    const nodes = inlines(source);
+    assert.equal(nodes.length, 1);
+    assert.equal(nodes[0]?.kind, "emphasis");
+    assert.equal(
+      nodes[0]?.kind === "emphasis" && nodes[0].children[0]?.kind,
+      "strong",
+    );
+  }
+  // The narrower runs, and the literal delimiters, are untouched.
+  assert.deepEqual(
+    inlines("**bold**").map((node) => node.kind),
+    ["strong"],
+  );
+  assert.deepEqual(
+    inlines("*italic*").map((node) => node.kind),
+    ["emphasis"],
+  );
+  assert.deepEqual(
+    inlines("__x__").map((node) => node.kind),
+    ["strong"],
+  );
+  assert.equal(text("snake_case_name"), "snake_case_name");
+  assert.equal(text("2 * 3 * 4"), "2 * 3 * 4");
+});
+
+test("a trailing hash in a heading needs whitespace before it", () => {
+  const heading = (source: string) => {
+    const block = one(source);
+    if (block.kind !== "heading")
+      assert.fail(`expected a heading, got ${block.kind}`);
+    return inlineToText(block.children);
+  };
+  // `C#` is a name, and a closing hash sequence has to be separated from it.
+  assert.equal(heading("## C#"), "C#");
+  assert.equal(heading("## C# "), "C#");
+  assert.equal(heading("## Title ##"), "Title");
+});
+
+test("a very long table is read, not spread into a stack overflow", { timeout: 30000 }, () => {
+  const lines = ["| a | b |", "| --- | --- |"];
+  for (let index = 0; index < 200_000; index += 1) lines.push(`| ${index} | x |`);
+  const table = parseMarkdown(lines.join("\n"))[0];
+  assert.equal(table?.kind, "table");
+  assert.equal(table?.kind === "table" && table.rows.length, 200_000);
+});
+
+test("an inline raster data url is kept and a scriptable one is not", () => {
+  // The payload can follow a comma, with no media type parameter first.
+  assert.equal(safeImageSrc("data:image/png,%89PNG"), "data:image/png,%89PNG");
+  assert.equal(
+    safeImageSrc("data:image/jpeg;base64,/9j/4AAQ"),
+    "data:image/jpeg;base64,/9j/4AAQ",
+  );
+  // Svg can carry script, so it never passes as an image source.
+  assert.equal(safeImageSrc("data:image/svg+xml;base64,PHN2"), null);
+  assert.equal(safeImageSrc("data:image/svg+xml,<svg onload=alert(1)>"), null);
+  assert.equal(safeImageSrc("data:text/html,<script>alert(1)</script>"), null);
+  assert.equal(safeImageSrc("vbscript:msgbox(1)"), null);
+});
+
+test("unmatched inline delimiters are read in linear time", { timeout: 10000 }, () => {
+  // Both used to rescan the tail from every opener, which is quadratic.
+  const started = process.hrtime.bigint();
+  parseMarkdown(`x${"`".repeat(64_000)}`);
+  parseMarkdown(`x${"[".repeat(64_000)}`);
+  const ms = Number(process.hrtime.bigint() - started) / 1e6;
+  assert.ok(ms < 1000, `64k unmatched delimiters took ${ms}ms`);
 });

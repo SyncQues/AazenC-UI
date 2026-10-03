@@ -173,7 +173,9 @@ export function resolveChartColor(
   index = 0,
 ): string {
   if (!input) return chartColorVar(index);
-  if (input in chartRoleColors) {
+  // `in` walks the prototype chain, so `toString` and `__proto__` came back as
+  // functions and objects and were handed straight to `fill`. Own keys only.
+  if (Object.hasOwn(chartRoleColors, input)) {
     return chartRoleColors[input as ChartRole];
   }
   const slot = colorSlot(input);
@@ -308,9 +310,7 @@ export function resolveDomain(
   }
 
   const step = niceCeil((max - min) / Math.max(1, tickCount));
-  const niceMin = zeroBaseline
-    ? Math.floor(min / step) * step
-    : Math.floor(min / step) * step;
+  const niceMin = Math.floor(min / step) * step;
   const niceMax = Math.ceil(max / step) * step;
   return niceMax === niceMin ? [niceMin, niceMax + step] : [niceMin, niceMax];
 }
@@ -328,12 +328,53 @@ export function resolveDomain(
  * extended past the domain if the last one falls short, so a domain that did
  * not come from `resolveDomain` still gets covered end to end.
  */
+/**
+ * The nice step `resolveDomain` already rounded to, recovered from the span.
+ *
+ * Re-running `niceCeil(span / count)` on a domain that was just rounded *up*
+ * picks a coarser step, and the ticks then start before the domain and finish
+ * past it. The next-smaller 1/2/2.5/5 step that tiles the span is the one the
+ * domain was built with. A span that is not on that grid keeps the coarser
+ * step, so a hand-built domain is still covered past both ends.
+ */
+function tickStep(span: number, count: number): number {
+  const target = span / Math.max(1, count);
+  const coarse = niceCeil(target);
+  if (!Number.isFinite(coarse) || coarse <= 0) return coarse;
+  if (dividesSpan(span, coarse)) return coarse;
+
+  let step = coarse;
+  for (let guard = 0; guard < 24; guard += 1) {
+    step = previousNice(step);
+    if (step <= 0) break;
+    if (dividesSpan(span, step)) return step;
+  }
+  return coarse;
+}
+
+function dividesSpan(span: number, step: number): boolean {
+  if (step <= 0 || !Number.isFinite(step)) return false;
+  const steps = span / step;
+  return Math.abs(steps - Math.round(steps)) < 1e-6;
+}
+
+/** The 1/2/2.5/5 step immediately below `value`. */
+function previousNice(value: number): number {
+  if (!Number.isFinite(value) || value <= 0) return 0;
+  const power = 10 ** Math.floor(Math.log10(value));
+  const fraction = value / power;
+  for (const item of [10, 5, 2.5, 2, 1]) {
+    if (item < fraction - 1e-8) return item * power;
+  }
+  return power / 2;
+}
+
 export function linearTicks(domain: ChartDomain, count = 5): number[] {
   const [min, max] = domain;
   const span = max - min;
   if (span === 0 || !Number.isFinite(span)) return [min];
 
-  const step = niceCeil(span / Math.max(1, count));
+  const step = tickStep(span, count);
   if (!Number.isFinite(step) || step <= 0) return [min, max];
 
   const first = Math.floor(min / step) * step;
@@ -583,8 +624,18 @@ function buildMonotonePath(points: readonly ChartPoint[]): string {
       tangents[index + 1] = 0;
       continue;
     }
-    const alpha = (tangents[index] ?? 0) / delta;
-    const beta = (tangents[index + 1] ?? 0) / delta;
+    let alpha = (tangents[index] ?? 0) / delta;
+    let beta = (tangents[index + 1] ?? 0) / delta;
+    // Sign guards: a tangent pointing against its own segment is what lets the
+    // curve overshoot the data, and no amount of tau-scaling brings it back.
+    if (alpha <= 0) {
+      alpha = 0;
+      tangents[index] = 0;
+    }
+    if (beta <= 0) {
+      beta = 0;
+      tangents[index + 1] = 0;
+    }
     // Harmonic-mean weighting. Without this guard a zero tangent next to a steep
     // segment divides by zero and the whole path goes NaN.
     if (alpha * alpha + beta * beta > 9) {
@@ -892,11 +943,23 @@ export function formatChartValue(
   const magnitude = Math.abs(value);
 
   if (compact) {
-    for (const unit of compactUnits) {
+    // `compactUnits` runs large to small, so index - 1 is the next unit up.
+    for (let index = 0; index < compactUnits.length; index += 1) {
+      const unit = compactUnits[index]!;
       if (magnitude < unit.limit) continue;
       const scaled = magnitude / unit.limit;
+      const rounded = Number(scaled.toFixed(precision));
+      // A mantissa that rounds up to 1000 belongs to the next unit up: a
+      // `1000.0K` axis label reads as a promotion that never happened.
+      const larger = compactUnits[index - 1];
+      if (rounded >= 1000 && larger !== undefined) {
+        const carried = magnitude / larger.limit;
+        const carriedRounded = Number(carried.toFixed(precision));
+        const digits = Number.isInteger(carriedRounded) ? 0 : precision;
+        return `${sign}${prefix}${carried.toFixed(digits)}${larger.suffix}${suffix}`;
+      }
       // Trailing zeros are noise on an axis: `10K`, not `10.0K`.
-      const digits = Number.isInteger(scaled) ? 0 : precision;
+      const digits = Number.isInteger(rounded) ? 0 : precision;
       return `${sign}${prefix}${scaled.toFixed(digits)}${unit.suffix}${suffix}`;
     }
   }

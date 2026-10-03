@@ -18,7 +18,13 @@
  * them, and the reveal has to grow sideways rather than upward.
  */
 
-import { useCallback, useEffect, useMemo, type ComponentProps } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  type ComponentProps,
+} from "react";
 import { cn } from "@aazenc/utils";
 import {
   ChartAxis,
@@ -124,6 +130,8 @@ interface BarGeometry {
   ticks: number[];
   labels: string[];
   centers: number[];
+  /** Pixel of each row's outer value end, on the axis the band does not run along. */
+  tips: number[];
   marks: BarMark[];
   maxCategoryLabels: number;
 }
@@ -307,7 +315,7 @@ function BarChart({
     const plans: BarSegment[][] = [];
     const extents: number[] = [];
 
-    for (const row of data) {
+    for (const [rowIndex, row] of data.entries()) {
       const category = datumLabel(row, xKey);
       labels.push(category);
       const segments: BarSegment[] = [];
@@ -327,7 +335,8 @@ function BarChart({
         }
         segments.push({
           seriesIndex: entry.index,
-          key: `${category}-${entry.key}`,
+          // The row index keeps the key unique when two rows share a label.
+          key: `${rowIndex}-${category}-${entry.key}`,
           color: entry.color,
           base,
           top,
@@ -397,15 +406,20 @@ function BarChart({
     const extent = cell - gap;
 
     const marks: BarMark[] = [];
+    const tips: number[] = [];
     for (const [rowIndex, segments] of plans.entries()) {
       // The segment that ends the stack in its direction is the one whose
       // outer edge is the value end, so it is the only one that gets the
       // radius. A radius on every segment turns a stack into a string of pills.
-      const positiveEnds = new Set<number>();
-      const negativeEnds = new Set<number>();
+      let positiveEnd = -1;
+      let negativeEnd = -1;
+      let positiveTip: number | null = null;
+      let negativeTip: number | null = null;
       for (const segment of segments) {
-        if (segment.value >= 0) positiveEnds.add(segment.seriesIndex);
-        else negativeEnds.add(segment.seriesIndex);
+        // A zero reading draws nothing, so it cannot end a stack.
+        if (stacked && segment.value === 0) continue;
+        if (segment.value < 0) negativeEnd = segment.seriesIndex;
+        else positiveEnd = segment.seriesIndex;
       }
 
       for (const segment of segments) {
@@ -420,15 +434,39 @@ function BarChart({
         const along =
           band.start(rowIndex) +
           (stacked ? 0 : segment.seriesIndex * cell + gap / 2);
-        const ends =
-          segment.value >= 0
-            ? positiveEnds.has(segment.seriesIndex)
-            : negativeEnds.has(segment.seriesIndex);
+        // Grouped: every bar is its own value end. Stacked: only the last
+        // segment in each direction is.
+        const end = segment.value < 0 ? negativeEnd : positiveEnd;
+        const ends = !stacked || segment.seriesIndex === end;
         // `buildBarPath` rounds the top edge or the right edge and nothing
         // else, so a bar that grows downward or to the left keeps square
         // corners — rounding its baseline end would say "this value is
         // smaller" when it is not.
         const corner = segment.value >= 0 && ends ? radius : 0;
+        // The outer pixel of this segment. A positive column ends at its top;
+        // a horizontal bar ends at its right. The keyboard tooltip anchors there.
+        const outer = vertical
+          ? segment.value >= 0
+            ? Math.min(from, to)
+            : Math.max(from, to)
+          : segment.value >= 0
+            ? Math.max(from, to)
+            : Math.min(from, to);
+        if (segment.value >= 0) {
+          positiveTip =
+            positiveTip === null
+              ? outer
+              : vertical
+                ? Math.min(positiveTip, outer)
+                : Math.max(positiveTip, outer);
+        } else {
+          negativeTip =
+            negativeTip === null
+              ? outer
+              : vertical
+                ? Math.max(negativeTip, outer)
+                : Math.min(negativeTip, outer);
+        }
 
         const d = vertical
           ? buildBarPath({
@@ -456,6 +494,9 @@ function BarChart({
           order: marks.length,
         });
       }
+      tips.push(
+        positiveTip ?? negativeTip ?? (vertical ? plotBottom : plotLeft),
+      );
     }
 
     return {
@@ -468,6 +509,7 @@ function BarChart({
       ticks,
       labels,
       centers: plans.map((_, index) => band.center(index)),
+      tips,
       marks,
       maxCategoryLabels: Math.max(
         1,
@@ -486,13 +528,24 @@ function BarChart({
     tickFormat,
   ]);
 
+  // A horizontal bar chart's band runs down the y axis, so the hit test has to
+  // read the y offset.
   const { pointer, handlers, focused } = useChartPointer({
     centers: geometry?.centers ?? [],
+    axis: vertical ? "x" : "y",
+    values: geometry?.tips ?? [],
   });
 
+  // Reported through an effect rather than during render: the parent that
+  // stores the index re-renders this chart, and a callback fired mid-render
+  // would set state on a component that is still rendering.
+  const hoverIndex = onHoverIndexChange;
+  const reportedIndex = useRef(pointer.index);
   useEffect(() => {
-    onHoverIndexChange?.(pointer.index);
-  }, [onHoverIndexChange, pointer.index]);
+    if (reportedIndex.current === pointer.index) return;
+    reportedIndex.current = pointer.index;
+    hoverIndex?.(pointer.index);
+  }, [hoverIndex, pointer.index]);
 
   const valueText = useCallback(
     (index: number) => {

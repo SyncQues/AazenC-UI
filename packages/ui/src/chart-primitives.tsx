@@ -41,6 +41,7 @@ import {
 } from "./chart-variants";
 import {
   formatChartValue,
+  toFiniteNumber,
   type ChartFormatOptions,
   type ChartSeries,
   type ChartSlice,
@@ -432,9 +433,11 @@ export interface ChartPointerState {
   /** Pointer position in plot pixels, for placing the crosshair. */
   x: number;
   y: number;
+  /** Plot-pixel y of the value itself, or `null` when there is no reading. */
+  valueY: number | null;
 }
 
-const noPointer: ChartPointerState = { index: -1, x: 0, y: 0 };
+const noPointer: ChartPointerState = { index: -1, x: 0, y: 0, valueY: null };
 
 export interface ChartPointerHandlers {
   onPointerMove: (event: ReactPointerEvent<Element>) => void;
@@ -459,9 +462,15 @@ export interface ChartPointerHandlers {
  * "1,240" instead of "14".
  */
 export function useChartPointer(options: {
-  /** Pixel position of each value, left to right. */
+  /** Pixel position of each value, along the band's axis. */
   centers: readonly number[];
-  /** Pixel position of each value vertically, for the crosshair. */
+  /** Which axis `centers` run along. A horizontal bar chart's band runs down the
+   *  page, so its hit test has to read `clientY`, not `clientX`. */
+  axis?: "x" | "y";
+  /** Pixel position of each value on the axis the band does not run along.
+   *  Vertical for a column, line, or area chart; horizontal for a horizontal
+   *  bar. Keyboard placement anchors the tooltip here, and the crosshair ring
+   *  reads it as `valueY` when the band runs left to right. */
   values?: readonly (number | null)[];
   /** Hit slack, in pixels. Zero means the pointer has to be exactly on a
    *  value; the default is half a step, so a column chart behaves like the
@@ -473,13 +482,21 @@ export function useChartPointer(options: {
   handlers: ChartPointerHandlers;
   focused: boolean;
 } {
-  const { centers, values, hitSlop, disabled = false } = options;
+  const { centers, axis = "x", values, hitSlop, disabled = false } = options;
   const [pointer, setPointer] = useState<ChartPointerState>(noPointer);
   const [focused, setFocused] = useState(false);
 
   // Kept in a ref so the keydown handler is not rebuilt on every pointer move.
   const centersRef = useRef(centers);
   centersRef.current = centers;
+  const valuesRef = useRef(values);
+  valuesRef.current = values;
+
+  /** The value's own y, so the crosshair ring lands on the reading, not the cursor. */
+  const valueYAt = useCallback((index: number): number | null => {
+    if (index < 0) return null;
+    return valuesRef.current?.[index] ?? null;
+  }, []);
 
   const step =
     centers.length > 1
@@ -516,10 +533,12 @@ export function useChartPointer(options: {
       if (bounds.width === 0) return;
       const x = event.clientX - bounds.left;
       const y = event.clientY - bounds.top;
-      const index = findIndex(x);
-      setPointer({ index, x, y });
+      // Both coordinates are always kept: the tooltip anchors off them even
+      // though only the band's own axis decides which index was hit.
+      const index = findIndex(axis === "y" ? y : x);
+      setPointer({ index, x, y, valueY: valueYAt(index) });
     },
-    [disabled, findIndex],
+    [axis, disabled, findIndex, valueYAt],
   );
 
   const handlers = useMemo<ChartPointerHandlers>(
@@ -559,28 +578,46 @@ export function useChartPointer(options: {
         event.preventDefault();
         setFocused(true);
         const center = list[next];
-        setPointer({ index: next, x: center ?? 0, y: 0 });
+        setPointer((current) => {
+          const along = center ?? 0;
+          const cross = valuesRef.current?.[next] ?? null;
+          // The band axis moves to the category. The other axis moves to the
+          // value, so a keyboard tooltip sits on the bar instead of the plot edge.
+          const placed =
+            axis === "y"
+              ? { x: cross ?? current.x, y: along }
+              : { x: along, y: cross ?? current.y };
+          return {
+            ...current,
+            ...placed,
+            index: next,
+            valueY: axis === "y" ? null : cross,
+          };
+        });
       },
       onFocus: () => {
         setFocused(true);
-        setPointer((current) =>
-          current.index < 0
-            ? {
-                ...current,
-                index: Math.min(centersRef.current.length - 1, 0),
-                x: centersRef.current[0] ?? 0,
-              }
-            : current,
-        );
+        setPointer((current) => {
+          if (current.index >= 0) return current;
+          const first = centersRef.current[0] ?? 0;
+          const index = Math.min(centersRef.current.length - 1, 0);
+          const cross = valuesRef.current?.[0] ?? null;
+          const placed =
+            axis === "y"
+              ? { y: first, x: cross ?? current.x }
+              : { x: first, y: cross ?? current.y };
+          return {
+            ...current,
+            ...placed,
+            index,
+            valueY: axis === "y" ? null : cross,
+          };
+        });
       },
       onBlur: () => setFocused(false),
     }),
-    [disabled, focused, pointer.index, resolve],
+    [axis, disabled, focused, pointer.index, resolve, valueYAt],
   );
-
-  // `values` is read by the caller's readout, not by this hook, but it is part
-  // of the options bag so a chart can pass one object and stay in sync.
-  void values;
 
   return { pointer, handlers, focused };
 }
@@ -661,6 +698,8 @@ export function ChartCrosshair({
   color: string;
 }) {
   if (center === null || pointer.index < 0) return null;
+  // No reading means no ring: the rule still shows, the value does not exist.
+  const valueY = pointer.valueY;
   return (
     <g
       data-slot="chart-crosshair"
@@ -677,15 +716,17 @@ export function ChartCrosshair({
         strokeDasharray="3 3"
         shapeRendering="crispEdges"
       />
-      <circle
-        cx={center}
-        cy={pointer.y}
-        r={4.5}
-        fill="var(--card)"
-        stroke={color}
-        strokeWidth={2.5}
-        className="chart-point-active"
-      />
+      {valueY === null ? null : (
+        <circle
+          cx={center}
+          cy={valueY}
+          r={4.5}
+          fill="var(--card)"
+          stroke={color}
+          strokeWidth={2.5}
+          className="chart-point-active"
+        />
+      )}
     </g>
   );
 }
@@ -737,8 +778,24 @@ export function ChartTooltip({
   useEffect(() => {
     const node = bubbleRef.current;
     if (!node) return;
-    setSize({ width: node.offsetWidth, height: node.offsetHeight });
-  }, [title, rows.length]);
+
+    const measure = () => {
+      setSize({ width: node.offsetWidth, height: node.offsetHeight });
+    };
+
+    measure();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }
+
+    // Measured, not derived from the props: a row that widens from `9` to
+    // `1,240,000` changes the bubble's width with the same title and row count.
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   const bubbleWidth = size?.width ?? 144;
   const bubbleHeight = size?.height ?? 64;
@@ -1007,10 +1064,10 @@ export function buildTooltipRows(
   const rows: ChartTooltipRow[] = [];
   for (const entry of series) {
     if (entry.hidden) continue;
-    const raw = datum[entry.key];
-    if (raw === null || raw === undefined) continue;
-    const value = typeof raw === "number" ? raw : Number(raw);
-    if (!Number.isFinite(value)) continue;
+    // The same coercion the plot uses, so a `""` reading is a gap in the line
+    // and no row in the tooltip rather than a zero sitting under the cursor.
+    const value = toFiniteNumber(datum[entry.key]);
+    if (value === null) continue;
     rows.push({
       label: entry.label ?? entry.key,
       value: format(value),

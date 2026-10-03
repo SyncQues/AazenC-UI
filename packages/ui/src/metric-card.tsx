@@ -327,6 +327,7 @@ function MetricCard({
   enter = "rise",
   asChild = false,
   onClick,
+  onKeyDown,
   className,
   children,
   ...props
@@ -341,6 +342,9 @@ function MetricCard({
   // answers the keyboard. `asChild` is exempt: the child is a real control and
   // already does both.
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    // Keydown bubbles, so a press on an inner control lands here too and must not
+    // be answered by the card.
+    if (event.target !== event.currentTarget) return;
     if (event.key !== "Enter" && event.key !== " ") return;
     // Space scrolls the page, and on a role="button" it has to activate.
     event.preventDefault();
@@ -376,7 +380,16 @@ function MetricCard({
         role={asChild ? undefined : onClick ? "button" : undefined}
         tabIndex={asChild || !onClick ? undefined : 0}
         onClick={onClick}
-        onKeyDown={asChild ? undefined : handleKeyDown}
+        // Internal first, then the caller's, and the caller's runs either way: a
+        // presentational card has no internal keyboard behaviour to compose.
+        onKeyDown={
+          !asChild && clickable
+            ? (event: ReactKeyboardEvent<HTMLDivElement>) => {
+                handleKeyDown(event);
+                onKeyDown?.(event);
+              }
+            : onKeyDown
+        }
         className={cn(
           metricCardVariants({ variant, size, align, interactive: lifted, enter }),
           className,

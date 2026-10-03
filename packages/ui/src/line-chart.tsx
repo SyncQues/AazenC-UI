@@ -317,7 +317,7 @@ function LineChart({
     [seriesPoints],
   );
 
-  const { pointer, handlers } = useChartPointer({
+  const { pointer, handlers, focused } = useChartPointer({
     centers,
     values: primaryValues,
     // The plot is the hit area, not the band. Without the slack a reader has to
@@ -597,7 +597,12 @@ function LineChart({
       {...props}
     >
       {plot}
-      <ChartLiveRegion message={readout(activeIndex)} />
+      {/* Announced only while the chart holds focus. A live region that
+          fires on every pointer move talks over a screen reader user who
+          is also driving a mouse. */}
+      <ChartLiveRegion
+        message={focused && activeIndex >= 0 ? readout(activeIndex) : ""}
+      />
     </figure>
   );
 }

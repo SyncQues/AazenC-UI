@@ -687,13 +687,6 @@
     transform: none !important;
   }
 
-  /* The pie sweep is a `stroke-dasharray` animation. Cancelling the animation
-     leaves whatever inline value the element had, so a slice must not be left
-     collapsed to `0 1000` — drop the animation and the dash stays as set. */
-  .chart-arc-in {
-    stroke-dasharray: revert !important;
-  }
-
   [data-slot="accordion-content"][data-state="closed"],
   [data-slot="collapsible-content"][data-state="closed"] {
     height: 0;

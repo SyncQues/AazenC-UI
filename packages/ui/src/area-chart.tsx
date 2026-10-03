@@ -135,7 +135,10 @@ function computeStacks(
   series: readonly ChartSeries[],
   data: readonly ChartDatum[],
 ): { stacks: StackedSeries[]; extents: (number | null)[] } {
-  const running = data.map(() => 0);
+  // Separate cursors, matching the bar chart: a loss below the axis must not
+  // fold back down through the positive band and hide itself inside it.
+  const positive = data.map(() => 0);
+  const negative = data.map(() => 0);
   const stacks: StackedSeries[] = [];
   const extents: (number | null)[] = [];
 
@@ -150,9 +153,10 @@ function computeStacks(
         bottoms.push(null);
         continue;
       }
-      const base = running[index] ?? 0;
+      const base = value >= 0 ? (positive[index] ?? 0) : (negative[index] ?? 0);
       const top = base + value;
-      running[index] = top;
+      if (value >= 0) positive[index] = top;
+      else negative[index] = top;
       tops.push(top);
       bottoms.push(base);
       extents.push(top, base);
@@ -416,7 +420,7 @@ function AreaChart({
     [stacked, values, centers, yScale],
   );
 
-  const { pointer, handlers } = useChartPointer({
+  const { pointer, handlers, focused } = useChartPointer({
     centers,
     values: primaryValues,
     // The plot is the hit area, not the band: a fill that only responds inside
@@ -663,7 +667,12 @@ function AreaChart({
       {...props}
     >
       {plot}
-      <ChartLiveRegion message={readout(activeIndex)} />
+      {/* Announced only while the chart holds focus. A live region that
+          fires on every pointer move talks over a screen reader user who
+          is also driving a mouse. */}
+      <ChartLiveRegion
+        message={focused && activeIndex >= 0 ? readout(activeIndex) : ""}
+      />
     </figure>
   );
 }

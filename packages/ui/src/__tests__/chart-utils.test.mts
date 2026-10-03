@@ -39,6 +39,33 @@ function point(x: number, y: number): ChartPoint {
   return { x, y };
 }
 
+/** Highest y a smooth path actually reaches, sampled per cubic. Control points
+ *  alone are not enough: a curve can crest between two of them. */
+function highestYOnSmoothPath(path: string, lowest = false): number {
+  let extreme = lowest ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+  for (const run of path.match(/M[-\d.\sC]*/g) ?? []) {
+    const numbers = (run.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
+    let startY = numbers[1] ?? 0;
+    for (let index = 2; index + 5 < numbers.length; index += 6) {
+      const controlAY = numbers[index + 1] ?? 0;
+      const controlBY = numbers[index + 3] ?? 0;
+      const endY = numbers[index + 5] ?? 0;
+      for (let step = 0; step <= 200; step += 1) {
+        const t = step / 200;
+        const u = 1 - t;
+        const y =
+          u ** 3 * startY +
+          3 * u * u * t * controlAY +
+          3 * u * t * t * controlBY +
+          t ** 3 * endY;
+        extreme = lowest ? Math.min(extreme, y) : Math.max(extreme, y);
+      }
+      startY = endY;
+    }
+  }
+  return extreme;
+}
+
 /* ------------------------------------------------------------------ colors -- */
 
 test("the palette is tokens, never literal colors", () => {
@@ -114,6 +141,29 @@ test("a named role resolves to a token and a raw value passes through", () => {
   // (L 62–72% vs 58%) and so are the weakest marks on a near-white surface.
   assert.equal(resolveChartColor("orange"), "var(--orange-500)");
   assert.equal(resolveChartColor("teal"), "var(--teal-500)");
+});
+
+test("a name off the prototype chain is a typo, not a color", () => {
+  // `in` walks the prototype chain, so these came back as functions and an
+  // object and were handed straight to `fill`. The return type says string.
+  for (const key of [
+    "toString",
+    "constructor",
+    "valueOf",
+    "hasOwnProperty",
+    "isPrototypeOf",
+    "propertyIsEnumerable",
+    "__proto__",
+    "__defineGetter__",
+  ]) {
+    const resolved = resolveChartColor(key, 2);
+    assert.equal(typeof resolved, "string", `${key} resolved to a ${typeof resolved}`);
+    assert.equal(resolved, "var(--data-3)", `${key} did not fall back to the palette slot`);
+  }
+
+  // A real role still resolves, so the own-key check did not over-reach.
+  assert.equal(resolveChartColor("primary"), "var(--primary)");
+  assert.equal(resolveChartColor("toString", 0), "var(--data-1)");
 });
 
 test("an unknown color name warns once, and still renders", () => {
@@ -265,6 +315,13 @@ test("a tick is never a number nobody asked for", () => {
   assert.equal(raw[raw.length - 1] >= 8734, true);
   assert.equal(raw.some((tick) => tick % 1 !== 0), false);
 
+  // [3, 13, 8] rounds to [2, 14]. Re-nicing that span used to emit 0 and 15,
+  // one tick below the plot and one clipped off the top.
+  const tight = resolveDomain([3, 13, 8], { zeroBaseline: false, tickCount: 5 });
+  const tightTicks = linearTicks(tight, 5);
+  assert.equal(tightTicks[0], tight[0]);
+  assert.equal(tightTicks[tightTicks.length - 1], tight[1]);
+
   // A degenerate domain is one tick, not a divide by zero.
   assert.deepEqual(linearTicks([5, 5], 5), [5]);
 });
@@ -381,6 +438,50 @@ test("a smooth curve does not overshoot a plateau", () => {
   const ys = (path.match(/-?\d+(?:\.\d+)?/g) ?? []).map(Number);
   const ysOnly = ys.filter((_, index) => index % 2 === 1);
   assert.equal(ysOnly.every((y) => y <= 100.0001), true);
+});
+
+test("a smooth curve does not invent a peak the data does not have", () => {
+  // The reported case: a local maximum at 100 whose neighbours slope the other
+  // way, where a tau-scaled tangent still crests the cubic at 102.2.
+  const readings = [point(0, 0), point(1, 100), point(2, 66)];
+  const path = buildLinePath(readings, { curve: "smooth" });
+  const dataMax = 100;
+  const [, domainMax] = resolveDomain([0, 100, 66], { zeroBaseline: false });
+  assert.equal(domainMax, dataMax);
+
+  assert.equal(highestYOnSmoothPath(path) <= dataMax + 1e-9, true, `curve crests at ${highestYOnSmoothPath(path)}`);
+  // The fix is the sign guard, so the tangent at the peak is flat and the second
+  // control point of the rising segment sits on the reading.
+  assert.match(path, /C0\.33 33\.33 0\.67 100 1 100/);
+
+  // Swept across shapes: a smooth curve never leaves the data's own range.
+  for (const series of [
+    [point(0, 3), point(10, 30), point(20, 12), point(30, 44), point(40, 41), point(50, 5)],
+    [point(0, -50), point(10, 20), point(20, -5), point(30, 90)],
+    [point(0, 0), point(1, 1000), point(2, 1000), point(3, 0)],
+    [point(0, 0), point(10, 10), point(20, 30), point(30, 60)],
+    [point(0, 0), point(10, 1), point(20, 4), point(30, 9), point(40, 16)],
+    [point(0, 5), point(10, 5), point(20, 5)],
+  ]) {
+    const ys = series.map((p) => p.y);
+    const peak = highestYOnSmoothPath(buildLinePath(series, { curve: "smooth" }));
+    const floor = highestYOnSmoothPath(buildLinePath(series, { curve: "smooth" }), true);
+    assert.equal(peak <= Math.max(...ys) + 1e-9, true, `overshot the maximum: ${peak}`);
+    assert.equal(floor >= Math.min(...ys) - 1e-9, true, `undershot the minimum: ${floor}`);
+  }
+
+  // Smooth, and still a curve: the monotone cases keep their rounded tangents.
+  const even = buildLinePath([point(0, 0), point(10, 10), point(20, 30), point(30, 60)], {
+    curve: "smooth",
+  });
+  assert.equal((even.match(/C/g) ?? []).length, 3);
+  assert.doesNotMatch(even, /NaN/);
+  assert.doesNotMatch(
+    buildLinePath([point(0, 20), point(10, 100), point(20, 100), point(30, 100), point(40, 20)], {
+      curve: "smooth",
+    }),
+    /NaN/,
+  );
 });
 
 test("a smooth curve survives repeated values and a single point", () => {
@@ -559,6 +660,36 @@ test("formatters take a prefix, a suffix, and a precision", () => {
   assert.equal(formatChartValue(0.4213, { suffix: "%", precision: 1 }), "0.4%");
   assert.equal(formatChartValue(1234, { compact: true, precision: 0 }), "1K");
   assert.equal(formatChartValue(1500, { locale: "de-DE", prefix: "$" }).length > 0, true);
+});
+
+test("a mantissa that rounds up to 1000 is promoted, not printed as 1000K", () => {
+  // `999999` scaled into K is 999.999, printed as `1000.0K`: a promotion the
+  // formatter never made, with the trailing zero the file's own rule forbids.
+  assert.equal(formatChartValue(999999, { compact: true }), "1M");
+  assert.equal(formatAxisTick(999999), "1M");
+  assert.equal(formatChartValue(99999, { compact: true }), "100K");
+  assert.equal(formatChartValue(999999999, { compact: true }), "1B");
+  assert.equal(formatChartValue(-999999, { compact: true }), "-1M");
+
+  // The ordinary cases are untouched by the promotion.
+  assert.equal(formatChartValue(1234, { compact: true }), "1.2K");
+  assert.equal(formatChartValue(1000, { compact: true }), "1K");
+  assert.equal(formatChartValue(999949, { compact: true }), "999.9K");
+  assert.equal(formatChartValue(1200, { compact: true }), "1.2K");
+  assert.equal(formatChartValue(1500000, { compact: true }), "1.5M");
+  assert.equal(formatAxisTick(1e12), "1T");
+  assert.equal(formatChartValue(999), "999");
+
+  // Precision 0 promoted too, and a prefix/suffix rides along with it.
+  assert.equal(formatChartValue(1234, { compact: true, precision: 0 }), "1K");
+  assert.equal(formatChartValue(999999, { compact: true, precision: 0 }), "1M");
+  assert.equal(formatChartValue(999999, { compact: true, prefix: "$" }), "$1M");
+
+  // No unit ever prints a mantissa of 1000 or more.
+  for (const magnitude of [1e3, 5e3, 99_949, 99_999, 999_949, 999_999, 999_999_999, 1e12]) {
+    const mantissa = Number.parseFloat(formatChartValue(magnitude, { compact: true }));
+    assert.equal(mantissa < 1000, true, `${magnitude} printed ${formatChartValue(magnitude, { compact: true })}`);
+  }
 });
 
 test("a delta carries its sign and a percentage is a share", () => {
