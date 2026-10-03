@@ -28,6 +28,19 @@
     --ring: oklch(0.13 0 0 / 0.35);
     --shadow-color: oklch(0.2 0 0);
 
+    /* The data palette is fixed and mode-independent (see @aazenc/tokens/base.css),
+       which means it does not follow this theme — so mono has to opt out of the
+       hue itself or a monochrome theme ships saturated charts. Stepped inside the
+       window base.css documents for greys (L 0.476–0.669, so every slot clears
+       3:1 on near-white and near-black alike) and kept in one block, so a mode
+       switch never re-encodes a series. */
+    --data-1: oklch(0.585 0 0);
+    --data-2: oklch(0.62 0 0);
+    --data-3: oklch(0.55 0 0);
+    --data-4: oklch(0.665 0 0);
+    --data-5: oklch(0.48 0 0);
+    --data-negative: oklch(0.515 0 0);
+
     --button-filled-bg: color-mix(in oklch, var(--primary) 95%, transparent);
     --button-filled-text: oklch(0.99 0 0);
     --button-filled-border: color-mix(in oklch, var(--primary) 80%, transparent);

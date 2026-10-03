@@ -727,6 +727,42 @@
       }
     },
     {
+      "name": "segmented-control",
+      "type": "registry:ui",
+      "title": "Segmented Control",
+      "description": "One exclusive answer as a row of options, with the primary pill sliding behind the chosen one. Tracked or loose, single-select, arrow keys.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/segmented-control.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/segmented-control.tsx"
+        },
+        {
+          "path": "packages/ui/src/segmented-control-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/segmented-control-variants.ts"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "segmented",
+          "pill",
+          "outline"
+        ],
+        "sizes": [
+          "sm",
+          "default",
+          "lg"
+        ]
+      }
+    },
+    {
       "name": "file-upload",
       "type": "registry:ui",
       "title": "File upload",
@@ -1271,6 +1307,243 @@
           "target": "components/ui/code-block-highlight.ts"
         }
       ]
+    },
+    {
+      "name": "markdown-viewer",
+      "type": "registry:ui",
+      "title": "Markdown viewer",
+      "description": "Read-only markdown. Headings, lists, tables, quotes, and code, with no HTML injection.",
+      "registryDependencies": [
+        "code-block",
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/markdown-viewer.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/markdown-viewer.tsx"
+        },
+        {
+          "path": "packages/ui/src/markdown-viewer-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/markdown-viewer-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/markdown-viewer-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/markdown-viewer-utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "chart-container",
+      "type": "registry:ui",
+      "title": "Chart container",
+      "description": "The frame every chart sits in. Title, description, actions, legend slot, and a loading, error, or empty state that keeps the card the same size while data lands. This is the SyncQues ChartContainer, with the states it was missing.",
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils",
+        "spinner",
+        "empty",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/chart-container.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/chart-container.tsx"
+        },
+        {
+          "path": "packages/ui/src/chart-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/chart-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/chart-primitives.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/chart-primitives.tsx"
+        },
+        {
+          "path": "packages/ui/src/chart-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/chart-utils.ts"
+        },
+        {
+          "path": "packages/ui/src/tone-icon.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tone-icon.tsx"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "panel",
+          "bare"
+        ],
+        "paddings": [
+          "none",
+          "sm",
+          "lg"
+        ]
+      }
+    },
+    {
+      "name": "area-chart",
+      "type": "registry:ui",
+      "title": "Area chart",
+      "description": "A filled trend over time, with a gradient that follows the theme instead of a hardcoded rgba. Multi-series, stackable, and animated without a charting library.",
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "chart-container"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/area-chart.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/area-chart.tsx"
+        }
+      ],
+      "meta": {
+        "curves": [
+          "linear",
+          "smooth",
+          "step"
+        ]
+      }
+    },
+    {
+      "name": "bar-chart",
+      "type": "registry:ui",
+      "title": "Bar chart",
+      "description": "Columns or horizontal bars, grouped or stacked, with a value axis that is never truncated. Horizontal is the reason long category names are readable at all.",
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "chart-container"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/bar-chart.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/bar-chart.tsx"
+        }
+      ],
+      "meta": {
+        "orientations": [
+          "vertical",
+          "horizontal"
+        ]
+      }
+    },
+    {
+      "name": "line-chart",
+      "type": "registry:ui",
+      "title": "Line chart",
+      "description": "One or more trends, with monotone smoothing that cannot invent a peak the data does not contain. Arrow-key readable and screen-reader labelled.",
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "chart-container"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/line-chart.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/line-chart.tsx"
+        }
+      ],
+      "meta": {
+        "curves": [
+          "linear",
+          "smooth",
+          "step"
+        ]
+      }
+    },
+    {
+      "name": "pie-chart",
+      "type": "registry:ui",
+      "title": "Pie chart",
+      "description": "A pie or a donut, drawn as a stroked circle so the sweep animates on the compositor. Legend is derived from the data, so it cannot drift out of sync with the slices.",
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "chart-container"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/pie-chart.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/pie-chart.tsx"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "pie",
+          "donut"
+        ]
+      }
+    },
+    {
+      "name": "heat-map",
+      "type": "registry:ui",
+      "title": "Heat map",
+      "description": "A matrix of cells on a ramp mixed in oklch, so lightness climbs the whole way instead of dipping in the middle. Bands rather than a gradient, so a cell's shade is a swatch the reader can point at. A missing reading is a dashed gap, never a zero. Arrow keys walk the grid in two dimensions.",
+      "dependencies": [],
+      "registryDependencies": [
+        "utils",
+        "chart-container"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/heat-map.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/heat-map.tsx"
+        }
+      ],
+      "meta": {
+        "scales": [
+          "sequential",
+          "diverging"
+        ],
+        "defaultSteps": 5
+      }
+    },
+    {
+      "name": "metric-card",
+      "type": "registry:ui",
+      "title": "Metric card",
+      "description": "A dashboard KPI tile: label, value, trend, context. The trend carries an arrow and a sign as well as a colour, so it survives a colour-blind reader and a greyscale print.",
+      "dependencies": [
+        "class-variance-authority",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "utils",
+        "card"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/metric-card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/metric-card.tsx"
+        },
+        {
+          "path": "packages/ui/src/chart-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/chart-utils.ts"
+        }
+      ],
+      "meta": {
+        "sizes": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      }
     }
   ]
 }

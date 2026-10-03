@@ -438,6 +438,29 @@ export function Example() {
   )
 }`,
   },
+  "segmented-control": {
+    filename: "segmented-control.tsx",
+    code: `import { useState } from "react"
+import { SegmentedControl } from "@aazenc/ui/segmented-control"
+
+export function Example() {
+  const [range, setRange] = useState("7d")
+
+  return (
+    <SegmentedControl
+      label="Date range"
+      value={range}
+      onValueChange={setRange}
+      options={[
+        { value: "24h", label: "24h" },
+        { value: "7d", label: "7 days" },
+        { value: "30d", label: "30 days" },
+        { value: "12m", label: "12 months" },
+      ]}
+    />
+  )
+}`,
+  },
   "file-upload": {
     filename: "file-upload.tsx",
     code: `import { FileUpload } from "@aazenc/ui/file-upload"
@@ -601,20 +624,18 @@ import { ThemeSelector } from "@aazenc/ui/theme-selector"
 import { useTheme } from "@aazenc/themes"
 
 export function Example() {
-  const { theme, mode, material, setTheme, setMode, setMaterial, availableThemes } = useTheme()
+  const { theme, mode, setTheme, setMode, availableThemes } = useTheme()
 
   return (
     <ThemeSelector
       theme={theme}
       themes={availableThemes}
       mode={mode}
-      material={material}
       onTheme={(id) => {
         const next = availableThemes.find((item) => item.id === id)
         if (next) setTheme(next.id)
       }}
       onMode={setMode}
-      onMaterial={setMaterial}
     />
   )
 }`,
@@ -650,6 +671,194 @@ const source = \`export function Hello() {
 
 export function Example() {
   return <CodeBlock filename="hello.tsx" language="tsx" code={source} showLines />
+}`,
+  },
+  "markdown-viewer": {
+    filename: "markdown-viewer.tsx",
+    code: `import { MarkdownViewer } from "@aazenc/ui/markdown-viewer"
+
+const answer = \`## Result
+
+The build is **green**, and the suite passed.
+
+- [x] Parser
+- [x] Renderer
+\`
+
+export function Example() {
+  return <MarkdownViewer source={answer} label="Model response" />
+}`,
+  },
+  charts: {
+    filename: "charts.tsx",
+    code: `import { ChartContainer } from "@aazenc/ui/chart-container"
+import { AreaChart } from "@aazenc/ui/area-chart"
+import { BarChart } from "@aazenc/ui/bar-chart"
+import { LineChart } from "@aazenc/ui/line-chart"
+import { PieChart } from "@aazenc/ui/pie-chart"
+
+const revenue = [
+  { month: "Jan", revenue: 18200, refunds: 900 },
+  { month: "Feb", revenue: 20340, refunds: 1240 },
+  { month: "Mar", revenue: 22480, refunds: 1100 },
+]
+
+const team = [
+  { name: "Platform engineering", headcount: 14 },
+  { name: "Payments", headcount: 9 },
+  { name: "Design systems", headcount: 6 },
+  { name: "Support", headcount: 21 },
+]
+
+
+export function Example() {
+  return (
+    <div className="grid gap-4 lg:grid-cols-2">
+      {/* The container owns the states: loading > error > empty > children,
+          decided once, so no call site paints an empty state over a failure. */}
+      <ChartContainer title="Revenue" description="Last 3 months">
+        <AreaChart
+          data={revenue}
+          xKey="month"
+          series={[{ key: "revenue", label: "Revenue" }]}
+          height={220}
+          label="Revenue by month"
+        />
+      </ChartContainer>
+
+      {/* A one-series chart takes yKey instead of an array literal. */}
+      <ChartContainer title="Revenue" loading>
+        <LineChart data={revenue} xKey="month" yKey="revenue" height={220} />
+      </ChartContainer>
+
+      {/* Horizontal bars are what make a long category name readable. */}
+      <ChartContainer title="By team">
+        <BarChart
+          data={team}
+          xKey="name"
+          series={[{ key: "headcount", label: "Headcount" }]}
+          orientation="horizontal"
+          height={240}
+        />
+      </ChartContainer>
+
+      {/* A donut is a variant of Pie, not a second component. */}
+      <ChartContainer title="Channels">
+        <PieChart
+          data={[
+            { name: "Organic", value: 4820 },
+            { name: "Referral", value: 3140 },
+            { name: "Paid", value: 2260 },
+          ]}
+          variant="donut"
+          innerRadius={0.62}
+          height={240}
+        />
+      </ChartContainer>
+    </div>
+  )
+}`,
+  },
+  "heat-map": {
+    filename: "heat-map.tsx",
+    code: `import { ChartContainer } from "@aazenc/ui/chart-container"
+import { HeatMap } from "@aazenc/ui/heat-map"
+
+const days = ["Mon", "Tue", "Wed", "Thu", "Fri"] as const
+const weeks = ["W1", "W2", "W3", "W4", "W5", "W6"] as const
+
+const deploys = weeks.flatMap((week, w) =>
+  days.map((day, d) => ({
+    week,
+    day,
+    // \`null\` is a missing reading, not a zero. It renders as a dashed gap, so
+    // a day with no deploys never looks like a day with no activity — the
+    // lowest band is a claim, and this one is not true.
+    value: w === 2 && d === 1 ? null : Math.round(8 + Math.sin(w * 0.9) * 4 + d * 2),
+  })),
+)
+
+export function Example() {
+  return (
+    <div className="space-y-4">
+      {/* Bands, not a gradient, so a cell\u2019s shade is a swatch the reader can
+          find in the scale printed underneath it. The ramp is mixed in oklch,
+          which is what makes lightness climb the whole way instead of dipping
+          in the middle. */}
+      <ChartContainer
+        title="Deploys per weekday"
+        description="Six weeks. The scale is printed in real numbers, not swatches alone."
+      >
+        <HeatMap
+          data={deploys}
+          xKey="day"
+          yKey="week"
+          valueKey="value"
+          color="data-4"
+          label="Deploys by weekday over six weeks"
+        />
+      </ChartContainer>
+
+      {/* A signed map. \`scale="diverging"\` levels both arms against the pivot,
+          so a fall of 8 and a rise of 8 are the same shade — an ordinary
+          min/max domain would put zero wherever the data happened to end. */}
+      <ChartContainer title="Change against last week">
+        <HeatMap
+          data={deploys}
+          xKey="day"
+          yKey="week"
+          valueKey="value"
+          scale="diverging"
+          steps={5}
+          label="Change in deploys against the previous week"
+        />
+      </ChartContainer>
+
+      {/* Pin \`domain\` to put two maps side by side. Each one left to its own
+          extent stretches to fill, and then they agree on nothing. */}
+      <ChartContainer title="One week, one range">
+        <HeatMap
+          data={deploys.filter((d) => d.week === "W1")}
+          xKey="day"
+          yKey="week"
+          valueKey="value"
+          domain={[0, 24]}
+          height={72}
+          radius={2}
+          color="data-4"
+          label="Deploys for the first week"
+        />
+      </ChartContainer>
+    </div>
+  )
+}`,
+  },
+  "metric-card": {
+    filename: "metric-card.tsx",
+    code: `import { MetricCard } from "@aazenc/ui/metric-card"
+
+export function Example() {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {/* The trend is coloured by sentiment, not by sign. Revenue up is good. */}
+      <MetricCard
+        label="Monthly revenue"
+        value={48210}
+        change={0.124}
+        changeLabel="vs last month"
+      />
+
+      {/* Latency down is good, so the same arrow is painted the other way. */}
+      <MetricCard
+        label="p95 latency"
+        value={184}
+        change={-0.031}
+        invertTrend
+        changeLabel="vs last week"
+        format={{ suffix: "ms" }}
+      />
+    </div>
+  )
 }`,
   },
 };

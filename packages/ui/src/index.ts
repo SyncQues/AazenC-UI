@@ -284,6 +284,20 @@ export type { LabelProps } from "./label";
 export { Badge, badgeVariants } from "./badge";
 export type { BadgeProps } from "./badge";
 export type { BadgeVariant } from "./badge-variants";
+export { SegmentedControl } from "./segmented-control";
+export type {
+  SegmentedControlOption,
+  SegmentedControlProps,
+} from "./segmented-control";
+export {
+  segmentedControlItemVariants,
+  segmentedControlVariants,
+} from "./segmented-control-variants";
+export type {
+  SegmentedControlSize,
+  SegmentedControlVariant,
+  SegmentedControlVariantProps,
+} from "./segmented-control-variants";
 export { FileUpload } from "./file-upload";
 export type { FileUploadProps } from "./file-upload";
 export { toast, Toaster } from "./toast";
@@ -389,3 +403,114 @@ export type { MonthPickerProps } from "./month-picker";
 export { CodeBlock } from "./code-block";
 export type { CodeBlockProps } from "./code-block";
 export type { CodeBlockLanguage } from "./code-block-highlight";
+export { MarkdownViewer, markdownViewerVariants } from "./markdown-viewer";
+export type { MarkdownViewerProps } from "./markdown-viewer";
+export type {
+  MarkdownViewerDensity,
+  MarkdownViewerVariantProps,
+} from "./markdown-viewer-variants";
+export {
+  inlineToText,
+  isExternalHref,
+  normalizeCodeLanguage,
+  parseMarkdown,
+  safeHref,
+  safeImageSrc,
+  slugifyHeading,
+} from "./markdown-viewer-utils";
+export type {
+  MarkdownAlign,
+  MarkdownBlockNode,
+  MarkdownHeadingLevel,
+  MarkdownInlineNode,
+  MarkdownListItem,
+} from "./markdown-viewer-utils";
+export {
+  ChartContainer,
+  ChartContainerActions,
+  ChartContainerBody,
+  ChartContainerDescription,
+  ChartContainerFooter,
+  ChartContainerHeader,
+  ChartContainerTitle,
+  chartContainerVariants,
+} from "./chart-container";
+export type {
+  ChartContainerActionsProps,
+  ChartContainerBodyProps,
+  ChartContainerDescriptionProps,
+  ChartContainerFooterProps,
+  ChartContainerHeaderProps,
+  ChartContainerPadding,
+  ChartContainerProps,
+  ChartContainerStateSize,
+  ChartContainerTitleLevel,
+  ChartContainerTitleProps,
+} from "./chart-container";
+export { AreaChart } from "./area-chart";
+export type { AreaChartProps } from "./area-chart";
+export { BarChart } from "./bar-chart";
+export type { BarChartProps } from "./bar-chart";
+export { LineChart } from "./line-chart";
+export type { LineChartProps } from "./line-chart";
+export { PieChart } from "./pie-chart";
+export type { PieChartProps } from "./pie-chart";
+export { HeatMap } from "./heat-map";
+export type { HeatMapProps } from "./heat-map";
+export {
+  MetricCard,
+  MetricCardChart,
+  MetricCardFooter,
+  MetricCardHeader,
+  MetricCardLabel,
+  MetricCardTrend,
+  MetricCardValue,
+  metricCardVariants,
+} from "./metric-card";
+export type {
+  MetricCardAlign,
+  MetricCardChartProps,
+  MetricCardFooterProps,
+  MetricCardHeaderProps,
+  MetricCardLabelProps,
+  MetricCardProps,
+  MetricCardSize,
+  MetricCardTrendDirection,
+  MetricCardTrendProps,
+  MetricCardTrendTone,
+  MetricCardValueProps,
+} from "./metric-card";
+export {
+  chartColorKeys,
+  chartRoleColors,
+  formatAxisTick,
+  formatChartValue,
+  formatDelta,
+  formatPercent,
+  heatBucketRange,
+  heatColorMix,
+  heatFill,
+  heatSteps,
+  resolveChartColor,
+  resolveChartPalette,
+  resolveHeatDomain,
+} from "./chart-utils";
+export type {
+  ChartColorInput,
+  ChartColorKey,
+  ChartCurve,
+  ChartDatum,
+  ChartDomain,
+  ChartFormatOptions,
+  ChartPoint,
+  ChartRole,
+  ChartSeries,
+  ChartSlice,
+  HeatFill,
+  HeatFillOptions,
+  HeatScale,
+} from "./chart-utils";
+/** The legend is derived from the data the chart already has, so it is exported
+ *  on its own: a container footer is the one place most charts put it. */
+export { ChartLegend } from "./chart-primitives";
+export type { ChartLegendItem } from "./chart-primitives";

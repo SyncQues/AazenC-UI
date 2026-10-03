@@ -4,6 +4,7 @@ import { AccordionPreview } from "../../../../components/accordion-preview";
 import { AvatarPreview } from "../../../../components/avatar-preview";
 import { CarouselPreview } from "../../../../components/carousel-preview";
 import { BadgePreview } from "../../../../components/badge-preview";
+import { SegmentedControlPreview } from "../../../../components/segmented-control-preview";
 import { ButtonPreview } from "../../../../components/button-preview";
 import { CardPreview } from "../../../../components/card-preview";
 import { CheckboxPreview } from "../../../../components/checkbox-preview";
@@ -35,6 +36,10 @@ import { ThemeSelectorPreview } from "../../../../components/theme-selector-prev
 import { PdfViewerPreview } from "../../../../components/pdf-viewer-preview";
 import { CalendarPreview } from "../../../../components/calendar-preview";
 import { CodeBlockPreview } from "../../../../components/code-block-preview";
+import { MarkdownViewerPreview } from "../../../../components/markdown-viewer-preview";
+import { ChartsPreview } from "../../../../components/charts-preview";
+import { HeatMapPreview } from "../../../../components/heat-map-preview";
+import { MetricCardPreview } from "../../../../components/metric-card-preview";
 import { ExampleCode } from "../../../../components/example-code";
 import { PlaceholderPage } from "../../../../components/placeholder-page";
 
@@ -66,6 +71,7 @@ export async function generateMetadata({
     collapsible: "Collapsible",
     label: "Label",
     badge: "Badge",
+    "segmented-control": "Segmented Control",
     "file-upload": "File upload",
     toast: "Toast",
     switch: "Switch",
@@ -80,6 +86,10 @@ export async function generateMetadata({
     "pdf-viewer": "PDF viewer",
     calendar: "Calendar",
     "code-block": "Code block",
+    "markdown-viewer": "Markdown viewer",
+    charts: "Charts",
+    "heat-map": "Heat Map",
+    "metric-card": "Metric card",
   };
   return { title: titles[slug] ?? slug };
 }
@@ -112,6 +122,7 @@ export default async function ComponentPage({
     collapsible: CollapsiblePreview,
     label: LabelPreview,
     badge: BadgePreview,
+    "segmented-control": SegmentedControlPreview,
     "file-upload": FileUploadPreview,
     toast: ToastPreview,
     switch: SwitchPreview,
@@ -126,6 +137,10 @@ export default async function ComponentPage({
     "pdf-viewer": PdfViewerPreview,
     calendar: CalendarPreview,
     "code-block": CodeBlockPreview,
+    "markdown-viewer": MarkdownViewerPreview,
+    charts: ChartsPreview,
+    "heat-map": HeatMapPreview,
+    "metric-card": MetricCardPreview,
   };
   const Preview = previews[slug];
 

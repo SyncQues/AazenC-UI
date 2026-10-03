@@ -27,6 +27,7 @@
     "./collapsible": "./src/collapsible.tsx",
     "./label": "./src/label.tsx",
     "./badge": "./src/badge.tsx",
+    "./segmented-control": "./src/segmented-control.tsx",
     "./file-upload": "./src/file-upload.tsx",
     "./toast": "./src/toast.tsx",
     "./switch": "./src/switch.tsx",
@@ -45,7 +46,15 @@
     "./date-time-picker": "./src/date-time-picker.tsx",
     "./time-picker": "./src/time-picker.tsx",
     "./month-picker": "./src/month-picker.tsx",
-    "./code-block": "./src/code-block.tsx"
+    "./code-block": "./src/code-block.tsx",
+    "./markdown-viewer": "./src/markdown-viewer.tsx",
+    "./chart-container": "./src/chart-container.tsx",
+    "./area-chart": "./src/area-chart.tsx",
+    "./bar-chart": "./src/bar-chart.tsx",
+    "./line-chart": "./src/line-chart.tsx",
+    "./pie-chart": "./src/pie-chart.tsx",
+    "./heat-map": "./src/heat-map.tsx",
+    "./metric-card": "./src/metric-card.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

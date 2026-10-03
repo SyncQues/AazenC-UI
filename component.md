@@ -115,7 +115,7 @@ Add each one under `packages/ui/src`.
 -   Description List
 -   Empty State
 -   Statistic Card
--   Metric Card
+-   Metric Card ✅ (`metric-card`)
 -   Pricing Card
 -   Feature Card
 -   Activity Feed
@@ -131,7 +131,7 @@ Add each one under `packages/ui/src`.
 -   Typing Indicator
 -   AI Loader
 -   Code Block
--   Markdown Renderer
+-   Markdown Renderer ✅ (`markdown-viewer`)
 -   Reasoning Block
 -   Citation Card
 -   Thinking Animation
@@ -205,17 +205,25 @@ Add each one under `packages/ui/src`.
 
 ## 11. Charts
 
--   Area Chart
--   Line Chart
--   Pie Chart
+-   Chart Container ✅ (`chart-container`)
+-   Area Chart ✅ (`area-chart`)
+-   Bar Chart ✅ (`bar-chart`)
+-   Line Chart ✅ (`line-chart`)
+-   Pie Chart ✅ (`pie-chart`)
 -   Donut Chart
 -   Radar Chart
--   Heatmap
+-   Heat Map ✅ (`heat-map`)
 -   Tree Map
 -   Sankey Diagram
 -   Funnel Chart
 -   Gauge
 -   Sparkline
+
+The six chart components share one engine (`chart-utils`) and one set of
+primitives (`chart-primitives`) rather than wrapping a charting library, so a
+chart is themed by the same tokens as the rest of the product, animates on the
+compositor, and is keyboard and screen-reader readable. Donut is a variant of
+Pie, not a separate component.
 
 ## 12. Tables
 

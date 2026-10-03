@@ -23,6 +23,7 @@ const componentSlugs = [
   "collapsible",
   "label",
   "badge",
+  "segmented-control",
   "file-upload",
   "toast",
   "switch",
@@ -37,6 +38,10 @@ const componentSlugs = [
   "pdf-viewer",
   "calendar",
   "code-block",
+  "markdown-viewer",
+  "charts",
+  "heat-map",
+  "metric-card",
 ];
 
 const routes = [

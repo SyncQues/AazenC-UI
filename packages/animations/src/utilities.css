@@ -331,6 +331,247 @@
   }
 }
 
+/* ---------------------------------------------------------------- charts --
+   One utility per reveal, and the per-series stagger arrives as a custom
+   property rather than a second class. `chart-draw-in` + `style={{ "--chart-delay":
+   "135ms" }}` is enough to stage an eight-series chart, so callers never have to
+   hand-write a keyframe with a hardcoded name. */
+
+@utility chart-draw-in {
+  /* pathLength="1" on the element normalises the dash maths: the whole path is
+     one unit long, so the offset is `1` regardless of the real geometry. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: chart-draw calc(var(--duration-enter) * 1.6) var(--ease-panel)
+    var(--chart-delay, 0ms) forwards;
+  /* A line drawn over 700ms while the plot is still settling reads as jank, so
+     the drawn line is masked by a growing clip: the draw runs once, at mount,
+     and data updates fade instead. */
+  will-change: stroke-dashoffset;
+}
+
+@utility chart-reveal-in {
+  animation: chart-reveal var(--duration-enter) var(--ease-panel)
+    var(--chart-delay, 0ms) backwards;
+}
+
+@utility chart-area-in {
+  animation: chart-area-in var(--duration-slow) var(--ease-default)
+    var(--chart-delay, 0ms) backwards;
+}
+
+/* `transform-box: fill-box` makes the scale origin the bar's own box, so a bar
+   grows out of the baseline instead of out of the middle of the plot. Without
+   it every bar scales around the SVG origin and the whole chart lurches. */
+@utility chart-bar-grow {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: chart-bar-grow var(--duration-enter) var(--ease-panel)
+    var(--chart-delay, 0ms) backwards;
+}
+
+@utility chart-bar-grow-x {
+  transform-box: fill-box;
+  transform-origin: left;
+  animation: chart-bar-grow-x var(--duration-enter) var(--ease-panel)
+    var(--chart-delay, 0ms) backwards;
+}
+
+@utility chart-arc-in {
+  animation: chart-arc-in var(--duration-enter) var(--ease-panel)
+    var(--chart-delay, 0ms) backwards;
+  will-change: stroke-dasharray;
+}
+
+@utility chart-point-in {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chart-point-in var(--duration-slow) var(--ease-spring)
+    var(--chart-delay, 0ms) backwards;
+}
+
+@utility chart-point-active {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: chart-point-active var(--duration-normal) var(--ease-spring) forwards;
+}
+
+@utility chart-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0%,
+    color-mix(in oklch, var(--foreground) 6%, transparent) 45%,
+    color-mix(in oklch, var(--foreground) 6%, transparent) 55%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: chart-shimmer 1.6s linear infinite;
+}
+
+/* The state layer entering. Applied to the frame, so a swap between plot,
+   loading, error, and empty is a cross-fade rather than a cut. The parts
+   inside stagger off it through `--chart-delay`, which is why the frame owns
+   this one and the container applies the offsets per child. */
+@utility chart-state-in {
+  animation: chart-state-in var(--duration-enter) var(--ease-panel) backwards;
+}
+
+/* The plot's grid and axes. Kept separate from the series' own draw so the two
+   never multiply: the furniture fades, the line draws, neither is scaled. */
+@utility chart-plot-in {
+  animation: chart-plot-in var(--duration-enter) var(--ease-default)
+    calc(var(--duration-enter) * 0.25) backwards;
+}
+
+/* One heat map cell. `transform-box: fill-box` is what makes `scale` measure
+   against the cell rather than the plot, which is the difference between the
+   matrix resolving in place and the whole grid folding into a corner. */
+@utility heat-cell-in {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: heat-cell-in var(--duration-enter) var(--ease-panel)
+    var(--chart-delay, 0ms) backwards;
+  will-change: transform, opacity;
+}
+
+/* The `color-mix` ramp, read back through a fallback. A custom property accepts
+   almost any token sequence without complaint, so on a browser that cannot
+   parse `color-mix` this one is invalid *at computed-value time* rather than
+   being dropped from the rule — the fallback underneath still applies and the
+   cells come out in the flat base token instead of in nothing. */
+@utility heat-cell {
+  fill: var(--heat-fill, var(--data-1));
+}
+
+@utility heat-cell-missing {
+  fill: var(--muted);
+}
+
+@utility heat-scale-in {
+  transform-origin: left center;
+  animation: heat-scale-in var(--duration-enter) var(--ease-panel) backwards;
+}
+
+/* The pill behind the chosen option. Opacity only — see the keyframes for why
+   transform is off the table here. */
+@utility animate-segmented-mark-in {
+  animation: segmented-mark-in var(--duration-normal) var(--ease-panel) backwards;
+}
+
+/* The options rising into place in order. `backwards` rather than `forwards` on
+   purpose: the keyframes end on `translateY(0) scale(1)`, and a forwards fill
+   would hold that transform over the item's own `active:scale` forever, so every
+   press in the control would silently stop working after mount.
+
+   The selector is `:nth-of-type`, not `:nth-child`, and that is not a style
+   choice. The mark is also a child of the track, so the first option is the
+   track's *second* child — and Tailwind compiles `nth-child(1)` down to
+   `:first-child`, which can never match it. The first option would silently lose
+   its delay while the rest kept theirs. `nth-of-type` counts only the buttons, so
+   the stagger is right wherever the mark is in the DOM. */
+@utility segmented-items-in {
+  & > [data-slot="segmented-control-item"] {
+    animation: segmented-item-in var(--duration-slow) var(--ease-panel) backwards;
+  }
+
+  & > [data-slot="segmented-control-item"]:nth-of-type(1) {
+    animation-delay: calc(var(--duration-stagger) * 1);
+  }
+  & > [data-slot="segmented-control-item"]:nth-of-type(2) {
+    animation-delay: calc(var(--duration-stagger) * 2);
+  }
+  & > [data-slot="segmented-control-item"]:nth-of-type(3) {
+    animation-delay: calc(var(--duration-stagger) * 3);
+  }
+  & > [data-slot="segmented-control-item"]:nth-of-type(4) {
+    animation-delay: calc(var(--duration-stagger) * 4);
+  }
+  & > [data-slot="segmented-control-item"]:nth-of-type(5) {
+    animation-delay: calc(var(--duration-stagger) * 5);
+  }
+  & > [data-slot="segmented-control-item"]:nth-of-type(6) {
+    animation-delay: calc(var(--duration-stagger) * 6);
+  }
+  & > [data-slot="segmented-control-item"]:nth-of-type(7) {
+    animation-delay: calc(var(--duration-stagger) * 7);
+  }
+  & > [data-slot="segmented-control-item"]:nth-of-type(8) {
+    animation-delay: calc(var(--duration-stagger) * 8);
+  }
+}
+
+/* The crosshair and the value dot. Kept as one class so a chart cannot end up
+   with a crosshair and no dot, or a dot that never gets a crosshair. */
+@utility chart-crosshair {
+  transition:
+    transform var(--duration-fast) var(--ease-default),
+    opacity var(--duration-fast) var(--ease-default);
+}
+
+@utility chart-series-line {
+  transition:
+    d var(--duration-slow) var(--ease-default),
+    opacity var(--duration-slow) var(--ease-default);
+}
+
+@utility chart-series-area {
+  transition: opacity var(--duration-slow) var(--ease-default);
+}
+
+/* Bars and slices dim when a legend or hover takes focus away from them, and
+   come back without a transition delay so the pointer never feels stuck. */
+@utility chart-mark {
+  transition:
+    opacity var(--duration-normal) var(--ease-default),
+    transform var(--duration-normal) var(--ease-default);
+}
+
+@utility chart-grid-line {
+  transition: opacity var(--duration-normal) var(--ease-default);
+}
+
+/* --------------------------------------------------------- metric card --
+   `backwards`, never `forwards`: these end on a transform, and a forwards fill
+   would pin it over the tile's `hover:-translate-y-1` and `active:scale`. */
+@utility metric-card-in {
+  animation: metric-card-in var(--duration-enter) var(--ease-panel) backwards;
+}
+
+@utility metric-card-parts-in {
+  & > [data-slot="metric-card-header"],
+  & > [data-slot="metric-card-value"],
+  & > [data-slot="metric-card-trend"],
+  & > [data-slot="metric-card-chart"],
+  & > [data-slot="metric-card-footer"] {
+    animation: metric-card-part-in var(--duration-slow) var(--ease-panel)
+      backwards;
+  }
+
+  /* Beats key off `data-slot`, not `nth-child`: a tile may have no trend, and a
+     positional selector slides every part below the gap up one. */
+  & > [data-slot="metric-card-header"] {
+    animation-delay: 0ms;
+  }
+
+  & > [data-slot="metric-card-value"] {
+    animation-delay: calc(var(--duration-stagger) * 1);
+  }
+
+  & > [data-slot="metric-card-trend"] {
+    animation-delay: calc(var(--duration-stagger) * 2);
+  }
+
+  /* The graph is last: the number is what the tile is for. This beat is also the
+     `--chart-delay` the card hands the slot, so a draw starts as the slot rises. */
+  & > [data-slot="metric-card-chart"] {
+    animation-delay: calc(var(--duration-stagger) * 3);
+  }
+
+  & > [data-slot="metric-card-footer"] {
+    animation-delay: calc(var(--duration-stagger) * 4);
+  }
+}
+
 /*
  * Mobile: kill infinite filter/opacity loops (content-glow, pulse, shimmer).
  * Enter animations stay — they are one-shot and cheap. Desktop unchanged.
@@ -340,7 +581,8 @@
   .animate-mesh-drift,
   .animate-badge-pulse,
   .animate-glass-pulse,
-  .animate-glass-shimmer {
+  .animate-glass-shimmer,
+  .chart-shimmer {
     animation: none !important;
   }
 
@@ -400,9 +642,49 @@
   .animate-mesh-drift,
   .glass-specular-on-mount::after,
   .glass-stagger-rows > tr,
-  .glass-stagger-children > * {
+  .glass-stagger-children > *,
+  .chart-draw-in,
+  .chart-reveal-in,
+  .chart-area-in,
+  .chart-bar-grow,
+  .chart-bar-grow-x,
+  .chart-arc-in,
+  .chart-point-in,
+  .chart-point-active,
+  .chart-state-in,
+  .chart-plot-in,
+  .heat-cell-in,
+  .heat-scale-in,
+  .animate-segmented-mark-in,
+  .segmented-items-in > [data-slot="segmented-control-item"],
+  .metric-card-in,
+  .metric-card-parts-in > [data-slot="metric-card-header"],
+  .metric-card-parts-in > [data-slot="metric-card-value"],
+  .metric-card-parts-in > [data-slot="metric-card-trend"],
+  .metric-card-parts-in > [data-slot="metric-card-chart"],
+  .metric-card-parts-in > [data-slot="metric-card-footer"],
+  .chart-shimmer {
     animation: none !important;
     transition: none !important;
+  }
+
+  /* A drawn line that never draws is a blank chart. When motion is reduced the
+     dash trick is cancelled, so the line has to be handed back its full length
+     or the reader gets an empty plot. Same for the bars — `backwards` fill
+     means an un-run animation would hold them at scale 0, i.e. invisible. */
+  .chart-draw-in {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
+  .chart-bar-grow,
+  .chart-bar-grow-x,
+  .chart-arc-in,
+  .chart-area-in,
+  .chart-point-in,
+  .chart-point-active {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   [data-slot="accordion-content"][data-state="closed"],

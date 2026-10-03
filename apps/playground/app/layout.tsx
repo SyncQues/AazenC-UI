@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import { ThemeProvider } from "@aazenc/themes";
 import { Toaster } from "@aazenc/ui/toast";
 import { TooltipProvider } from "@aazenc/ui/tooltip";
 import { SITE_DESCRIPTION, SITE_NAME } from "../lib/site";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+// Local files, not next/font/google. The preview deploy fetches Google Fonts
+// during `vercel build`, and Turbopack fails that step when the stylesheet
+// URL does not parse as a single font query.
+const inter = localFont({
+  src: "./fonts/inter-latin.woff2",
+  weight: "100 900",
   variable: "--font-inter",
   display: "swap",
 });
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
+const playfair = localFont({
+  src: "./fonts/playfair-display-latin.woff2",
+  weight: "100 900",
   variable: "--font-playfair",
   display: "swap",
 });

@@ -363,3 +363,217 @@
     transform: scale(1.04);
   }
 }
+/* ---------------------------------------------------------------- charts --
+   Chart reveal. Every one of these animates a property the compositor owns —
+   transform, opacity, or an SVG stroke offset — and never width, height, d, or
+   a filter. Animating a path's `d` forces a re-layout of the geometry on every
+   frame, which is why the line charts below draw a clip that grows instead.
+
+   The `--chart-*` custom properties on the element carry the per-series stagger,
+   so one utility animates every series and each one waits its own turn. */
+
+@keyframes chart-draw {
+  from {
+    stroke-dashoffset: var(--chart-draw-offset, 1);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes chart-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Bars grow out of the baseline. `transform-box: fill-box` is set on the
+   utility so `scaleY` measures against the bar, not the whole plot. */
+@keyframes chart-bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes chart-bar-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* The area fill fades up under a line that is already drawing. */
+@keyframes chart-area-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Pie and donut slices sweep. The dash values are set inline per slice; this
+   only supplies the motion between them, so the compositor does the work. */
+@keyframes chart-arc-in {
+  from {
+    stroke-dasharray: 0 1000;
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes chart-point-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The active dot under the pointer. Deliberately springy — this is the one
+   element the eye is already tracking, so a soft arrival reads as responsive. */
+@keyframes chart-point-active {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Loading placeholder for a chart body: a bar of light travelling across the
+   plot in the same direction as the reveal, so a finished chart and a loading
+   chart do not feel like two different components. */
+@keyframes chart-shimmer {
+  from {
+    background-position: -180% 0;
+  }
+  to {
+    background-position: 180% 0;
+  }
+}
+
+/* The state frame settling in. Opacity plus a 1.5% scale, not a slide: a
+   dashed border that travels reads as the card being pushed, whereas one that
+   tightens onto its own rect reads as a frame being drawn around what is
+   already there. Both are cheap, and neither touches layout. */
+@keyframes chart-state-in {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The plot's chrome — grid rules and tick labels — arriving under the series.
+   The series draw themselves, so only the furniture is left with nothing to
+   do; without this the grid and axes pop to full opacity while the line is
+   still a stub, and a chart returning from an error state hard-cuts. */
+@keyframes chart-plot-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* One heat map cell. It grows from its own centre rather than fading, because a
+   cell is a discrete mark the way a bar is: a fade makes thousands of cells
+   dissolve independently and the matrix never resolves into a shape, while a
+   scale-up reads as each square arriving in its place. `transform-box: fill-box`
+   is set on the utility — without it every cell scales around the SVG origin
+   and the whole grid folds into a corner. */
+@keyframes heat-cell-in {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The swatch band of a heat map's scale, growing out of its own left edge. */
+@keyframes heat-scale-in {
+  from {
+    opacity: 0;
+    transform: scaleX(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* ------------------------------------------------ segmented control --
+   The pill behind the chosen option fading in. Opacity only, and that is the
+   whole constraint: the mark's `transform` is what places it, so an animation on
+   transform would fight the inline `translate()` that positions it and send the
+   pill to the corner of the track. Opacity is the one channel it is not using. */
+@keyframes segmented-mark-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The options arriving one after another. Four pixels and 4% of scale: enough to
+   read as a row assembling rather than a row blinking on, small enough that a
+   control sitting above a chart is not visibly performing. */
+@keyframes segmented-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ------------------------------------------------------- metric card --
+   The tile arriving: the card as one plane, its parts a beat apart.
+   Opacity and transform only — the tile reserves its value's line box. */
+@keyframes metric-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes metric-card-part-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
