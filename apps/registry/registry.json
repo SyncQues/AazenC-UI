@@ -510,7 +510,7 @@
       "name": "dropdown-menu",
       "type": "registry:ui",
       "title": "Dropdown menu",
-      "description": "SyncQues dropdown. One menu. Destructive is the only item tone.",
+      "description": "SyncQues dropdown. One menu. Destructive is the only item tone. NOTE: this entry now writes components/ui/menu-variants.ts, which was components/ui/dropdown-menu-variants.ts before the context menu landed. Re-running `aazenc-ui add dropdown-menu` leaves the old file behind and orphaned — delete it, and re-apply any local edit to it by hand.",
       "dependencies": [
         "@radix-ui/react-dropdown-menu",
         "class-variance-authority"

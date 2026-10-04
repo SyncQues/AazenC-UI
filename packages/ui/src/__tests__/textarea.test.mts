@@ -72,10 +72,14 @@ test("only the bottom edge drags", () => {
   assert.match(cn(textareaVariants({ resize: "manual" })), /resize-y/);
   assert.doesNotMatch(cn(textareaVariants({ resize: "manual" })), /resize-x|resize-none/);
 
-  // A growing field owns its own height, so the handle has nothing left to move.
+  // A growing field owns its own height, so the handle has nothing left to move. It
+  // must still scroll: `autoResize` stops the box at `maxRows`, and past that the only
+  // way to the text the user typed or pasted is a scrollbar. `overflow-hidden` takes
+  // that away, stranding everything below the last visible row.
   const none = cn(textareaVariants({ resize: "none" }));
   assert.match(none, /resize-none/);
-  assert.match(none, /overflow-hidden/);
+  assert.doesNotMatch(none, /overflow-hidden/);
+  assert.match(none, /overflow-y-auto/);
 });
 
 test("autoResize is the only thing that takes the handle away", () => {
@@ -120,8 +124,10 @@ test("the counter is the shared one, sitting in the bottom corner", () => {
 });
 
 test("counting reserves a strip below the last line", () => {
-  // The count floats, so the text has to be kept out of its corner by padding, not by luck.
-  assert.match(cn(textareaVariants({ count: true })), /pb-8/);
-  assert.doesNotMatch(cn(textareaVariants({ count: false })), /pb-8/);
+  // The count floats, so the text has to be kept out of its corner by padding, not by
+  // luck. The strip is the shared one the counter is positioned into, rather than a
+  // second number that has to be kept in step with the first.
+  assert.match(cn(textareaVariants({ count: true })), /pb-\[var\(--counter-strip\)\]/);
+  assert.doesNotMatch(cn(textareaVariants({ count: false })), /counter-strip/);
   assert.match(component, /count: withCount/);
 });

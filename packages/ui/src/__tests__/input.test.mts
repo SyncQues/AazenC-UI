@@ -39,17 +39,17 @@ test("the count is opt-in and starts out off", () => {
 
 test("the text is kept clear of the count, and it is measured not guessed", () => {
   // A fixed reserve breaks on any font that is not the one it was guessed against.
-  assert.match(component, /counter\.offsetWidth/);
-  assert.match(component, /COUNTER_INSET_PX/);
+  assert.match(component, /counterClearance\(field, counterRef\.current\)/);
   assert.match(component, /field\.style\.paddingRight/);
-  // No count, no reserve, or the field would be short of text for the rest of its life.
-  assert.match(component, /counter \? `\$\{counter\.offsetWidth/);
-  assert.match(component, /: ""/);
+  // Re-measured when the *used* count changes, not only when the limit does: `9 / 24`
+  // and `10 / 24` are a digit apart, and a reserve taken once per limit slides under
+  // the text the moment the used number crosses into a second digit.
+  assert.match(component, /\}, \[withCount, maxLength, length\]\);/);
 });
 
 test("the icon centres on the field, not on the counter", () => {
   // The counter is out of flow, so this box is the field's own height and the icon stays put.
-  assert.match(component, /data-slot="input-root" className="relative w-full"/);
+  assert.match(component, /cn\("relative w-full", counterRootClass\)/);
   assert.match(component, /absolute top-1\/2 left-4 -translate-y-1\/2/);
   assert.match(component, /if \(!icon && !withCount\) return field;/);
 });

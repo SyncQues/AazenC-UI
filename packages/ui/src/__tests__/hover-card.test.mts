@@ -40,37 +40,79 @@ test("the card takes pointer events, unlike the layer that hosts it", () => {
   assert.match(component, /menu-presence pointer-events-none fixed inset-0/);
 });
 
-test("the open state is held here, not left to Radix's intent handlers", () => {
-  // Measured against react-hover-card@1.1.23: Radix schedules its close when the
-  // pointer leaves the trigger and nothing cancels it on the card, which is
-  // portalled and so shares no pointer region. A controlled `open` is what makes
-  // the content's own pointer enter able to call that close off.
+test("the pointer path is Radix's, timers and all", () => {
+  // This is the load-bearing one. Radix already schedules the open on the trigger's
+  // delay, already cancels that close the moment the pointer reaches the card, and
+  // already declines to close while a pointer is held down inside it or the user has a
+  // selection in it (`react-hover-card@1.1.23` `index.mjs:50-55`, `121`, `195-201`).
+  //
+  // An earlier draft re-implemented that timer to work around a card that closed under
+  // the pointer. That defect does not exist in the pinned version, and re-implementing
+  // the timer silently switched off the selection guard — a card you could not read
+  // inside. Both halves of that are asserted here, because neither shows up in a render.
+  assert.doesNotMatch(
+    component,
+    /onPointerEnter=/,
+    "a trigger pointer-enter handler is the start of a second intent layer",
+  );
+  assert.doesNotMatch(component, /onPointerLeave=/);
+  assert.doesNotMatch(
+    component,
+    /setTimeout/,
+    "the only timers left are Radix's, and they carry the guard",
+  );
+  assert.doesNotMatch(component, /isHoverPointer/, "Radix's `excludeTouch` already does this");
+  // The open state is still ours, because the two behaviours below need it to be.
   assert.match(component, /open=\{open\}/);
   assert.match(component, /onOpenChange=\{setOpen\}/);
+});
+
+test("both delays reach the primitive, or a caller's openDelay means two things", () => {
+  // With the pointer path handed back to Radix, these two props are the only thing
+  // deciding when anything opens. Reading them here without passing them down left the
+  // primitive on its own 700ms/300ms while the component appeared to honour the caller's.
+  assert.match(component, /openDelay=\{openDelay\}/);
+  assert.match(component, /closeDelay=\{closeDelay\}/);
+  assert.match(component, /openDelay = DEFAULT_OPEN_DELAY/);
+  assert.match(component, /closeDelay = DEFAULT_CLOSE_DELAY/);
+});
+
+test("focus opens at once, without waiting out the pointer's delay", () => {
+  // Radix routes focus through `onOpen`, which is the pointer path, so tabbing onto a
+  // trigger otherwise waits 700ms for a card the keyboard user has already asked for.
+  // Preventing is what suppresses the primitive's half: `composeEventHandlers` skips
+  // its argument once the caller's has.
   assert.match(
     component,
-    /onPointerEnter=\{\(event\) => \{[\s\S]*?intent\.onEnter\(true\)[\s\S]*?\}\}\s*onPointerLeave/,
-    "the content's pointer enter must land in the same handler pair as its leave",
+    /onFocus=\{\(event\) => \{[\s\S]*?event\.preventDefault\(\);[\s\S]*?openNow\(\)/,
+  );
+  // And it is the only place we open, so nothing else can re-introduce the delay.
+  assert.equal((component.match(/openNow\(\)/g) ?? []).length, 1);
+});
+
+test("focus leaving the card closes it", () => {
+  // Radix prevents `onFocusOutside` (`index.mjs:186-188`), which is how a card ends up
+  // stranded on screen once the user tabs past it.
+  assert.match(
+    component,
+    /onFocusOutside=\{\(event\) => \{[\s\S]*?event\.preventDefault\(\);[\s\S]*?dismiss\(\)/,
   );
 });
 
-test("every one of our intent handlers suppresses Radix's own half", () => {
-  // `composeEventHandlers` skips the primitive's handler once the caller's has
-  // prevented the event. Without this, two intent layers race and the close the
-  // content cancels is scheduled again by the primitive a few lines later.
-  // Four on the trigger, three on the content: `onFocusOutside` is Radix's own
-  // hook rather than a DOM event and is handled by its own test below.
-  const handlers = component.match(
-    /on(?:PointerEnter|PointerLeave|Focus|Blur)=\{\(event\) => \{[^}]*\}\}/g,
+test("focus moving into the card is not a departure", () => {
+  // The one keyboard case Radix's pointer cancellation does not cover: tab from the
+  // trigger into the card. The trigger's blur would otherwise schedule the close and
+  // nothing would call it off, so the card shut under the focus it had just received.
+  // `relatedTarget` is where the focus is going, and it is available synchronously.
+  assert.match(component, /onBlur=\{\(event\) => \{[\s\S]*?event\.relatedTarget/);
+  assert.match(
+    component,
+    /if \(to && contentRef\.current\?\.contains\(to\)\) event\.preventDefault\(\);/,
   );
-  assert.equal(
-    handlers?.length,
-    7,
-    "the trigger's four and the content's three",
-  );
-  for (const handler of handlers) {
-    assert.match(handler, /event\.preventDefault\(\)/);
-  }
+  // Which needs the card's own node, published by the surface and pulled in the trigger.
+  assert.match(component, /const \{ openNow, contentRef \} = useHoverCardIntent\("HoverCardTrigger"\)/);
+  assert.match(component, /contentRef\.current = content;/);
+  assert.match(component, /contentRef\.current = null;/);
 });
 
 test("the card's own links are back in the tab order", () => {
@@ -112,35 +154,20 @@ test("the attribute is watched, not just stripped once", () => {
   assert.match(component, /new MutationObserver\(restore\)/);
   assert.match(component, /attributeFilter: \["tabindex"\]/);
   assert.match(component, /subtree: true/);
-  assert.match(component, /return \(\) => observer\.disconnect\(\);/);
+  // The observer is torn down, and the node it published with it, so a closed card
+  // leaves no dangling reference for the trigger's blur to ask.
+  assert.match(component, /observer\.disconnect\(\)/);
+  assert.match(component, /contentRef\.current = null;/);
 });
 
-test("tabbing out of the card closes it", () => {
-  // Radix prevents this event, which is what strands a card on screen after the
-  // user has tabbed past it.
+test("the trigger says it needs an href, because a bare anchor is not focusable", () => {
+  // The card opens on focus, and Radix renders the trigger as a real `<a>`. Without an
+  // `href` that is not a tab stop, so the focus path never runs and the card is
+  // hover-only — which the shipped example hides by passing one.
   assert.match(
     component,
-    /onFocusOutside=\{\(event\) => \{[\s\S]*?intent\.onDismiss\(\)/,
+    /Rendered as a real `<a>`, which the keyboard cannot reach without an `href`/,
   );
-});
-
-test("focus opens at once, the pointer goes through the delay", () => {
-  assert.match(
-    component,
-    /onFocus=\{\(event\) => \{[\s\S]*?intent\.onEnter\(true\)/,
-  );
-  assert.match(
-    component,
-    /onPointerEnter=\{\(event\) => \{[\s\S]*?intent\.onEnter\(false\)/,
-  );
-});
-
-test("a touch pointer is not a hover", () => {
-  assert.match(component, /function isHoverPointer/);
-  assert.match(component, /event\.pointerType !== "touch"/);
-  // Both the trigger and the content have to be guarded: a finger resting on the
-  // card itself would otherwise hold it open over the page.
-  assert.equal((component.match(/isHoverPointer\(event\)/g) ?? []).length, 4);
 });
 
 test("the trigger is a real link, so a card about a person is a link", () => {

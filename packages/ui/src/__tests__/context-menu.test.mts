@@ -85,12 +85,29 @@ test("the panel is portalled and the wrapper only exists to carry presence", () 
   assert.doesNotMatch(contextMenuContentClass, /pointer-events-none/);
 });
 
-test("the panel follows the pointer and takes no side or offset", () => {
-  // Radix omits side/align/sideOffset from a context menu on purpose: the pointer
-  // decides where it goes, and an offset would only push it off the cursor.
-  assert.doesNotMatch(component, /sideOffset/);
-  assert.doesNotMatch(component, /align=/);
-  assert.doesNotMatch(component, /side=/);
+test("where the panel goes is Radix's, and this component cannot argue", () => {
+  // The reason there is no `side`, `align` or `sideOffset` here is not that the author
+  // chose to omit them: Radix drops all three from `ContextMenuContentProps` itself
+  // (`@radix-ui/react-context-menu` `index.d.ts:26`), so passing one is a type error.
+  // Asserting the *absence* of the words in our own source proved nothing — it would
+  // pass just as well on an empty file — so this checks the contract it leans on.
+  const radixTypes = readFileSync(
+    new URL(
+      "../../../../node_modules/@radix-ui/react-context-menu/dist/index.d.ts",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const contentProps = /interface ContextMenuContentProps extends ([^{]+)\{/.exec(radixTypes);
+  assert.ok(contentProps, "ContextMenuContentProps has to exist for this to mean anything");
+  for (const omitted of ["side", "sideOffset", "align"]) {
+    assert.ok(
+      contentProps[1].includes(`'${omitted}'`),
+      `Radix no longer omits \`${omitted}\`, so this component's placement is no longer the only one on offer`,
+    );
+  }
+  // And the one that is genuinely ours: the panel is the dropdown's panel.
+  assert.match(component, /className=\{contextMenuContentClass\}/);
 });
 
 test("every part the dropdown exposes, the context menu exposes too", () => {

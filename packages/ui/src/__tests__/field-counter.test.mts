@@ -2,10 +2,30 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { cn } from "../../../utils/src/cn.ts";
-import { counterLimit, inputCounterClass, lengthOf, showsCount, textareaCounterClass } from "../field-counter.ts";
+import {
+  COUNTER_GAP_PX,
+  counterClearance,
+  counterLimit,
+  counterRootClass,
+  inputCounterClass,
+  lengthOf,
+  showsCount,
+  textareaCounterClass,
+  textareaCounterStripClass,
+} from "../field-counter.ts";
 
 const input = readFileSync(new URL("../input.tsx", import.meta.url), "utf8");
 const textarea = readFileSync(new URL("../textarea.tsx", import.meta.url), "utf8");
+const counterSource = readFileSync(new URL("../field-counter.ts", import.meta.url), "utf8");
+
+/** The two measurements `counterClearance` reads, and nothing else. */
+function box(right: number): HTMLElement {
+  return { getBoundingClientRect: () => ({ right }) } as unknown as HTMLElement;
+}
+
+function counter(right: number, offsetWidth: number): HTMLElement {
+  return { offsetWidth, getBoundingClientRect: () => ({ right }) } as unknown as HTMLElement;
+}
 
 test("a value wider than a string is still counted", () => {
   assert.equal(lengthOf("Ada"), 3);
@@ -49,7 +69,7 @@ test("the count floats inside the field and stays out of the way", () => {
     assert.match(value, /pointer-events-none/);
     assert.match(value, /text-muted-foreground/);
     assert.match(value, /tabular-nums/);
-    assert.match(value, /right-4/);
+    assert.match(value, /right-\[var\(--counter-inset\)\]/);
   }
   // One line centres the count; a tall field puts it in the corner.
   assert.match(inputCounterClass, /top-1\/2 -translate-y-1\/2/);
@@ -95,4 +115,42 @@ test("the field keeps its own onChange", () => {
     assert.match(source, /onChange=\{handleChange\}/);
     assert.ok(source.indexOf("onChange={handleChange}") < source.indexOf("{...props}"));
   }
+});
+
+test("the inset and the strip are written down once, on the wrapper both fields inherit", () => {
+  // Two custom properties on the shared wrapper, which the counters position against
+  // and the textarea reserves against — so neither can be moved without the other.
+  assert.match(counterRootClass, /\[--counter-inset:1rem\]/);
+  assert.match(counterRootClass, /\[--counter-strip:2rem\]/);
+  assert.match(inputCounterClass, /var\(--counter-inset\)/);
+  assert.match(textareaCounterClass, /var\(--counter-inset\)/);
+  assert.match(textareaCounterStripClass, /var\(--counter-strip\)/);
+  assert.match(input, /counterRootClass/);
+  assert.match(textarea, /counterRootClass/);
+  // The mirrored constant is exactly what let a `right-3` change land on one side and
+  // miss the other, so it must not come back in any of the three files.
+  assert.doesNotMatch(counterSource, /COUNTER_INSET_PX/);
+  assert.doesNotMatch(input, /COUNTER_INSET_PX/);
+  assert.doesNotMatch(textarea, /COUNTER_INSET_PX/);
+});
+
+test("the clearance is measured off the two boxes, not recomputed from the inset", () => {
+  // A 40px counter sitting 16px in from a field's right edge.
+  assert.equal(counterClearance(box(200), counter(184, 40)), 40 + 16 + COUNTER_GAP_PX);
+  // The same counter positioned 4px in instead: the reserve follows it, which a
+  // constant copied out of a class could not.
+  assert.equal(counterClearance(box(200), counter(196, 40)), 40 + 4 + COUNTER_GAP_PX);
+  // Nothing drawn, nothing reserved.
+  assert.equal(counterClearance(box(200), null), 0);
+  // A counter pushed past the field's own edge still leaves a sane reserve.
+  assert.equal(counterClearance(box(200), counter(210, 40)), 40 + COUNTER_GAP_PX);
+});
+
+test("the reserve grows when the used count gains a digit, which is why it is re-measured", () => {
+  // `9 / 24` against `10 / 24`. `tabular-nums` holds a digit's width steady, so the
+  // wider count is exactly one digit more — and a reserve taken once per limit slides
+  // under the text the moment the used number crosses into a second digit.
+  const at = (offsetWidth: number) => counterClearance(box(200), counter(184, offsetWidth));
+  assert.equal(at(47) - at(40), 7, "one more digit of count, one more digit of padding");
+  assert.ok(at(47) > at(40));
 });

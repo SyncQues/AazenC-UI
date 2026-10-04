@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
   type ComponentProps,
+  type FocusEvent,
   type KeyboardEvent,
   type ReactElement,
   type ReactNode,
@@ -26,6 +27,7 @@ import {
   ITEM_SELECTOR,
   nextFocusIndex,
   selectOnly,
+  tabStopValue,
   toggleSelection,
   type ToggleGroupOrientation,
   type ToggleGroupType,
@@ -158,13 +160,16 @@ function ToggleGroup({
   label,
   className,
   onKeyDown,
+  onFocus,
   children,
   // Pulled out so the rest-spread cannot put a group's own answer and callback
   // on the div: React logs `onValueChange` as an unknown handler, and `value`
-  // on a div is meaningless noise in the DOM.
+  // on a div is meaningless noise in the DOM. `aria-label` comes out too, so the
+  // `label` prop below can win it rather than be overwritten by the spread.
   value: valueProp,
   defaultValue,
   onValueChange,
+  "aria-label": ariaLabel,
   ...props
 }: ToggleGroupProps) {
   const groupRef = useRef<HTMLDivElement>(null);
@@ -178,6 +183,10 @@ function ToggleGroup({
     readValue(defaultValue),
   );
   const selected = isControlled ? readValue(valueProp) : uncontrolled;
+  // Where the focus is, which is not the same question as what is pressed. A multi
+  // group answers with the focus moving and the pressed set standing still, so this
+  // is the only thing that can tell the tab stop where the user actually is.
+  const [focusedValue, setFocusedValue] = useState<string | null>(null);
 
   const commit = (next: string[]) => {
     if (!isControlled) setUncontrolled(next);
@@ -220,30 +229,48 @@ function ToggleGroup({
 
     if (isSingle) {
       const nextValue = next.dataset.value;
-      if (nextValue !== undefined) commit(selectOnly(selected, nextValue));
+      // Only when the answer would actually change: arrowing onto the item that is
+      // already on is focus moving, not an answer, and a callback that fires with the
+      // value it already holds is a render a consumer did not ask for.
+      if (nextValue !== undefined && !selected.includes(nextValue)) {
+        commit(selectOnly(selected, nextValue));
+      }
     }
   }
 
-  // One tab stop for the whole group: the answer takes it, so tabbing away and
-  // back lands on what is currently on rather than on the first item. A group
-  // with nothing pressed yet hands it to the first item that can be reached,
-  // because a disabled item cannot take focus and would strand the group.
+  function handleFocus(event: FocusEvent<HTMLDivElement>) {
+    // React's `onFocus` bubbles, so this sees the focus landing on an item by arrow,
+    // by click, or by tab, without a handler per item.
+    const item = (event.target as HTMLElement).closest<HTMLElement>(ITEM_SELECTOR);
+    const value = item?.dataset.value;
+    if (value !== undefined) setFocusedValue(value);
+  }
+
+  // One tab stop for the whole group, and it follows the focus rather than the answer.
+  // A group with nothing focused and nothing pressed hands it to the first item that can
+  // be reached, because a disabled item cannot take focus and would strand the group.
   const items = Children.toArray(children).filter(isItemNode);
-  const tabStopValue =
-    selected.find((value) => {
-      const item = items.find((child) => child.props.value === value);
-      return item !== undefined && !item.props.disabled;
-    }) ?? items.find((child) => !child.props.disabled)?.props.value;
+  const reachable = items
+    .filter((child) => !child.props.disabled)
+    .map((child) => child.props.value);
+  const stop = tabStopValue({ values: reachable, selected, focused: focusedValue });
 
   return (
     <ToggleGroupContext.Provider
       value={{ variant, size, type, selected, toggle }}
     >
       <div
+        // The caller's attributes land first, so the ones below are this component's
+        // contract rather than something a rest-spread can quietly overwrite — the role
+        // and the name are how a screen reader finds the group at all.
+        {...props}
         ref={groupRef}
         role={isSingle ? "radiogroup" : "toolbar"}
         aria-orientation={orientation}
-        aria-label={label ?? props["aria-label"]}
+        aria-label={label ?? ariaLabel}
+        // Every item disabled leaves the group with nothing to hand the tab stop to, so
+        // the group itself takes it rather than becoming unreachable entirely.
+        tabIndex={stop === undefined ? 0 : undefined}
         data-slot="toggle-group"
         data-variant={variant}
         data-size={size}
@@ -255,18 +282,21 @@ function ToggleGroup({
           handleKeyDown(event);
           onKeyDown?.(event);
         }}
+        onFocus={(event) => {
+          handleFocus(event);
+          onFocus?.(event);
+        }}
         className={cn(
           toggleGroupItemsInClass,
           toggleGroupVariants({ variant }),
           className,
         )}
-        {...props}
       >
         {Children.map(children, (child) => {
           const value = itemValueOf(child);
           if (value === undefined) return child;
           return cloneElement(child as ReactElement<{ tabIndex?: number }>, {
-            tabIndex: value === tabStopValue ? 0 : -1,
+            tabIndex: value === stop ? 0 : -1,
           });
         })}
       </div>
@@ -277,6 +307,9 @@ function ToggleGroup({
 function ToggleGroupItem({
   value,
   disabled,
+  // Renamed on the way in: the group context already owns `type` for the selection mode
+  // below, and the button's own `type` is still a caller-overridable default.
+  type: buttonType = "button",
   className,
   onClick,
   children,
@@ -289,7 +322,11 @@ function ToggleGroupItem({
 
   return (
     <button
-      type="button"
+      // The caller's attributes land first: `data-value` is how the group's roving
+      // focus finds this item, and `aria-checked` is the answer itself. Neither can be
+      // something a rest-spread is allowed to replace.
+      {...props}
+      type={buttonType}
       role={isSingle ? "radio" : undefined}
       aria-checked={isSingle ? pressed : undefined}
       aria-pressed={isSingle ? undefined : pressed}
@@ -308,7 +345,6 @@ function ToggleGroupItem({
         toggleGroupItemVariants({ variant, size, pressed }),
         className,
       )}
-      {...props}
     >
       {children}
     </button>

@@ -6,6 +6,7 @@ import {
   focusIntentFor,
   nextFocusIndex,
   selectOnly,
+  tabStopValue,
   toggleSelection,
 } from "../toggle-group-utils.ts";
 import {
@@ -155,33 +156,123 @@ test("a modified arrow belongs to the browser", () => {
 
 test("a disabled item is skipped, not hidden, and never takes the tab stop", () => {
   assert.match(component, /\.filter\(\(item\) => !item\.disabled\)/);
+  // A natively disabled button cannot be focused, so a group that handed its only tab
+  // stop to one would be unreachable. The rule itself lives in the utils, where it can
+  // be asked directly rather than read.
   assert.match(
     component,
-    /const tabStopValue =\s*selected\.find[\s\S]*?items\.find\(/,
+    /const reachable = items\s*\.filter\(\(child\) => !child\.props\.disabled\)/,
   );
-  // A natively disabled button cannot be focused, so a group that handed its only
-  // tab stop to one would be unreachable.
-  assert.match(
-    component,
-    /const item = items\.find\(\(child\) => child\.props\.value === value\);\s*return item !== undefined && !item\.props\.disabled;/,
+  assert.equal(
+    tabStopValue({ values: ["a", "c"], selected: ["b"], focused: null }),
+    "a",
+    "a disabled item is not a candidate, so the stop skips past the answer",
   );
-  assert.match(
-    component,
-    /\?\? items\.find\(\(child\) => !child\.props\.disabled\)\?\.props\.value;/,
-  );
+  assert.equal(tabStopValue({ values: ["a", "c"], selected: ["a"], focused: null }), "a");
 });
 
 test("one tab stop, and it sits on the answer", () => {
-  assert.match(component, /tabIndex: value === tabStopValue \? 0 : -1/);
+  assert.match(component, /tabIndex: value === stop \? 0 : -1/);
+  // Nothing focused yet is the state a tab into the group arrives in, and the answer
+  // is where the keyboard user last was.
+  assert.equal(tabStopValue({ values: ["a", "b", "c"], selected: ["b"], focused: null }), "b");
+  // With no answer either, the first item that can take focus gets it.
+  assert.equal(tabStopValue({ values: ["a", "b", "c"], selected: [], focused: null }), "a");
+  // An empty group has nothing to hand it to, and says so rather than inventing one.
+  assert.equal(tabStopValue({ values: [], selected: ["a"], focused: null }), undefined);
+});
+
+test("the tab stop follows the focus, which the answer alone cannot answer", () => {
+  // The whole reason the focus is tracked separately: a multi group moves focus on
+  // arrow without selecting, so a stop derived from `selected` would put the user back
+  // on the first pressed item every time they tabbed in, rather than where they left.
+  assert.equal(
+    tabStopValue({
+      values: ["bold", "italic", "underline"],
+      selected: ["bold"],
+      focused: "underline",
+    }),
+    "underline",
+    "focus wins over the answer, because only the focus moved",
+  );
+  // A focus on something that has since gone, or been disabled, falls back rather than
+  // pointing the tab at a button that cannot take it.
+  assert.equal(tabStopValue({ values: ["bold", "italic"], selected: ["bold"], focused: "underline" }), "bold");
+  assert.equal(tabStopValue({ values: ["bold", "italic"], selected: ["italic"], focused: null }), "italic");
+  // The group takes the focus from one bubbling handler, so an arrow, a click and a
+  // tab all land in the same place without a handler per item.
+  assert.match(
+    component,
+    /const \[focusedValue, setFocusedValue\] = useState<string \| null>\(null\)/,
+  );
+  assert.match(component, /closest<HTMLElement>\(ITEM_SELECTOR\)/);
+  assert.match(component, /if \(value !== undefined\) setFocusedValue\(value\);/);
+});
+
+test("a group with nothing focusable takes the tab stop itself", () => {
+  // Every item disabled leaves the stop with nowhere to go, and a group no tab can
+  // reach is a group nobody can find.
+  assert.match(component, /tabIndex=\{stop === undefined \? 0 : undefined\}/);
 });
 
 test("a caller's onKeyDown composes instead of replacing the roving focus", () => {
   // Regression shape from `SegmentedControl`: a rest-spread after an
   // un-destructured `onKeyDown` silently deleted the arrows and Home/End.
-  assert.match(component, /\n {2}onKeyDown,\n {2}children,/);
+  assert.match(component, /\n {2}onKeyDown,\n {2}onFocus,\n {2}children,/);
   assert.match(
     component,
     /onKeyDown=\{\(event\) => \{\s*handleKeyDown\(event\);\s*onKeyDown\?\.\(event\);\s*\}\}/,
+  );
+  // Same for the focus the roving tab stop is derived from.
+  assert.match(
+    component,
+    /onFocus=\{\(event\) => \{\s*handleFocus\(event\);\s*onFocus\?\.\(event\);\s*\}\}/,
+  );
+});
+
+test("the name comes from label, and aria-label is pulled out so it cannot win", () => {
+  // `aria-label` written before `{...props}` meant the spread silently overrode the
+  // `label` prop — the opposite of what the expression said it was doing.
+  assert.match(component, /"aria-label": ariaLabel,/);
+  assert.match(component, /aria-label=\{label \?\? ariaLabel\}/);
+  assert.ok(
+    component.indexOf("aria-label={label ?? ariaLabel}") > component.indexOf("{...props}"),
+    "the resolved name has to land after the spread, not before it",
+  );
+});
+
+test("the group's own contract is written after the rest-spread", () => {
+  // The role and the name are how a screen reader finds the group; `data-value` on an
+  // item is how the roving focus finds the item. None of them can be a caller's to set.
+  for (const owned of [
+    'role={isSingle ? "radiogroup" : "toolbar"}',
+    "aria-label={label ?? ariaLabel}",
+    'data-slot="toggle-group"',
+  ]) {
+    assert.ok(
+      component.indexOf("{...props}") < component.indexOf(owned),
+      `${owned} has to be written after the spread`,
+    );
+  }
+  for (const owned of [
+    'role={isSingle ? "radio" : undefined}',
+    "aria-checked={isSingle ? pressed : undefined}",
+    "data-value={value}",
+  ]) {
+    assert.ok(
+      component.indexOf("{...props}") < component.indexOf(owned),
+      `${owned} has to be written after the spread`,
+    );
+  }
+});
+
+test("an arrow onto the item already answered does not call back", () => {
+  // With `loop`, arrowing past the end can land on the item that is already on. Focus
+  // moving is not an answer, and a callback that fires with the value it already holds
+  // is a render the consumer did not ask for.
+  assert.match(
+    component,
+    /if \(nextValue !== undefined && !selected\.includes\(nextValue\)\)/,
   );
 });
 

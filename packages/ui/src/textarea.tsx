@@ -13,6 +13,7 @@ import {
 import { cn } from "@aazenc/utils";
 import {
   counterLimit,
+  counterRootClass,
   lengthOf,
   showsCount,
   textareaCounterClass,
@@ -64,7 +65,7 @@ function Textarea({
 
   // `field-sizing: content` would do this in CSS, but it needs Chrome 123 and the
   // library supports 111, so the height is measured instead.
-  useLayoutEffect(() => {
+  const measure = useCallback(() => {
     const field = fieldRef.current;
     if (!autoResize || !field) return;
     // Collapse first. Measuring the standing box only ever lets the field grow.
@@ -83,7 +84,34 @@ function Textarea({
       minRows: rows ?? DEFAULT_MIN_ROWS,
       maxRows,
     })}px`;
-  }, [autoResize, maxRows, rows, length, value]);
+  }, [autoResize, maxRows, rows]);
+
+  useLayoutEffect(measure, [measure, length, value]);
+
+  // A ref, so the observer below survives a keystroke instead of being torn down and
+  // rebuilt on one. The measure it calls is always the one from the latest render.
+  const measureRef = useRef(measure);
+  useLayoutEffect(() => {
+    measureRef.current = measure;
+  }, [measure]);
+
+  // The field is `text-base` under `md:` and `text-sm` above it, so crossing the
+  // breakpoint changes the row height every measurement is taken against. Watching
+  // width only: the height write above is this observer's own output, and letting it
+  // back in would measure against a box it had just resized.
+  useLayoutEffect(() => {
+    const field = fieldRef.current;
+    if (!autoResize || !field || typeof ResizeObserver === "undefined") return;
+    let lastWidth = field.clientWidth;
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+      if (width === undefined || Math.abs(width - lastWidth) < 0.5) return;
+      lastWidth = width;
+      measureRef.current();
+    });
+    observer.observe(field);
+    return () => observer.disconnect();
+  }, [autoResize]);
 
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLTextAreaElement>) => {
@@ -118,7 +146,7 @@ function Textarea({
 
   // The counter floats over the padding the count axis reserved, so it never sits on the text.
   return (
-    <div data-slot="textarea-root" className="relative">
+    <div data-slot="textarea-root" className={cn("relative", counterRootClass)}>
       {field}
       <p
         id={counterId}

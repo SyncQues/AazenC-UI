@@ -15,7 +15,24 @@ test("a toggle is a button that says whether it is down", () => {
   assert.match(component, /aria-pressed=\{pressed\}/);
   assert.match(component, /data-state=\{pressed \? "on" : "off"\}/);
   assert.match(component, /data-slot="toggle"/);
-  assert.match(component, /type="button"/);
+  // `type` is destructured to a default rather than pinned, so a toggle inside a form
+  // can still ask to submit, and is written after the spread so the ask survives.
+  assert.match(component, /\n {2}type = "button",/);
+  assert.match(component, /type=\{type\}/);
+});
+
+test("the outward contract is written after the rest-spread, not before it", () => {
+  // `aria-pressed` and `data-state` are how the toggle describes itself, and the
+  // pressed class keys off the second one. Spread after them and a consumer could
+  // hand the component an `aria-pressed` that contradicts its own state.
+  assert.ok(
+    component.indexOf("{...props}") < component.indexOf("aria-pressed={pressed}"),
+    "the spread has to land first",
+  );
+  assert.ok(
+    component.indexOf("{...props}") < component.indexOf('data-state={pressed ? "on" : "off"}'),
+    "or a caller's attribute could retype the button",
+  );
 });
 
 test("there is no value, defaultValue or onChange on the DOM node", () => {

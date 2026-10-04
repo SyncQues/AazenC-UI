@@ -34,19 +34,44 @@ export function showsCount({
 }
 
 /**
+ * The geometry, written down once and inherited by both the field and the counter, which
+ * are siblings under the wrapper this lands on. Custom properties inherit, so the strip a
+ * Textarea reserves and the inset both counters sit at read the same number — which a
+ * mirrored constant in this file could not promise.
+ */
+export const counterRootClass = "[--counter-inset:1rem] [--counter-strip:2rem]";
+
+/**
  * The count sits inside the field, floating over the chrome while the text is kept
  * clear of it. `pointer-events-none` leaves the whole box clickable and selectable.
  */
 const COUNTER_BASE = "pointer-events-none absolute text-xs text-muted-foreground tabular-nums";
 
 /** On an input's single line, at the right end of the pill. */
-export const inputCounterClass = `${COUNTER_BASE} right-4 top-1/2 -translate-y-1/2`;
+export const inputCounterClass = `${COUNTER_BASE} right-[var(--counter-inset)] top-1/2 -translate-y-1/2`;
 
 /** In a textarea's bottom corner, in the padding strip the count axis reserves. */
-export const textareaCounterClass = `${COUNTER_BASE} bottom-3 right-4`;
+export const textareaCounterClass = `${COUNTER_BASE} bottom-3 right-[var(--counter-inset)]`;
 
-/** How far the counters keep from the right edge. Has to agree with the `right-4` above. */
-export const COUNTER_INSET_PX = 16;
+/** The padding strip a Textarea keeps clear below its last line for the count to sit in. */
+export const textareaCounterStripClass = "pb-[var(--counter-strip)]";
 
-/** Gap between the text and the count, so the two never touch. */
+/**
+ * Gap between the text and the count, so the two never touch. Deliberately a plain
+ * number: unlike the inset above it is not a class anywhere, so it has no second
+ * definition to drift from.
+ */
 export const COUNTER_GAP_PX = 8;
+
+/**
+ * How much padding-right keeps a field's own text clear of its counter.
+ *
+ * Measured off the two boxes rather than recomputed from the inset, so it is right
+ * whatever positions the counter — and it has to be re-measured as the count itself
+ * changes width, which it does every time the used number gains a digit.
+ */
+export function counterClearance(field: HTMLElement, counter: HTMLElement | null): number {
+  if (!counter) return 0;
+  const inset = field.getBoundingClientRect().right - counter.getBoundingClientRect().right;
+  return counter.offsetWidth + Math.max(0, inset) + COUNTER_GAP_PX;
+}

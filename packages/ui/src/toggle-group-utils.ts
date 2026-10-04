@@ -17,6 +17,11 @@ export type FocusIntent = "first" | "last" | "prev" | "next";
  * pressing them leaves the key to whatever the item itself does. `rtl` swaps the
  * two horizontal arrows, which is the only place the writing direction changes
  * what a key means.
+ *
+ * `PageUp` and `PageDown` are answered alongside `Home` and `End`. Neither
+ * pattern this group implements — toolbar or radiogroup — gives them a meaning of
+ * their own, so they are treated as a jump to the two ends rather than ignored:
+ * a keypress that moves the focus is never worse than one the group swallows.
  */
 export function focusIntentFor(
   key: string,
@@ -103,4 +108,30 @@ export function selectOnly(
   value: string,
 ): string[] {
   return selected.includes(value) ? [...selected] : [value];
+}
+
+/**
+ * Which item holds the group's one tab stop, or `undefined` when nothing can take it.
+ *
+ * `values` is the items that can actually hold focus, in order — a disabled one cannot,
+ * and a stop resting on one would strand the group.
+ *
+ * The focus wins over the answer, and that ordering is the whole point: a multi group
+ * deliberately does not select on arrow, so a stop derived from `selected` alone would
+ * put the user back on the first pressed item every time they tabbed in, rather than on
+ * the one they left. With nothing focused yet — the state a tab into the group arrives
+ * in — the answer takes it, because that is where the keyboard user last was.
+ */
+export function tabStopValue({
+  values,
+  selected,
+  focused,
+}: {
+  values: readonly string[];
+  selected: readonly string[];
+  focused: string | null;
+}): string | undefined {
+  const reachable = new Set(values);
+  if (focused !== null && reachable.has(focused)) return focused;
+  return selected.find((value) => reachable.has(value)) ?? values[0];
 }

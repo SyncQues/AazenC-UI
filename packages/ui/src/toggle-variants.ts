@@ -10,6 +10,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 /**
  * `scale` is in the transition list because that is the property the press is
  * animated on; the `active` override is what makes it instant.
+ *
+ * The keyframe starts deeper (0.88) than the held scale (0.95) on purpose. The
+ * release is the moment the `:active` value stops applying and
+ * `animate-toggle-press-in` takes the same property over, so it picks up from
+ * where the keyframe says rather than from where the class left off — one
+ * continuous squeeze and release instead of a jump back out to full size.
  */
 export const toggleControlClass = [
   "animate-toggle-press-in",

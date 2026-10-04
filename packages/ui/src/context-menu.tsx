@@ -85,7 +85,14 @@ function ContextMenuSub(props: ContextMenuSubProps) {
   return <ContextMenuPrimitive.Sub data-slot="context-menu-sub" {...props} />;
 }
 
-/** Radix strips the offset here, because a context menu follows the pointer. */
+/**
+ * A context menu follows the pointer, so Radix settles where it goes and does not let
+ * it be argued with: `side`, `align` and `sideOffset` are omitted from
+ * `ContextMenuContentProps` (`@radix-ui/react-context-menu` `index.d.ts:26`), which is
+ * why there is nothing to pass here. Its own runtime default is `align: "start"`,
+ * `sideOffset: 2`, and that 2px is the whole difference from a dropdown — the panels are
+ * otherwise the same class, which is the point of `menu-variants`.
+ */
 function ContextMenuContent(props: ContextMenuContentProps) {
   return (
     <ContextMenuPrimitive.Portal>

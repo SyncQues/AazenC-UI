@@ -13,9 +13,9 @@ import {
 } from "react";
 import { cn } from "@aazenc/utils";
 import {
-  COUNTER_GAP_PX,
-  COUNTER_INSET_PX,
+  counterClearance,
   counterLimit,
+  counterRootClass,
   inputCounterClass,
   lengthOf,
   showsCount,
@@ -59,14 +59,13 @@ function Input({
   const limit = counterLimit(maxLength);
   const withCount = showsCount({ showCount, maxLength, type });
 
-  // A fixed reserve guesses at the widest count. `tabular-nums` means the width only
-  // moves when the limit's digit count does, so one measure per limit is enough.
+  // Re-measured whenever the count could have changed width, which is every time the
+  // *used* number gains a digit and not only when the limit's does.
   useLayoutEffect(() => {
     const field = fieldRef.current;
     if (!field) return;
-    const counter = counterRef.current;
-    field.style.paddingRight = counter ? `${counter.offsetWidth + COUNTER_INSET_PX + COUNTER_GAP_PX}px` : "";
-  }, [withCount, maxLength]);
+    field.style.paddingRight = `${counterClearance(field, counterRef.current)}px`;
+  }, [withCount, maxLength, length]);
 
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -99,7 +98,7 @@ function Input({
 
   // The counter floats, so this box is the field's own height and the icon still centres on it.
   return (
-    <div data-slot="input-root" className="relative w-full">
+    <div data-slot="input-root" className={cn("relative w-full", counterRootClass)}>
       {icon ? (
         <span
           data-slot="input-icon"

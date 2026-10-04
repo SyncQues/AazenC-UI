@@ -34,6 +34,9 @@ function Toggle({
   onPressedChange,
   variant = "default",
   size = "default",
+  // Pulled out rather than left in the spread so a form can still ask for a submit
+  // toggle, while the attributes below stay this component's to decide.
+  type = "button",
   className,
   onClick,
   children,
@@ -47,7 +50,11 @@ function Toggle({
 
   return (
     <button
-      type="button"
+      // The caller's attributes land first: `aria-pressed` and `data-state` are the
+      // toggle's whole outward contract, and a rest-spread that could replace either
+      // would be able to describe a button as something it is not.
+      {...props}
+      type={type}
       aria-pressed={pressed}
       data-slot="toggle"
       data-state={pressed ? "on" : "off"}
@@ -61,7 +68,6 @@ function Toggle({
         onPressedChange?.(next);
       }}
       className={cn(toggleVariants({ variant, size, pressed }), className)}
-      {...props}
     >
       {children}
     </button>

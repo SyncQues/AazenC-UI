@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
+import { textareaCounterStripClass } from "./field-counter";
 
 /**
  * SyncQues field, multi-line.
@@ -18,11 +19,16 @@ export const textareaVariants = cva(
       },
       resize: {
         manual: "resize-y",
-        none: "resize-none overflow-hidden",
+        // The handle goes, the scrolling stays: `autoResize` stops the box growing at
+        // `maxRows`, so past that the excess is only reachable by scrolling. Clipping it
+        // instead would strand whatever the user typed or pasted below the last row.
+        none: "resize-none overflow-y-auto",
       },
       count: {
-        // The count lives in this strip below the last line, so counting costs a line of text.
-        true: "min-h-24 pb-8",
+        // The count lives in this strip below the last line, so counting costs a line of
+        // text. The strip is the shared one, so the field reserves exactly what the
+        // counter is positioned into.
+        true: `min-h-24 ${textareaCounterStripClass}`,
         false: "",
       },
     },

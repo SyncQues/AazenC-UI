@@ -3,14 +3,14 @@
 import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
   type ComponentProps,
-  type FocusEvent,
-  type PointerEvent,
   type ReactNode,
+  type RefObject,
 } from "react";
 import { cn } from "@aazenc/utils";
 import { hoverCardContentClass } from "./hover-card-variants";
@@ -20,13 +20,12 @@ const DEFAULT_OPEN_DELAY = 700;
 const DEFAULT_CLOSE_DELAY = 300;
 
 type HoverCardIntent = {
-  open: boolean;
-  /** The pointer or the focus arrived somewhere that wants the card. */
-  onEnter: (immediate: boolean) => void;
-  /** Whatever wanted the card has gone. */
-  onLeave: () => void;
-  /** Escape, or a pointer down outside. */
-  onDismiss: () => void;
+  /** Focus is a request in its own right: open without waiting out `openDelay`. */
+  openNow: () => void;
+  /** Escape, a pointer down outside, or the focus leaving the card. */
+  dismiss: () => void;
+  /** The card's own node, so the trigger can tell a departure from a move into it. */
+  contentRef: RefObject<HTMLElement | null>;
 };
 
 const HoverCardIntentContext = createContext<HoverCardIntent | null>(null);
@@ -37,12 +36,6 @@ function useHoverCardIntent(part: string): HoverCardIntent {
     throw new Error(`<${part}> must be rendered inside <HoverCard>.`);
   }
   return intent;
-}
-
-/** A touch pointer has no hover, so a finger resting on a trigger opens nothing. */
-function isHoverPointer(event: PointerEvent | FocusEvent): boolean {
-  if (!("pointerType" in event)) return true;
-  return event.pointerType !== "touch";
 }
 
 export type HoverCardProps = Omit<
@@ -66,6 +59,10 @@ export interface HoverCardTriggerProps extends Omit<
    * Kept, unlike `PopoverTrigger`. The trigger is almost always something the
    * trigger cannot size for itself — an avatar, a name, a link in a sentence —
    * so there is always a size or a focus ring to merge in from outside.
+   *
+   * Rendered as a real `<a>`, which the keyboard cannot reach without an `href`.
+   * Pass one, or `asChild` onto something already focusable, or the card is
+   * hover-only and the focus path below never runs.
    */
   className?: string;
 }
@@ -82,13 +79,26 @@ export interface HoverCardContentProps extends Omit<
 /**
  * A preview panel that opens on hover and on focus.
  *
- * The intent layer is ours, not Radix's. Radix schedules its close when the
- * pointer leaves the *trigger* and never cancels it on the *card*, which is
- * portalled and so shares no pointer region: measured against
- * `react-hover-card@1.1.23`, a card closes 300ms after the pointer leaves the
- * trigger even while the pointer is resting on it. A card you cannot move onto
- * cannot hold a link, which is the only reason to build one. Radix keeps the
- * parts that are hard — portalling, placement, dismissal, presence.
+ * The open state is held here so two of Radix's defaults can be corrected. The pointer
+ * path is left entirely to Radix, because that is the part that was already right.
+ *
+ * What Radix does, and this file deliberately does not touch: it schedules the open on
+ * the trigger's `openDelay` and the close on its `closeDelay`, cancels that close as
+ * soon as the pointer reaches the card, and declines to close at all while a pointer is
+ * held down inside the card or the user has a selection in it — see
+ * `react-hover-card@1.1.23` `index.mjs:50-55`, `121`, `195-201`. Re-implementing that
+ * timer to fix a card that closed under the pointer would be re-implementing a defect
+ * this version does not have, and would have cost the selection guard with it: Radix
+ * holds a card open for as long as you are reading inside it, which is the whole reason
+ * a card can hold a link.
+ *
+ * What this file does change, both measured against that same version:
+ *
+ *  - **focus opens at once.** Radix routes focus through the pointer's `openDelay`
+ *    (`index.mjs:93`), so tabbing onto a trigger waits 700ms for a card the keyboard
+ *    user has already asked for.
+ *  - **focus leaving the card closes it.** Radix prevents `onFocusOutside`
+ *    (`index.mjs:186-188`), which strands a card on screen once the user tabs past it.
  */
 function HoverCard({
   openDelay = DEFAULT_OPEN_DELAY,
@@ -102,59 +112,33 @@ function HoverCard({
   // Latched, as `SegmentedControl` latches: a parent supplying `open` with its
   // data must not flip the card controlled and discard what the user found.
   const [isControlled] = useState(openProp !== undefined);
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(
-    defaultOpen ?? false,
-  );
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen ?? false);
   const open = isControlled ? (openProp ?? false) : uncontrolledOpen;
+  const contentRef = useRef<HTMLElement | null>(null);
 
-  const openTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (!isControlled) setUncontrolledOpen(next);
+      onOpenChange?.(next);
+    },
+    [isControlled, onOpenChange],
   );
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
 
-  const clearTimers = () => {
-    clearTimeout(openTimer.current);
-    clearTimeout(closeTimer.current);
-  };
+  const openNow = useCallback(() => setOpen(true), [setOpen]);
+  const dismiss = useCallback(() => setOpen(false), [setOpen]);
 
-  const setOpen = (next: boolean) => {
-    if (!isControlled) setUncontrolledOpen(next);
-    onOpenChange?.(next);
-  };
-
-  useEffect(() => clearTimers, []);
-
-  const intent: HoverCardIntent = {
-    open,
-    onEnter: (immediate) => {
-      clearTimeout(closeTimer.current);
-      if (immediate || openDelay === 0) {
-        clearTimeout(openTimer.current);
-        setOpen(true);
-        return;
-      }
-      clearTimeout(openTimer.current);
-      // Arriving is not the same as being wanted: a pointer sweeping a row of
-      // avatars has to cross the delay or the row strobes.
-      openTimer.current = setTimeout(() => setOpen(true), openDelay);
-    },
-    onLeave: () => {
-      clearTimeout(openTimer.current);
-      closeTimer.current = setTimeout(() => setOpen(false), closeDelay);
-    },
-    onDismiss: () => {
-      clearTimers();
-      setOpen(false);
-    },
-  };
+  const intent: HoverCardIntent = { openNow, dismiss, contentRef };
 
   return (
     <HoverCardIntentContext.Provider value={intent}>
       <HoverCardPrimitive.Root
         data-slot="hover-card"
         open={open}
+        // Both delays belong to Radix, which owns the only timers left. Handing them
+        // to the primitive rather than reading them here is what keeps a caller's
+        // `openDelay` from meaning one thing on the pointer path and another on ours.
+        openDelay={openDelay}
+        closeDelay={closeDelay}
         onOpenChange={setOpen}
         {...props}
       >
@@ -168,42 +152,32 @@ function HoverCard({
 function HoverCardTrigger({
   asChild = false,
   className,
-  onPointerEnter,
-  onPointerLeave,
   onFocus,
   onBlur,
   ...props
 }: HoverCardTriggerProps) {
-  const intent = useHoverCardIntent("HoverCardTrigger");
+  const { openNow, contentRef } = useHoverCardIntent("HoverCardTrigger");
 
   return (
     <HoverCardPrimitive.Trigger
       data-slot="hover-card-trigger"
       asChild={asChild}
       className={className}
-      onPointerEnter={(event) => {
+      onFocus={(event) => {
         // Preventing is how a handler suppresses the primitive's own half:
         // `composeEventHandlers` skips the second argument once the first has.
-        // Otherwise Radix's timers race ours and the fix above is undone.
-        event.preventDefault();
-        onPointerEnter?.(event);
-        if (isHoverPointer(event)) intent.onEnter(false);
-      }}
-      onPointerLeave={(event) => {
-        event.preventDefault();
-        onPointerLeave?.(event);
-        if (isHoverPointer(event)) intent.onLeave();
-      }}
-      onFocus={(event) => {
+        // Otherwise Radix opens on its own `openDelay` and this is a 700ms wait.
         event.preventDefault();
         onFocus?.(event);
-        // No delay on focus: tabbing onto a trigger is already the request.
-        intent.onEnter(true);
+        openNow();
       }}
       onBlur={(event) => {
-        event.preventDefault();
+        const to = event.relatedTarget as Node | null;
+        // Focus moving into the card is intent, not a departure. Radix cancels a
+        // scheduled close on the card's *pointer* enter, so a card opened by keyboard
+        // would otherwise be closed out from under the focus it had just received.
+        if (to && contentRef.current?.contains(to)) event.preventDefault();
         onBlur?.(event);
-        intent.onLeave();
       }}
       {...props}
     />
@@ -229,15 +203,12 @@ function HoverCardContent(props: HoverCardContentProps) {
 function HoverCardSurface({
   sideOffset = 8,
   align = "center",
-  onPointerEnter,
-  onPointerLeave,
-  onFocus,
   onFocusOutside,
   className,
   children,
   ...props
 }: HoverCardContentProps) {
-  const intent = useHoverCardIntent("HoverCardSurface");
+  const { dismiss, contentRef } = useHoverCardIntent("HoverCardSurface");
   // The ref is on the wrapper this file renders. Radix's `Content` takes a
   // forwarded ref and never attaches it, so a ref on it stays null for good.
   const layerRef = useRef<HTMLDivElement | null>(null);
@@ -255,6 +226,7 @@ function HoverCardSurface({
       '[data-slot="hover-card-content"]',
     );
     if (!content) return;
+    contentRef.current = content;
     const restore = () =>
       content
         .querySelectorAll<HTMLElement>('[tabindex="-1"]')
@@ -269,8 +241,11 @@ function HoverCardSurface({
       attributeFilter: ["tabindex"],
       subtree: true,
     });
-    return () => observer.disconnect();
-  }, []);
+    return () => {
+      observer.disconnect();
+      contentRef.current = null;
+    };
+  }, [contentRef]);
 
   return (
     <div
@@ -282,30 +257,13 @@ function HoverCardSurface({
         data-presence=""
         align={align}
         sideOffset={sideOffset}
-        onPointerEnter={(event) => {
-          // The point of the component: the pointer is on the card, so the
-          // close the trigger scheduled on its way out is called off.
-          event.preventDefault();
-          onPointerEnter?.(event);
-          if (isHoverPointer(event)) intent.onEnter(true);
-        }}
-        onPointerLeave={(event) => {
-          event.preventDefault();
-          onPointerLeave?.(event);
-          if (isHoverPointer(event)) intent.onLeave();
-        }}
-        onFocus={(event) => {
-          event.preventDefault();
-          onFocus?.(event);
-          // Tabbing into the card is intent too, or it closes under the focus.
-          intent.onEnter(true);
-        }}
         onFocusOutside={(event) => {
+          // Preventing is how a handler suppresses the primitive's own half.
+          // Radix uses this one to *keep* a card open once the focus has left, which
+          // is how a card ends up stranded on screen after the user tabs past it.
           event.preventDefault();
           onFocusOutside?.(event);
-          // Radix prevents this event, which is what strands a card on screen
-          // after the user tabs past it. Skipping its half, close instead.
-          intent.onDismiss();
+          dismiss();
         }}
         className={cn(hoverCardContentClass, className)}
         {...props}
