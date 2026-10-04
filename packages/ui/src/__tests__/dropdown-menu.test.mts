@@ -4,7 +4,7 @@ import { cn } from "../../../utils/src/cn.ts";
 import {
   dropdownMenuContentClass,
   dropdownMenuItemVariants,
-} from "../dropdown-menu-variants.ts";
+} from "../menu-variants.ts";
 
 test("dropdown is one panel", () => {
   assert.match(dropdownMenuContentClass, /menu-motion/);

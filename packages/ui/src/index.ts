@@ -230,9 +230,53 @@ export type {
   DropdownMenuSubTriggerProps,
   DropdownMenuTriggerProps,
 } from "./dropdown-menu";
-export type { DropdownMenuTone } from "./dropdown-menu-variants";
+export type { DropdownMenuTone } from "./menu-variants";
+export {
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuGroup,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuRadioGroup,
+  ContextMenuRadioItem,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+  contextMenuItemVariants,
+} from "./context-menu";
+export type {
+  ContextMenuCheckboxItemProps,
+  ContextMenuContentProps,
+  ContextMenuGroupProps,
+  ContextMenuItemProps,
+  ContextMenuLabelProps,
+  ContextMenuProps,
+  ContextMenuRadioGroupProps,
+  ContextMenuRadioItemProps,
+  ContextMenuSeparatorProps,
+  ContextMenuShortcutProps,
+  ContextMenuSubContentProps,
+  ContextMenuSubProps,
+  ContextMenuSubTriggerProps,
+  ContextMenuTriggerProps,
+} from "./context-menu";
+export type { ContextMenuTone } from "./menu-variants";
+export { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage } from "./breadcrumb";
+export type {
+  BreadcrumbItemProps,
+  BreadcrumbLinkProps,
+  BreadcrumbListProps,
+  BreadcrumbPageProps,
+  BreadcrumbProps,
+} from "./breadcrumb";
 export { Input, inputVariants } from "./input";
 export type { InputProps } from "./input";
+export { Textarea, textareaVariants } from "./textarea";
+export type { TextareaProps, TextareaResize, TextareaShape, TextareaVariantProps } from "./textarea";
 export {
   Select,
   SelectContent,
@@ -514,3 +558,30 @@ export type {
  *  on its own: a container footer is the one place most charts put it. */
 export { ChartLegend } from "./chart-primitives";
 export type { ChartLegendItem } from "./chart-primitives";
+export { HoverCard, HoverCardContent, HoverCardTrigger } from "./hover-card";
+export type {
+  HoverCardContentProps,
+  HoverCardProps,
+  HoverCardTriggerProps,
+} from "./hover-card";
+export { hoverCardContentClass } from "./hover-card-variants";
+export { Toggle } from "./toggle";
+export type { ToggleProps } from "./toggle";
+export { toggleVariants } from "./toggle-variants";
+export type {
+  ToggleSize,
+  ToggleVariant,
+  ToggleVariantProps,
+} from "./toggle-variants";
+export { ToggleGroup, ToggleGroupItem } from "./toggle-group";
+export type { ToggleGroupItemProps, ToggleGroupProps } from "./toggle-group";
+export {
+  toggleGroupItemVariants,
+  toggleGroupVariants,
+} from "./toggle-group-variants";
+export type {
+  ToggleGroupSize,
+  ToggleGroupVariant,
+  ToggleGroupVariantProps,
+} from "./toggle-group-variants";
+export type { ToggleGroupOrientation, ToggleGroupType } from "./toggle-group-utils";

@@ -83,9 +83,25 @@ const components = [
     description: "SyncQues dropdown. One menu. Destructive is the only tone.",
   },
   {
+    href: "/components/context-menu",
+    name: "Context Menu",
+    description: "SyncQues context menu. The same panel as the dropdown, opened on right-click.",
+  },
+  {
+    href: "/components/breadcrumb",
+    name: "Breadcrumb",
+    description: "SyncQues breadcrumb. A labelled nav around a list, with the separator built in.",
+  },
+  {
     href: "/components/input",
     name: "Input",
-    description: "SyncQues input. One field for every native type.",
+    description: "SyncQues input. One field for every native type, with a count against a limit.",
+  },
+  {
+    href: "/components/textarea",
+    name: "Textarea",
+    description:
+      "The input field with a shape. Rounded or pill, grows with the text or takes a count against a limit. No class name.",
   },
   {
     href: "/components/select",
@@ -149,6 +165,24 @@ const components = [
     href: "/components/popover",
     name: "Popover",
     description: "SyncQues popover. One panel, same radius as the menus.",
+  },
+  {
+    href: "/components/hover-card",
+    name: "Hover card",
+    description:
+      "SyncQues hover card. A preview that opens on hover and focus, and stays open under the pointer.",
+  },
+  {
+    href: "/components/toggle-group",
+    name: "Toggle group",
+    description:
+      "SyncQues toggle group. Any number of on/off answers held at once, with arrow keys.",
+  },
+  {
+    href: "/components/toggle",
+    name: "Toggle",
+    description:
+      "SyncQues toggle. One button that stays down, pill shaped and springing as it turns on.",
   },
   {
     href: "/components/avatar",
