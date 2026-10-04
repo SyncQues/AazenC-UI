@@ -8,8 +8,12 @@
 @import "@aazenc/themes/mono.css";
 @import "@aazenc/animations/globals.css";
 
-/* Class mode, matching SyncQues. ThemeProvider toggles `.dark` on <html>. */
-@custom-variant dark (&:is(.dark *));
+/* Class mode, matching SyncQues. ThemeProvider toggles `.dark` on <html>.
+   `:where` keeps the variant at zero extra specificity, so a `data-[state=…]`
+   utility still wins over a `dark:` one on the same property. With `:is`, both
+   landed on the same specificity and document order decided — a `dark:` track
+   fill silently covered the checked primary. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @source "../../../packages/ui/src/**/*.{ts,tsx}";
 @source "../../../apps/playground/**/*.{ts,tsx}";
