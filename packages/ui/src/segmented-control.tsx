@@ -19,8 +19,11 @@ import {
   type SegmentedControlSize,
   type SegmentedControlVariant,
 } from "./segmented-control-variants";
-
-const ITEM_SELECTOR = "[data-slot=segmented-control-item]";
+import {
+  measureMark,
+  SEGMENTED_ITEM_SELECTOR as ITEM_SELECTOR,
+  type MarkBox,
+} from "./segmented-control-measure";
 
 const NAVIGATION_KEYS = new Set([
   "ArrowRight",
@@ -60,37 +63,6 @@ export interface SegmentedControlProps<T extends string = string>
   size?: SegmentedControlSize;
   /** Names the group for a reader. Falls back to `aria-label` on the root. */
   label?: string;
-}
-
-type MarkBox = { x: number; y: number; w: number; h: number };
-
-/**
- * The mark's rect in the track's own coordinate space.
- *
- * `getBoundingClientRect` on the track returns the *border* box, but an absolutely
- * positioned mark is placed against the *padding* box, so the border width has to
- * come off the difference or a 1px track border slides the whole mark 1px off
- * its label. Reading the border off the computed style is the explicit version of
- * that correction — the same thing `tabs` gets slightly wrong and nobody has
- * noticed because the error is a pixel.
- *
- * Rounded on purpose: a sub-pixel rect makes the mark a hair narrower than the ink
- * it is supposed to be sitting behind.
- */
-function measureMark(track: HTMLElement): MarkBox | null {
-  const active = track.querySelector<HTMLElement>(`${ITEM_SELECTOR}[data-selected="true"]`);
-  if (!active) return null;
-  const style = getComputedStyle(track);
-  const borderLeft = Number.parseFloat(style.borderLeftWidth) || 0;
-  const borderTop = Number.parseFloat(style.borderTopWidth) || 0;
-  const trackRect = track.getBoundingClientRect();
-  const rect = active.getBoundingClientRect();
-  return {
-    x: Math.round(rect.left - trackRect.left - borderLeft),
-    y: Math.round(rect.top - trackRect.top - borderTop),
-    w: Math.round(rect.width),
-    h: Math.round(rect.height),
-  };
 }
 
 function sameBox(a: MarkBox | null, b: MarkBox | null): boolean {

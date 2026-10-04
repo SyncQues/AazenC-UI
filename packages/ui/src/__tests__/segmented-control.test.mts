@@ -2,11 +2,68 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { cn } from "../../../utils/src/cn.ts";
+import { measureMark } from "../segmented-control-measure.ts";
 import { segmentedControlItemVariants } from "../segmented-control-variants.ts";
 import { segmentedControlMarkClass } from "../segmented-control-variants.ts";
 import { segmentedControlVariants } from "../segmented-control-variants.ts";
 
 const component = readFileSync(new URL("../segmented-control.tsx", import.meta.url), "utf8");
+
+/**
+ * A track whose chosen option is mid-entrance: a 75x32 layout box that the entrance
+ * animation is currently painting as 72x31, four pixels low. `reparented` models a
+ * track that has lost `relative`, so it is no longer what the mark is placed against.
+ */
+function stubTrack(selected: boolean, reparented = false) {
+  const item = {
+    offsetLeft: 5,
+    offsetTop: 5,
+    offsetWidth: 75,
+    offsetHeight: 32,
+    offsetParent: null as unknown,
+    getBoundingClientRect: () => ({ left: 6, top: 9, width: 72, height: 31 }),
+  };
+  const track = { querySelector: () => (selected ? item : null) };
+  item.offsetParent = reparented ? {} : track;
+  return track as unknown as HTMLElement;
+}
+
+test("the mark is placed from the layout box, not the entrance frame", () => {
+  // Regression: the mark was placed from `getBoundingClientRect`, which returns the painted box,
+  // so it inherited the option's `translateY(4px) scale(0.96)` entrance frame and stayed wrong.
+  assert.deepEqual(measureMark(stubTrack(true)), { x: 5, y: 5, w: 75, h: 32 });
+});
+
+test("the mark measures nothing when there is no answer, or no track to measure against", () => {
+  assert.equal(measureMark(stubTrack(false)), null, "no chosen option means no mark");
+  assert.equal(
+    measureMark(stubTrack(true, true)),
+    null,
+    "a track without `relative` is not the mark's containing block",
+  );
+});
+
+test("the option's entrance is a transform, so the rect API stays banned here", () => {
+  const measure = readFileSync(new URL("../segmented-control-measure.ts", import.meta.url), "utf8");
+  assert.doesNotMatch(
+    measure,
+    /getBoundingClientRect/,
+    "measure the layout box, not the painted one",
+  );
+
+  // offset* is only mandatory because something transforms the element being measured.
+  const keyframes = readFileSync(
+    new URL("../../../animations/src/keyframes.css", import.meta.url),
+    "utf8",
+  );
+  const start = keyframes.indexOf("@keyframes segmented-item-in");
+  assert.ok(start !== -1, "segmented-item-in is missing from keyframes.css");
+  assert.match(
+    keyframes.slice(start, keyframes.indexOf("to {", start)),
+    /transform/,
+    "if the entrance stops transforming the option, this guard can go too",
+  );
+});
 
 test("segmented is one track and outline is none", () => {
   const segmented = cn(segmentedControlVariants({ variant: "segmented" }));
