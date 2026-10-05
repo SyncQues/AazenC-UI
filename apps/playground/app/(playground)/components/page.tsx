@@ -54,6 +54,12 @@ const components = [
     description: "SyncQues empty state. One dashed layout.",
   },
   {
+    href: "/components/typeset",
+    name: "Typeset",
+    description:
+      "A prose container. One class styles the plain HTML inside it, and appending never restyles what is already there.",
+  },
+  {
     href: "/components/alert",
     name: "Alert",
     description:
