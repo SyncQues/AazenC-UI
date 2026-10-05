@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@aazenc/utils";
 import { timePartClass } from "./calendar-variants";
 import { fromHour12, toHour12 } from "./calendar-utils";
 
@@ -11,13 +12,14 @@ export interface TimeControlsProps {
   minutes: number;
   disabled?: boolean;
   onChange: (hours: number, minutes: number) => void;
+  className?: string;
 }
 
-function TimeControls({ hours, minutes, disabled = false, onChange }: TimeControlsProps) {
+function TimeControls({ hours, minutes, disabled = false, onChange, className }: TimeControlsProps) {
   const { hour, period } = toHour12(hours);
 
   return (
-    <div data-slot="time-controls" className="flex items-center gap-2 px-1 py-1">
+    <div data-slot="time-controls" className={cn("flex items-center gap-2 px-1 py-1", className)}>
       <select
         aria-label="Hour"
         disabled={disabled}

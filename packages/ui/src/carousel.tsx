@@ -13,6 +13,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from "react";
+import { cn } from "@aazenc/utils";
 import { Button } from "./button";
 import { carouselDotClass, carouselDotMarkClass, carouselFrameClass, carouselItemClass, carouselTrackClass } from "./carousel-variants";
 
@@ -23,9 +24,10 @@ const CarouselContext = createContext<CarouselContextValue>({ current: 0, count:
 export interface CarouselProps extends Omit<ComponentProps<"div">, "className" | "children"> {
   children: ReactNode;
   label?: string;
+  className?: string;
 }
 
-function Carousel({ children, label = "Slides", onKeyDown, ...rest }: CarouselProps) {
+function Carousel({ children, label = "Slides", onKeyDown, className, ...rest }: CarouselProps) {
   const items = Children.toArray(children);
   const count = items.length;
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -72,7 +74,7 @@ function Carousel({ children, label = "Slides", onKeyDown, ...rest }: CarouselPr
         role="region"
         aria-roledescription="carousel"
         aria-label={label}
-        className="w-full"
+        className={cn("w-full", className)}
         onKeyDown={onRegionKeyDown}
         {...rest}
       >
@@ -125,9 +127,10 @@ function Carousel({ children, label = "Slides", onKeyDown, ...rest }: CarouselPr
 export type CarouselItemProps = {
   children: ReactNode;
   index?: number;
+  className?: string;
 };
 
-function CarouselItem({ children, index = 0 }: CarouselItemProps) {
+function CarouselItem({ children, index = 0, className }: CarouselItemProps) {
   const { current, count } = useContext(CarouselContext);
   const hidden = index !== current;
 
@@ -139,7 +142,7 @@ function CarouselItem({ children, index = 0 }: CarouselItemProps) {
       aria-label={`${index + 1} of ${count}`}
       aria-hidden={hidden || undefined}
       inert={hidden ? true : undefined}
-      className={carouselItemClass}
+      className={cn(carouselItemClass, className)}
     >
       {children}
     </div>

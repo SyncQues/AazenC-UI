@@ -26,16 +26,19 @@ type DialogChrome = {
 
 const DialogChromeContext = createContext<DialogChrome>({ padding: "default", close: true });
 
+/** A root, so no `className`: `DialogPrimitive.Root` renders a provider, not an element. */
 export type DialogProps = Omit<ComponentProps<typeof DialogPrimitive.Root>, "className">
 
 export interface DialogTriggerProps
   extends Omit<ComponentProps<typeof DialogPrimitive.Trigger>, "className"> {
   asChild?: boolean;
+  className?: string;
 }
 
 export interface DialogCloseProps
   extends Omit<ComponentProps<typeof DialogPrimitive.Close>, "className"> {
   asChild?: boolean;
+  className?: string;
 }
 
 export interface DialogContentProps
@@ -57,15 +60,25 @@ export interface DialogContentProps
   title?: string;
 }
 
-export type DialogHeaderProps = Omit<ComponentProps<"div">, "className">
+export type DialogHeaderProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
 
-export type DialogBodyProps = Omit<ComponentProps<"div">, "className">
+export type DialogBodyProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
 
-export type DialogFooterProps = Omit<ComponentProps<"div">, "className">
+export type DialogFooterProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
 
-export type DialogTitleProps = Omit<ComponentProps<typeof DialogPrimitive.Title>, "className">
+export type DialogTitleProps = Omit<ComponentProps<typeof DialogPrimitive.Title>, "className"> & {
+  className?: string;
+}
 
-export type DialogDescriptionProps = Omit<ComponentProps<typeof DialogPrimitive.Description>, "className">
+export type DialogDescriptionProps = Omit<ComponentProps<typeof DialogPrimitive.Description>, "className"> & {
+  className?: string;
+}
 
 function Dialog(props: DialogProps) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -133,12 +146,12 @@ function DialogContent({
   );
 }
 
-function DialogHeader({ children, ...props }: DialogHeaderProps) {
+function DialogHeader({ children, className, ...props }: DialogHeaderProps) {
   const chrome = useContext(DialogChromeContext);
   return (
     <div
       data-slot="dialog-header"
-      className={cn(dialogHeaderVariants({ padding: chrome.padding, close: chrome.close }))}
+      className={cn(dialogHeaderVariants({ padding: chrome.padding, close: chrome.close }), className)}
       {...props}
     >
       {children}
@@ -146,12 +159,12 @@ function DialogHeader({ children, ...props }: DialogHeaderProps) {
   );
 }
 
-function DialogBody({ children, ...props }: DialogBodyProps) {
+function DialogBody({ children, className, ...props }: DialogBodyProps) {
   const chrome = useContext(DialogChromeContext);
   return (
     <div
       data-slot="dialog-body"
-      className={cn(dialogBodyVariants({ padding: chrome.padding }))}
+      className={cn(dialogBodyVariants({ padding: chrome.padding }), className)}
       {...props}
     >
       {children}
@@ -159,12 +172,12 @@ function DialogBody({ children, ...props }: DialogBodyProps) {
   );
 }
 
-function DialogFooter({ children, ...props }: DialogFooterProps) {
+function DialogFooter({ children, className, ...props }: DialogFooterProps) {
   const chrome = useContext(DialogChromeContext);
   return (
     <div
       data-slot="dialog-footer"
-      className={cn(dialogFooterVariants({ padding: chrome.padding }))}
+      className={cn(dialogFooterVariants({ padding: chrome.padding }), className)}
       {...props}
     >
       {children}
@@ -172,19 +185,19 @@ function DialogFooter({ children, ...props }: DialogFooterProps) {
   );
 }
 
-function DialogTitle({ children, ...props }: DialogTitleProps) {
+function DialogTitle({ children, className, ...props }: DialogTitleProps) {
   return (
-    <DialogPrimitive.Title data-slot="dialog-title" className={dialogTitleClass} {...props}>
+    <DialogPrimitive.Title data-slot="dialog-title" className={cn(dialogTitleClass, className)} {...props}>
       {children}
     </DialogPrimitive.Title>
   );
 }
 
-function DialogDescription({ children, ...props }: DialogDescriptionProps) {
+function DialogDescription({ children, className, ...props }: DialogDescriptionProps) {
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={dialogDescriptionClass}
+      className={cn(dialogDescriptionClass, className)}
       {...props}
     >
       {children}

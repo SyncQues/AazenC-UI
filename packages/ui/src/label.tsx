@@ -2,17 +2,19 @@
 
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { type ComponentProps, type ReactNode } from "react";
+import { cn } from "@aazenc/utils";
 import { labelClass } from "./label-variants";
 
 export interface LabelProps extends Omit<ComponentProps<typeof LabelPrimitive.Root>, "className"> {
   /** Shows a required mark. The caption stays the same size. */
   required?: boolean;
   children?: ReactNode;
+  className?: string;
 }
 
-function Label({ required = false, children, ...props }: LabelProps) {
+function Label({ required = false, children, className, ...props }: LabelProps) {
   return (
-    <LabelPrimitive.Root data-slot="label" className={labelClass} {...props}>
+    <LabelPrimitive.Root data-slot="label" className={cn(labelClass, className)} {...props}>
       {children}
       {required ? (
         <span data-slot="label-required" className="text-destructive" aria-hidden="true">

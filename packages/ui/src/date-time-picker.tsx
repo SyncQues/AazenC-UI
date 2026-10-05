@@ -19,6 +19,7 @@ export interface DateTimePickerProps {
   disablePast?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
 function DateTimePicker({
@@ -31,6 +32,7 @@ function DateTimePicker({
   disablePast = false,
   open,
   onOpenChange,
+  className,
 }: DateTimePickerProps) {
   const [isOpen, setOpen] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<Date | null>(null);
@@ -53,6 +55,7 @@ function DateTimePicker({
       id={id}
       label={label}
       empty={!selected}
+      className={className}
       disabled={disabled}
       invalid={invalid}
       open={isOpen}
@@ -75,7 +78,7 @@ function DateTimePicker({
           setSelected(applyTime(date, selected ? hours : 12, selected ? minutes : 0));
         }}
       />
-      <div className="mx-1 border-t border-border">
+      <div data-slot="date-time-picker" className="mx-1 border-t border-border">
         <TimeControls
           hours={hours}
           minutes={minutes}
@@ -83,7 +86,7 @@ function DateTimePicker({
           onChange={(nextHours, nextMinutes) => setSelected(applyTime(selected ?? new Date(), nextHours, nextMinutes))}
         />
       </div>
-      <div className="flex flex-col gap-1 px-1 pt-1 pb-1">
+      <div data-slot="date-time-picker" className="flex flex-col gap-1 px-1 pt-1 pb-1">
         {selected ? (
           <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear

@@ -1,6 +1,7 @@
 "use client";
 
 import { type ChangeEvent, type ComponentProps, type DragEvent, useId, useRef, useState } from "react";
+import { cn } from "@aazenc/utils";
 import { fileUploadClass, fileUploadFileClass } from "./file-upload-variants";
 
 const DEFAULT_MAX_BYTES = 10 * 1024 * 1024;
@@ -23,6 +24,7 @@ export interface FileUploadProps extends Omit<ComponentProps<"div">, "className"
   value?: File[];
   onValueChange?: (files: File[]) => void;
   onReject?: (message: string) => void;
+  className?: string;
 }
 
 function extensionOf(file: File) {
@@ -65,6 +67,7 @@ function FileUpload({
   value,
   onValueChange,
   onReject,
+  className,
   ...zoneProps
 }: FileUploadProps) {
   const inputId = useId();
@@ -125,7 +128,7 @@ function FileUpload({
   const showProgress = progress !== null && progress !== undefined;
 
   return (
-    <div data-slot="file-upload" className="grid gap-3" {...zoneProps}>
+    <div data-slot="file-upload" className={cn("grid gap-3", className)} {...zoneProps}>
       <label
         htmlFor={inputId}
         data-dragging={dragging ? "true" : "false"}

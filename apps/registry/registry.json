@@ -352,6 +352,49 @@
       ]
     },
     {
+      "name": "typeset",
+      "type": "registry:ui",
+      "title": "Typeset",
+      "description": "A prose container that styles the plain HTML inside it, so markdown and CMS content get a real type system. Needs the typeset stylesheet, which `add` writes into your theme file for you.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "css": [
+        "typeset"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/typeset.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/typeset.tsx"
+        },
+        {
+          "path": "packages/ui/src/typeset-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/typeset-variants.ts"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "default",
+          "compact",
+          "chat",
+          "docs",
+          "reading",
+          "display",
+          "large"
+        ],
+        "sizes": [
+          "default",
+          "narrow",
+          "wide"
+        ]
+      }
+    },
+    {
       "name": "alert",
       "type": "registry:ui",
       "title": "Alert",

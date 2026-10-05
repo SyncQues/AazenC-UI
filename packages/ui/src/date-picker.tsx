@@ -16,6 +16,7 @@ type FieldShared = {
   disablePast?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 };
 
 export type DatePickerSingleProps = FieldShared & {
@@ -43,6 +44,7 @@ function SingleDatePicker({
   disablePast = false,
   open,
   onOpenChange,
+  className,
 }: DatePickerSingleProps) {
   const [isOpen, setOpen] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<Date | null>(null);
@@ -59,6 +61,7 @@ function SingleDatePicker({
       id={id}
       label={selected ? formatDateLabel(selected) : placeholder}
       empty={!selected}
+      className={className}
       disabled={disabled}
       invalid={invalid}
       open={isOpen}
@@ -79,7 +82,7 @@ function SingleDatePicker({
         }}
       />
       {selected ? (
-        <div className="px-1 pt-1 pb-1">
+        <div data-slot="date-picker" className="px-1 pt-1 pb-1">
           <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear
           </Button>
@@ -99,6 +102,7 @@ function RangeDatePicker({
   disablePast = false,
   open,
   onOpenChange,
+  className,
 }: DatePickerRangeProps) {
   const [isOpen, setOpen] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<DateRange | null>(null);
@@ -115,6 +119,7 @@ function RangeDatePicker({
       id={id}
       label={selected?.from ? formatRangeLabel(selected.from, selected.to) : placeholder}
       empty={!selected?.from}
+      className={className}
       disabled={disabled}
       invalid={invalid}
       open={isOpen}
@@ -135,7 +140,7 @@ function RangeDatePicker({
         }}
       />
       {selected?.from ? (
-        <div className="px-1 pt-1 pb-1">
+        <div data-slot="date-picker" className="px-1 pt-1 pb-1">
           <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear
           </Button>

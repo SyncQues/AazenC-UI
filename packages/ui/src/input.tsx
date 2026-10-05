@@ -31,6 +31,7 @@ export interface InputProps extends Omit<ComponentProps<"input">, "className" | 
   icon?: ReactNode;
   /** Shows `used / maxLength` inside the field. Needs `maxLength` to say anything. */
   showCount?: boolean;
+  className?: string;
 }
 
 function Input({
@@ -44,6 +45,7 @@ function Input({
   onChange,
   "aria-invalid": ariaInvalid,
   "aria-describedby": ariaDescribedBy,
+  className,
   ...props
 }: InputProps) {
   const fieldRef = useRef<HTMLInputElement>(null);
@@ -88,7 +90,7 @@ function Input({
       maxLength={maxLength}
       aria-invalid={ariaInvalid ?? (invalid ? true : undefined)}
       aria-describedby={describedBy}
-      className={cn(inputVariants({ icon: Boolean(icon) }))}
+      className={cn(inputVariants({ icon: Boolean(icon) }), className)}
       onChange={handleChange}
       {...props}
     />

@@ -2,6 +2,7 @@
 
 import { Command as CommandPrimitive } from "cmdk";
 import { type ComponentProps } from "react";
+import { cn } from "@aazenc/utils";
 import {
   Dialog,
   DialogContent,
@@ -22,27 +23,45 @@ import {
   commandShortcutClass,
 } from "./command-variants";
 
-export type CommandProps = Omit<ComponentProps<typeof CommandPrimitive>, "className">
+export type CommandProps = Omit<ComponentProps<typeof CommandPrimitive>, "className"> & {
+  className?: string;
+}
 
 export interface CommandDialogProps extends Omit<DialogProps, "children"> {
   title?: string;
   description?: string;
   children?: ComponentProps<typeof CommandPrimitive>["children"];
+  /** Lands on the panel, which is the only element of the dialog with classes. */
+  className?: string;
 }
 
-export type CommandInputProps = Omit<ComponentProps<typeof CommandPrimitive.Input>, "className">
+export type CommandInputProps = Omit<ComponentProps<typeof CommandPrimitive.Input>, "className"> & {
+  className?: string;
+}
 
-export type CommandListProps = Omit<ComponentProps<typeof CommandPrimitive.List>, "className">
+export type CommandListProps = Omit<ComponentProps<typeof CommandPrimitive.List>, "className"> & {
+  className?: string;
+}
 
-export type CommandEmptyProps = Omit<ComponentProps<typeof CommandPrimitive.Empty>, "className">
+export type CommandEmptyProps = Omit<ComponentProps<typeof CommandPrimitive.Empty>, "className"> & {
+  className?: string;
+}
 
-export type CommandGroupProps = Omit<ComponentProps<typeof CommandPrimitive.Group>, "className">
+export type CommandGroupProps = Omit<ComponentProps<typeof CommandPrimitive.Group>, "className"> & {
+  className?: string;
+}
 
-export type CommandSeparatorProps = Omit<ComponentProps<typeof CommandPrimitive.Separator>, "className">
+export type CommandSeparatorProps = Omit<ComponentProps<typeof CommandPrimitive.Separator>, "className"> & {
+  className?: string;
+}
 
-export type CommandItemProps = Omit<ComponentProps<typeof CommandPrimitive.Item>, "className">
+export type CommandItemProps = Omit<ComponentProps<typeof CommandPrimitive.Item>, "className"> & {
+  className?: string;
+}
 
-export type CommandShortcutProps = Omit<ComponentProps<"span">, "className">
+export type CommandShortcutProps = Omit<ComponentProps<"span">, "className"> & {
+  className?: string;
+}
 
 function CommandSearchIcon() {
   return (
@@ -53,19 +72,20 @@ function CommandSearchIcon() {
   );
 }
 
-function Command({ filter = commandFilter, ...props }: CommandProps) {
-  return <CommandPrimitive data-slot="command" className={commandClass} filter={filter} {...props} />;
+function Command({ filter = commandFilter, className, ...props }: CommandProps) {
+  return <CommandPrimitive data-slot="command" className={cn(commandClass, className)} filter={filter} {...props} />;
 }
 
 function CommandDialog({
   title = "Command palette",
   description = "Search for a command to run.",
   children,
+  className,
   ...props
 }: CommandDialogProps) {
   return (
     <Dialog {...props}>
-      <DialogContent padding="none">
+      <DialogContent padding="none" className={className}>
         <div className="sr-only">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -76,37 +96,41 @@ function CommandDialog({
   );
 }
 
-function CommandInput(props: CommandInputProps) {
+function CommandInput({ className, ...props }: CommandInputProps) {
   return (
     <div data-slot="command-input-wrapper" className={commandInputWrapperClass}>
       <CommandSearchIcon />
-      <CommandPrimitive.Input data-slot="command-input" className={commandInputClass} {...props} />
+      <CommandPrimitive.Input
+        data-slot="command-input"
+        className={cn(commandInputClass, className)}
+        {...props}
+      />
     </div>
   );
 }
 
-function CommandList(props: CommandListProps) {
-  return <CommandPrimitive.List data-slot="command-list" className={commandListClass} {...props} />;
+function CommandList({ className, ...props }: CommandListProps) {
+  return <CommandPrimitive.List data-slot="command-list" className={cn(commandListClass, className)} {...props} />;
 }
 
-function CommandEmpty(props: CommandEmptyProps) {
-  return <CommandPrimitive.Empty data-slot="command-empty" className={commandEmptyClass} {...props} />;
+function CommandEmpty({ className, ...props }: CommandEmptyProps) {
+  return <CommandPrimitive.Empty data-slot="command-empty" className={cn(commandEmptyClass, className)} {...props} />;
 }
 
-function CommandGroup(props: CommandGroupProps) {
-  return <CommandPrimitive.Group data-slot="command-group" className={commandGroupClass} {...props} />;
+function CommandGroup({ className, ...props }: CommandGroupProps) {
+  return <CommandPrimitive.Group data-slot="command-group" className={cn(commandGroupClass, className)} {...props} />;
 }
 
-function CommandSeparator(props: CommandSeparatorProps) {
-  return <CommandPrimitive.Separator data-slot="command-separator" className={commandSeparatorClass} {...props} />;
+function CommandSeparator({ className, ...props }: CommandSeparatorProps) {
+  return <CommandPrimitive.Separator data-slot="command-separator" className={cn(commandSeparatorClass, className)} {...props} />;
 }
 
-function CommandItem(props: CommandItemProps) {
-  return <CommandPrimitive.Item data-slot="command-item" className={commandItemClass} {...props} />;
+function CommandItem({ className, ...props }: CommandItemProps) {
+  return <CommandPrimitive.Item data-slot="command-item" className={cn(commandItemClass, className)} {...props} />;
 }
 
-function CommandShortcut(props: CommandShortcutProps) {
-  return <span data-slot="command-shortcut" className={commandShortcutClass} {...props} />;
+function CommandShortcut({ className, ...props }: CommandShortcutProps) {
+  return <span data-slot="command-shortcut" className={cn(commandShortcutClass, className)} {...props} />;
 }
 
 export {

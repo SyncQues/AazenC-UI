@@ -45,6 +45,7 @@ const componentSlugs = [
   "calendar",
   "code-block",
   "markdown-viewer",
+  "typeset",
   "charts",
   "heat-map",
   "metric-card",

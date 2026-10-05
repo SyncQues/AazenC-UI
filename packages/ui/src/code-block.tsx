@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { cn } from "@aazenc/utils";
 import { Button } from "./button";
 import { highlightCode, type CodeBlockLanguage } from "./code-block-highlight";
 import {
@@ -21,6 +22,7 @@ export interface CodeBlockProps {
   filename?: string;
   /** Gutter with line numbers. Off for short snippets. */
   showLines?: boolean;
+  className?: string;
 }
 
 type CopyNotice = { kind: "copied" | "failed"; at: number };
@@ -30,6 +32,7 @@ function CodeBlock({
   language = "tsx",
   filename,
   showLines = false,
+  className,
 }: CodeBlockProps) {
   const [notice, setNotice] = useState<CopyNotice | null>(null);
   const lines = useMemo(() => highlightCode(code, language), [code, language]);
@@ -56,7 +59,7 @@ function CodeBlock({
   }
 
   return (
-    <figure data-slot="code-block" className={codeBlockFrameClass}>
+    <figure data-slot="code-block" className={cn(codeBlockFrameClass, className)}>
       <figcaption className={codeBlockHeaderClass}>
         <span className={codeBlockFilenameClass}>{filename ?? language}</span>
         <Button

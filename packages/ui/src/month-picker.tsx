@@ -24,6 +24,7 @@ export interface MonthPickerProps {
   allowPresent?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
@@ -50,6 +51,7 @@ function MonthPicker({
   allowPresent = false,
   open,
   onOpenChange,
+  className,
 }: MonthPickerProps) {
   const [isOpen, setOpenState] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<string | null>(null);
@@ -94,6 +96,7 @@ function MonthPicker({
       invalid={invalid}
       open={isOpen}
       onOpenChange={setOpen}
+      className={className}
     >
       <div data-slot="month-picker" className="w-[16.5rem] p-1">
         <div className="relative">

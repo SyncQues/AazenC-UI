@@ -1,4 +1,5 @@
 import { type ComponentProps } from "react";
+import { cn } from "@aazenc/utils";
 import {
   tableBodyClass,
   tableCaptionClass,
@@ -11,44 +12,59 @@ import {
   tableRowClass,
 } from "./table-variants";
 
-export type TableProps = Omit<ComponentProps<"table">, "className">;
+export type TableProps = Omit<ComponentProps<"table">, "className"> & {
+  className?: string;
+  /**
+   * The scroll container, not the table. It owns `overflow-x-auto` and the
+   * max-height, so it is the element a consumer usually needs to cap — a
+   * `max-w-*` on `className` sizes the inner table and desyncs it instead.
+   */
+  containerClassName?: string;
+};
 
-function Table(props: TableProps) {
+function Table({ className, containerClassName, ...props }: TableProps) {
   return (
-    <div data-slot="table-container" className={tableContainerClass}>
-      <table data-slot="table" className={tableClass} {...props} />
+    <div data-slot="table-container" className={cn(tableContainerClass, containerClassName)}>
+      <table data-slot="table" className={cn(tableClass, className)} {...props} />
     </div>
   );
 }
 
-export type TableHeaderProps = Omit<ComponentProps<"thead">, "className">;
+export type TableHeaderProps = Omit<ComponentProps<"thead">, "className"> & {
+  className?: string;
+};
 
-function TableHeader(props: TableHeaderProps) {
-  return <thead data-slot="table-header" className={tableHeaderClass} {...props} />;
+function TableHeader({ className, ...props }: TableHeaderProps) {
+  return <thead data-slot="table-header" className={cn(tableHeaderClass, className)} {...props} />;
 }
 
-export type TableBodyProps = Omit<ComponentProps<"tbody">, "className">;
+export type TableBodyProps = Omit<ComponentProps<"tbody">, "className"> & {
+  className?: string;
+};
 
-function TableBody(props: TableBodyProps) {
-  return <tbody data-slot="table-body" className={tableBodyClass} {...props} />;
+function TableBody({ className, ...props }: TableBodyProps) {
+  return <tbody data-slot="table-body" className={cn(tableBodyClass, className)} {...props} />;
 }
 
-export type TableFooterProps = Omit<ComponentProps<"tfoot">, "className">;
+export type TableFooterProps = Omit<ComponentProps<"tfoot">, "className"> & {
+  className?: string;
+};
 
-function TableFooter(props: TableFooterProps) {
-  return <tfoot data-slot="table-footer" className={tableFooterClass} {...props} />;
+function TableFooter({ className, ...props }: TableFooterProps) {
+  return <tfoot data-slot="table-footer" className={cn(tableFooterClass, className)} {...props} />;
 }
 
 export type TableRowProps = Omit<ComponentProps<"tr">, "className"> & {
   selected?: boolean;
+  className?: string;
 };
 
-function TableRow({ selected, ...props }: TableRowProps) {
+function TableRow({ selected, className, ...props }: TableRowProps) {
   return (
     <tr
       {...props}
       data-slot="table-row"
-      className={tableRowClass}
+      className={cn(tableRowClass, className)}
       {...(selected ? { "data-state": "selected" } : {})}
     />
   );
@@ -56,24 +72,28 @@ function TableRow({ selected, ...props }: TableRowProps) {
 
 export type TableHeadProps = Omit<ComponentProps<"th">, "className"> & {
   wrap?: boolean;
+  className?: string;
 };
 
-function TableHead({ scope = "col", wrap = false, ...props }: TableHeadProps) {
-  return <th scope={scope} data-slot="table-head" data-wrap={wrap ? "true" : undefined} className={tableHeadClass} {...props} />;
+function TableHead({ scope = "col", wrap = false, className, ...props }: TableHeadProps) {
+  return <th scope={scope} data-slot="table-head" data-wrap={wrap ? "true" : undefined} className={cn(tableHeadClass, className)} {...props} />;
 }
 
 export type TableCellProps = Omit<ComponentProps<"td">, "className"> & {
   wrap?: boolean;
+  className?: string;
 };
 
-function TableCell({ wrap = false, ...props }: TableCellProps) {
-  return <td data-slot="table-cell" data-wrap={wrap ? "true" : undefined} className={tableCellClass} {...props} />;
+function TableCell({ wrap = false, className, ...props }: TableCellProps) {
+  return <td data-slot="table-cell" data-wrap={wrap ? "true" : undefined} className={cn(tableCellClass, className)} {...props} />;
 }
 
-export type TableCaptionProps = Omit<ComponentProps<"caption">, "className">;
+export type TableCaptionProps = Omit<ComponentProps<"caption">, "className"> & {
+  className?: string;
+};
 
-function TableCaption(props: TableCaptionProps) {
-  return <caption data-slot="table-caption" className={tableCaptionClass} {...props} />;
+function TableCaption({ className, ...props }: TableCaptionProps) {
+  return <caption data-slot="table-caption" className={cn(tableCaptionClass, className)} {...props} />;
 }
 
 export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow };

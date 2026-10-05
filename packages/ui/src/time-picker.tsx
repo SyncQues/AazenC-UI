@@ -16,6 +16,7 @@ export interface TimePickerProps {
   invalid?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
 function TimePicker({
@@ -27,6 +28,7 @@ function TimePicker({
   invalid = false,
   open,
   onOpenChange,
+  className,
 }: TimePickerProps) {
   const [isOpen, setOpen] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<Date | null>(null);
@@ -50,6 +52,7 @@ function TimePicker({
       invalid={invalid}
       open={isOpen}
       onOpenChange={setOpen}
+      className={className}
     >
       <TimeControls
         hours={hours}
@@ -57,7 +60,7 @@ function TimePicker({
         disabled={disabled}
         onChange={(nextHours, nextMinutes) => setSelected(applyTime(selected ?? new Date(), nextHours, nextMinutes))}
       />
-      <div className="flex flex-col gap-1 px-1 pt-1 pb-1">
+      <div data-slot="time-picker" className="flex flex-col gap-1 px-1 pt-1 pb-1">
         {selected ? (
           <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear

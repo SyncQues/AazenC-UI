@@ -38,6 +38,12 @@ function useHoverCardIntent(part: string): HoverCardIntent {
   return intent;
 }
 
+/**
+ * No `className` on the root, and it is not a gap in the sweep: Radix's
+ * `HoverCardPrimitive.Root` is a context provider that renders no element
+ * (`@radix-ui/react-hover-card` `index.mjs`), so a forwarded class is discarded
+ * rather than applied. `HoverCardTrigger` and `HoverCardContent` take one.
+ */
 export type HoverCardProps = Omit<
   ComponentProps<typeof HoverCardPrimitive.Root>,
   "className" | "children"
@@ -184,10 +190,10 @@ function HoverCardTrigger({
   );
 }
 
-function HoverCardContent(props: HoverCardContentProps) {
+function HoverCardContent({ className, ...props }: HoverCardContentProps) {
   return (
     <HoverCardPrimitive.Portal>
-      <HoverCardSurface {...props} />
+      <HoverCardSurface className={className} {...props} />
     </HoverCardPrimitive.Portal>
   );
 }

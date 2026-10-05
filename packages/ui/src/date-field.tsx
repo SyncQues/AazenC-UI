@@ -2,6 +2,7 @@
 
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { type ComponentProps, type ReactNode } from "react";
+import { cn } from "@aazenc/utils";
 import { dateFieldClass, datePanelClass } from "./calendar-variants";
 
 function CalendarIcon() {
@@ -30,6 +31,7 @@ export interface DateFieldProps extends Omit<ComponentProps<typeof PopoverPrimit
   onOpenChange?: (open: boolean) => void;
   icon?: "date" | "time";
   children: ReactNode;
+  className?: string;
 }
 
 function DateField({
@@ -41,6 +43,7 @@ function DateField({
   icon = "date",
   children,
   "aria-invalid": ariaInvalid,
+  className,
   ...triggerProps
 }: DateFieldProps) {
   return (
@@ -50,7 +53,7 @@ function DateField({
         data-slot="date-field"
         data-empty={empty ? "true" : undefined}
         aria-invalid={ariaInvalid ?? (invalid ? true : undefined)}
-        className={dateFieldClass}
+        className={cn(dateFieldClass, className)}
         {...triggerProps}
       >
         {icon === "time" ? <ClockIcon /> : <CalendarIcon />}

@@ -58,9 +58,12 @@ type IndicatorBox = { x: number; y: number; w: number; h: number };
 
 export interface TabsProps extends Omit<ComponentProps<typeof TabsPrimitive.Root>, "className"> {
   variant?: TabsVariant;
+  className?: string;
 }
 
-export type TabsListProps = Omit<ComponentProps<typeof TabsPrimitive.List>, "className">
+export type TabsListProps = Omit<ComponentProps<typeof TabsPrimitive.List>, "className"> & {
+  className?: string;
+}
 
 export type TabsIcon = ComponentType<{ className?: string }>;
 
@@ -69,9 +72,12 @@ export interface TabsTriggerProps
   icon?: TabsIcon;
   badge?: ReactNode;
   color?: TabsColor;
+  className?: string;
 }
 
-export type TabsContentProps = Omit<ComponentProps<typeof TabsPrimitive.Content>, "className">
+export type TabsContentProps = Omit<ComponentProps<typeof TabsPrimitive.Content>, "className"> & {
+  className?: string;
+}
 
 export type TabsItem = {
   value: string;
@@ -109,20 +115,20 @@ function measureIndicator(list: HTMLDivElement): IndicatorState | null {
   };
 }
 
-function Tabs({ variant = "default", ...props }: TabsProps) {
+function Tabs({ variant = "default", className, ...props }: TabsProps) {
   return (
     <TabsVariantContext.Provider value={variant}>
       <TabsPrimitive.Root
         data-slot="tabs"
         data-variant={variant}
-        className="flex w-full min-w-0 flex-col gap-4"
+        className={cn("flex w-full min-w-0 flex-col gap-4", className)}
         {...props}
       />
     </TabsVariantContext.Provider>
   );
 }
 
-function TabsList({ children, ...props }: TabsListProps) {
+function TabsList({ children, className, ...props }: TabsListProps) {
   const variant = useContext(TabsVariantContext);
   const listRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<IndicatorState | null>(null);
@@ -185,7 +191,7 @@ function TabsList({ children, ...props }: TabsListProps) {
         ref={listRef}
         data-slot="tabs-list"
         data-variant={variant}
-        className={cn(tabsListVariants({ variant }))}
+        className={cn(tabsListVariants({ variant }), className)}
         {...props}
       >
         {box ? (
@@ -205,7 +211,7 @@ function TabsList({ children, ...props }: TabsListProps) {
   );
 }
 
-function TabsTrigger({ icon: Icon, badge, color, children, ...props }: TabsTriggerProps) {
+function TabsTrigger({ icon: Icon, badge, color, children, className, ...props }: TabsTriggerProps) {
   const variant = useContext(TabsVariantContext);
   const showBadge = badge != null && badge !== false && badge !== "";
 
@@ -213,7 +219,7 @@ function TabsTrigger({ icon: Icon, badge, color, children, ...props }: TabsTrigg
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       data-variant={variant}
-      className={cn(tabsTriggerVariants({ variant }), tabsColorVariants({ color }))}
+      className={cn(tabsTriggerVariants({ variant }), tabsColorVariants({ color }), className)}
       {...props}
       // After the spread on purpose. The mark reads this attribute off the DOM, so a
       // raw data-color arriving through props would tint the mark on a trigger whose
@@ -229,11 +235,11 @@ function TabsTrigger({ icon: Icon, badge, color, children, ...props }: TabsTrigg
   );
 }
 
-function TabsContent(props: TabsContentProps) {
+function TabsContent({ className, ...props }: TabsContentProps) {
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"
-      className="animate-tab-content outline-none"
+      className={cn("animate-tab-content outline-none", className)}
       {...props}
     />
   );

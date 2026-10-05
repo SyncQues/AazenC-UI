@@ -2,18 +2,22 @@
 
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { createContext, useContext, type ComponentProps, type ReactNode } from "react";
+import { cn } from "@aazenc/utils";
 import { tooltipContentClass } from "./tooltip-variants";
 
+/** Both are context providers with no element, so neither can take a `className`. */
 export type TooltipProviderProps = Omit<ComponentProps<typeof TooltipPrimitive.Provider>, "className">;
 
 export type TooltipProps = Omit<ComponentProps<typeof TooltipPrimitive.Root>, "className">;
 
 export interface TooltipTriggerProps extends Omit<ComponentProps<typeof TooltipPrimitive.Trigger>, "className"> {
   asChild?: boolean;
+  className?: string;
 }
 
 export interface TooltipContentProps extends Omit<ComponentProps<typeof TooltipPrimitive.Content>, "className"> {
   children?: ReactNode;
+  className?: string;
 }
 
 const TooltipProviderState = createContext(false);
@@ -37,7 +41,7 @@ function TooltipTrigger({ asChild = false, ...props }: TooltipTriggerProps) {
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" asChild={asChild} {...props} />;
 }
 
-function TooltipContent({ sideOffset = 6, children, ...props }: TooltipContentProps) {
+function TooltipContent({ sideOffset = 6, children, className, ...props }: TooltipContentProps) {
   return (
     <TooltipPrimitive.Portal>
       <div className="menu-presence pointer-events-none fixed inset-0 z-[var(--z-popper)]">
@@ -45,7 +49,7 @@ function TooltipContent({ sideOffset = 6, children, ...props }: TooltipContentPr
           data-slot="tooltip-content"
           data-presence=""
           sideOffset={sideOffset}
-          className={tooltipContentClass}
+          className={cn(tooltipContentClass, className)}
           {...props}
         >
           {children}

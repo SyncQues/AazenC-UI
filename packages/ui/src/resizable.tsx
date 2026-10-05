@@ -73,6 +73,7 @@ export type ResizablePanelGroupProps = Omit<
 > & {
   /** Panels side by side, or stacked. The handles turn with it. */
   orientation?: ResizableOrientation;
+  className?: string;
 };
 
 export type ResizablePanelProps = ComponentProps<
@@ -94,6 +95,7 @@ export type ResizableHandleProps = Omit<
   variant?: ResizableHandleVariantProps["variant"];
   /** The six-dot grip, for a split people are not expecting to move. Default false. */
   withHandle?: boolean;
+  className?: string;
 };
 
 function ResizableGripIcon() {
@@ -133,6 +135,7 @@ function ResizableChevronIcon({ direction }: { direction: "start" | "end" }) {
 
 function ResizablePanelGroup({
   orientation,
+  className,
   ...props
 }: ResizablePanelGroupProps) {
   const resolvedOrientation: ResizableOrientation = orientation ?? "horizontal";
@@ -171,7 +174,7 @@ function ResizablePanelGroup({
         <ResizablePrimitive.Group
           data-slot="resizable-panel-group"
           orientation={resolvedOrientation}
-          className={resizableGroupClass}
+          className={cn(resizableGroupClass, className)}
           {...props}
         />
       </ResizableRegistryContext.Provider>
@@ -375,6 +378,7 @@ function ResizableHandle({
   withHandle = false,
   children,
   elementRef: consumerElementRef,
+  className,
   ...props
 }: ResizableHandleProps) {
   const orientation = useContext(ResizableOrientationContext);
@@ -421,7 +425,7 @@ function ResizableHandle({
       {...props}
       data-slot="resizable-handle"
       elementRef={composedElementRef}
-      className={resizableHandleVariants({ orientation, variant })}
+      className={cn(resizableHandleVariants({ orientation, variant }), className)}
     >
       {/* `collapsible` takes the handle's contents over. A consumer who wants a
           custom child keeps `withHandle` and `children` and leaves this off. */}

@@ -9,11 +9,12 @@ export interface BadgeProps extends Omit<ComponentProps<"span">, "className"> {
   variant?: BadgeVariant;
   /** Render the mark as the child element. The look stays the same. */
   asChild?: boolean;
+  className?: string;
 }
 
-function Badge({ variant = "default", asChild = false, ...props }: BadgeProps) {
+function Badge({ variant = "default", asChild = false, className, ...props }: BadgeProps) {
   const Comp = asChild ? Slot : "span";
-  return <Comp data-slot="badge" className={cn(badgeVariants({ variant }))} {...props} />;
+  return <Comp data-slot="badge" className={cn(badgeVariants({ variant }), className)} {...props} />;
 }
 
 export { Badge, badgeVariants };

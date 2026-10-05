@@ -22,16 +22,19 @@ type SheetChrome = { close: boolean };
 
 const SheetChromeContext = createContext<SheetChrome>({ close: true });
 
+/** A root, so no `className`: `SheetPrimitive.Root` renders a provider, not an element. */
 export type SheetProps = Omit<ComponentProps<typeof SheetPrimitive.Root>, "className">
 
 export interface SheetTriggerProps
   extends Omit<ComponentProps<typeof SheetPrimitive.Trigger>, "className"> {
   asChild?: boolean;
+  className?: string;
 }
 
 export interface SheetCloseProps
   extends Omit<ComponentProps<typeof SheetPrimitive.Close>, "className"> {
   asChild?: boolean;
+  className?: string;
 }
 
 export interface SheetContentProps
@@ -48,18 +51,28 @@ export interface SheetContentProps
   title?: string;
 }
 
-export type SheetHeaderProps = Omit<ComponentProps<"div">, "className">
+export type SheetHeaderProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
 
-export type SheetBodyProps = Omit<ComponentProps<"div">, "className">
+export type SheetBodyProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
 
-export type SheetFooterProps = Omit<ComponentProps<"div">, "className">
+export type SheetFooterProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
 
-export type SheetTitleProps = Omit<ComponentProps<typeof SheetPrimitive.Title>, "className">
+export type SheetTitleProps = Omit<ComponentProps<typeof SheetPrimitive.Title>, "className"> & {
+  className?: string;
+}
 
 export type SheetDescriptionProps = Omit<
   ComponentProps<typeof SheetPrimitive.Description>,
   "className"
->
+> & {
+  className?: string;
+}
 
 function Sheet({ ...props }: SheetProps) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />;
@@ -103,12 +116,12 @@ function SheetContent({ side, close, title, className, children, ...props }: She
   );
 }
 
-function SheetHeader({ children, ...props }: SheetHeaderProps) {
+function SheetHeader({ children, className, ...props }: SheetHeaderProps) {
   const chrome = useContext(SheetChromeContext);
   return (
     <div
       data-slot="sheet-header"
-      className={cn(sheetHeaderVariants({ close: chrome.close }))}
+      className={cn(sheetHeaderVariants({ close: chrome.close }), className)}
       {...props}
     >
       {children}
@@ -116,35 +129,35 @@ function SheetHeader({ children, ...props }: SheetHeaderProps) {
   );
 }
 
-function SheetBody({ children, ...props }: SheetBodyProps) {
+function SheetBody({ children, className, ...props }: SheetBodyProps) {
   return (
-    <div data-slot="sheet-body" className={sheetBodyClass} {...props}>
+    <div data-slot="sheet-body" className={cn(sheetBodyClass, className)} {...props}>
       {children}
     </div>
   );
 }
 
-function SheetFooter({ children, ...props }: SheetFooterProps) {
+function SheetFooter({ children, className, ...props }: SheetFooterProps) {
   return (
-    <div data-slot="sheet-footer" className={sheetFooterClass} {...props}>
+    <div data-slot="sheet-footer" className={cn(sheetFooterClass, className)} {...props}>
       {children}
     </div>
   );
 }
 
-function SheetTitle({ children, ...props }: SheetTitleProps) {
+function SheetTitle({ children, className, ...props }: SheetTitleProps) {
   return (
-    <SheetPrimitive.Title data-slot="sheet-title" className={sheetTitleClass} {...props}>
+    <SheetPrimitive.Title data-slot="sheet-title" className={cn(sheetTitleClass, className)} {...props}>
       {children}
     </SheetPrimitive.Title>
   );
 }
 
-function SheetDescription({ children, ...props }: SheetDescriptionProps) {
+function SheetDescription({ children, className, ...props }: SheetDescriptionProps) {
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      className={sheetDescriptionClass}
+      className={cn(sheetDescriptionClass, className)}
       {...props}
     >
       {children}
