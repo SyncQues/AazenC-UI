@@ -1,5 +1,5 @@
 import { Slot } from "@radix-ui/react-slot";
-import { type ComponentProps, type ElementType } from "react";
+import { type ComponentPropsWithRef, type ElementType } from "react";
 import { cn } from "@aazenc/utils";
 import {
   asVariantKey,
@@ -54,35 +54,49 @@ export type {
   StackVariantProps,
 } from "./layout-variants";
 
-/** `as` renders another tag; `asChild` adopts the child's tag and keeps our classes. */
-type LayoutElementProps = {
-  as?: ElementType;
+/**
+ * `as` renders another tag and re-types the props with it, so a Stack can be a
+ * link; `asChild` adopts the child's tag and keeps our classes.
+ */
+type LayoutElementProps<E extends ElementType, OwnProps> = OwnProps & {
+  as?: E;
   asChild?: boolean;
-  className?: string;
-} & Omit<ComponentProps<"div">, "className">;
+} & Omit<ComponentPropsWithRef<E>, keyof OwnProps | "as" | "asChild">;
 
-export type BoxProps = LayoutElementProps;
+/** The tag to render: the child's own element under `asChild`, otherwise `as`. */
+const resolveTag = (as: ElementType | undefined, asChild: boolean): ElementType =>
+  asChild ? Slot : (as ?? "div");
+
+export type BoxProps<E extends ElementType = "div"> = LayoutElementProps<
+  E,
+  Record<never, never>
+>;
 
 /** The plain box. Everything here is one of these with a direction and a gap. */
-export function Box({
-  as: Tag = "div",
+export function Box<E extends ElementType = "div">({
+  as: Tag,
   asChild = false,
   className,
   ...props
-}: BoxProps) {
-  const Comp = asChild ? Slot : Tag;
+}: BoxProps<E>) {
+  const Comp = resolveTag(Tag, asChild);
   return (
-    <Comp data-slot="box" className={cn(boxClass, className)} {...props} />
+    <Comp
+      data-slot="box"
+      className={cn(boxClass, className)}
+      {...(props as object)}
+    />
   );
 }
 
-export type StackProps = Omit<StackVariantProps, "gap"> & {
-  gap?: LayoutGap;
-} & LayoutElementProps;
+export type StackProps<E extends ElementType = "div"> = LayoutElementProps<
+  E,
+  Omit<StackVariantProps, "gap"> & { gap?: LayoutGap }
+>;
 
 /** A column by default. `direction="row"` and `wrap` cover the rest of flex. */
-export function Stack({
-  as: Tag = "div",
+export function Stack<E extends ElementType = "div">({
+  as: Tag,
   asChild = false,
   direction = "col",
   gap,
@@ -90,8 +104,8 @@ export function Stack({
   wrap,
   className,
   ...props
-}: StackProps) {
-  const Comp = asChild ? Slot : Tag;
+}: StackProps<E>) {
+  const Comp = resolveTag(Tag, asChild);
   return (
     <Comp
       data-slot="stack"
@@ -100,26 +114,29 @@ export function Stack({
         stackVariants({ direction, gap: asVariantKey(gap), align, wrap }),
         className,
       )}
-      {...props}
+      {...(props as object)}
     />
   );
 }
 
-export type GridProps = Omit<GridVariantProps, "gap" | "columns"> & {
-  gap?: LayoutGap;
-  columns?: LayoutColumns;
-} & LayoutElementProps;
+export type GridProps<E extends ElementType = "div"> = LayoutElementProps<
+  E,
+  Omit<GridVariantProps, "gap" | "columns"> & {
+    gap?: LayoutGap;
+    columns?: LayoutColumns;
+  }
+>;
 
 /** Equal columns. Breakpoints are `className`: `md:grid-cols-3` wins over `columns`. */
-export function Grid({
-  as: Tag = "div",
+export function Grid<E extends ElementType = "div">({
+  as: Tag,
   asChild = false,
   columns = "1",
   gap,
   className,
   ...props
-}: GridProps) {
-  const Comp = asChild ? Slot : Tag;
+}: GridProps<E>) {
+  const Comp = resolveTag(Tag, asChild);
   return (
     <Comp
       data-slot="grid"
@@ -130,18 +147,19 @@ export function Grid({
         }),
         className,
       )}
-      {...props}
+      {...(props as object)}
     />
   );
 }
 
-export type FlexProps = Omit<FlexVariantProps, "gap"> & {
-  gap?: LayoutGap;
-} & LayoutElementProps;
+export type FlexProps<E extends ElementType = "div"> = LayoutElementProps<
+  E,
+  Omit<FlexVariantProps, "gap"> & { gap?: LayoutGap }
+>;
 
 /** Raw flex. It has no gap by default; `Stack` is the one with rhythm. */
-export function Flex({
-  as: Tag = "div",
+export function Flex<E extends ElementType = "div">({
+  as: Tag,
   asChild = false,
   direction = "row",
   gap,
@@ -150,8 +168,8 @@ export function Flex({
   wrap,
   className,
   ...props
-}: FlexProps) {
-  const Comp = asChild ? Slot : Tag;
+}: FlexProps<E>) {
+  const Comp = resolveTag(Tag, asChild);
   return (
     <Comp
       data-slot="flex"
@@ -166,46 +184,50 @@ export function Flex({
         }),
         className,
       )}
-      {...props}
+      {...(props as object)}
     />
   );
 }
 
-export type CenterProps = CenterVariantProps & LayoutElementProps;
+export type CenterProps<E extends ElementType = "div"> = LayoutElementProps<
+  E,
+  CenterVariantProps
+>;
 
 /** Centres one thing on both axes. `full` gives it a whole viewport to do it in. */
-export function Center({
-  as: Tag = "div",
+export function Center<E extends ElementType = "div">({
+  as: Tag,
   asChild = false,
   full,
   className,
   ...props
-}: CenterProps) {
-  const Comp = asChild ? Slot : Tag;
+}: CenterProps<E>) {
+  const Comp = resolveTag(Tag, asChild);
   return (
     <Comp
       data-slot="center"
       className={cn(centerVariants({ full }), className)}
-      {...props}
+      {...(props as object)}
     />
   );
 }
 
-export type SplitProps = Omit<SplitVariantProps, "gap"> & {
-  gap?: LayoutGap;
-} & LayoutElementProps;
+export type SplitProps<E extends ElementType = "div"> = LayoutElementProps<
+  E,
+  Omit<SplitVariantProps, "gap"> & { gap?: LayoutGap }
+>;
 
 /** A heading at one end and its action at the other. Draggable is `resizable`. */
-export function Split({
-  as: Tag = "div",
+export function Split<E extends ElementType = "div">({
+  as: Tag,
   asChild = false,
   direction = "row",
   gap,
   align,
   className,
   ...props
-}: SplitProps) {
-  const Comp = asChild ? Slot : Tag;
+}: SplitProps<E>) {
+  const Comp = resolveTag(Tag, asChild);
   return (
     <Comp
       data-slot="split"
@@ -214,48 +236,54 @@ export function Split({
         splitVariants({ direction, gap: asVariantKey(gap), align }),
         className,
       )}
-      {...props}
+      {...(props as object)}
     />
   );
 }
 
-export type ContainerProps = ContainerVariantProps & LayoutElementProps;
+export type ContainerProps<E extends ElementType = "div"> = LayoutElementProps<
+  E,
+  ContainerVariantProps
+>;
 
 /** The centred page column. `size` is a Tailwind `max-w` step; `prose` is a measure. */
-export function Container({
-  as: Tag = "div",
+export function Container<E extends ElementType = "div">({
+  as: Tag,
   asChild = false,
   size = "6xl",
   className,
   ...props
-}: ContainerProps) {
-  const Comp = asChild ? Slot : Tag;
+}: ContainerProps<E>) {
+  const Comp = resolveTag(Tag, asChild);
   return (
     <Comp
       data-slot="container"
       data-size={size}
       className={cn(containerVariants({ size }), className)}
-      {...props}
+      {...(props as object)}
     />
   );
 }
 
-export type SpacerProps = SpacerVariantProps & LayoutElementProps;
+export type SpacerProps<E extends ElementType = "div"> = LayoutElementProps<
+  E,
+  SpacerVariantProps
+>;
 
 /** Grows to push what follows to the far end. */
-export function Spacer({
-  as: Tag = "div",
+export function Spacer<E extends ElementType = "div">({
+  as: Tag,
   asChild = false,
   grow = true,
   className,
   ...props
-}: SpacerProps) {
-  const Comp = asChild ? Slot : Tag;
+}: SpacerProps<E>) {
+  const Comp = resolveTag(Tag, asChild);
   return (
     <Comp
       data-slot="spacer"
       className={cn(spacerVariants({ grow }), className)}
-      {...props}
+      {...(props as object)}
     />
   );
 }

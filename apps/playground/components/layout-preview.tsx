@@ -92,15 +92,15 @@ export function LayoutPreview() {
         <Box>
           <p className="text-sm font-medium">Grid</p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Equal columns, one to six. Breakpoints stay yours:{" "}
+            Equal columns, one to six. Breakpoints stay yours: set the base with{" "}
+            <code className="font-mono text-foreground">columns</code> and let{" "}
             <code className="font-mono text-foreground">
               className=&quot;sm:grid-cols-2&quot;
             </code>{" "}
-            wins over <code className="font-mono text-foreground">columns</code>
-            , because the caller&rsquo;s classes are merged last.
+            take it from there at that width.
           </p>
           <Demo>
-            <Grid columns={3} gap={3} className="sm:grid-cols-1">
+            <Grid columns={1} gap={3} className="sm:grid-cols-3">
               {["Plans", "Usage", "Billing"].map((label) => (
                 <div
                   key={label}

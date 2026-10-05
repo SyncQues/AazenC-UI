@@ -143,7 +143,7 @@ export const containerVariants = cva(
  * Grows to push a footer down. `grow={false}` reserves nothing, which is how you
  * drop one without deleting it.
  */
-export const spacerVariants = cva("", {
+export const spacerVariants = cva(boxClass, {
   variants: { grow: { true: "flex-1", false: "flex-none" } },
   defaultVariants: { grow: true },
 });

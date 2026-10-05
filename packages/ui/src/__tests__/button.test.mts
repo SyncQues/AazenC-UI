@@ -49,18 +49,48 @@ test("destructive fill stays white, and soft danger text lightens in dark mode",
 test("soft is a raised pill whose pressed state is held by aria-pressed, not :active", () => {
   const value = classes({ variant: "soft" });
   assert.match(value, /rounded-full/);
-  assert.match(value, /bg-accent\/60/);
-  assert.match(value, /text-muted-foreground/);
+  assert.match(value, /bg-muted/);
+  assert.match(value, /(^|\s)text-foreground(\s|$)/);
   assert.match(value, /hover:bg-accent/);
   // Transparent at rest so the pressed border claims a pixel that is already there.
   assert.match(value, /border-transparent/);
   assert.match(value, /aria-pressed:bg-blue-500\/15/);
-  assert.match(value, /aria-pressed:text-blue-600/);
+  assert.match(value, /aria-pressed:text-blue-700/);
   assert.match(value, /aria-pressed:border-blue-500\/40/);
   assert.match(value, /dark:aria-pressed:text-blue-400/);
+  assert.match(value, /dark:aria-pressed:border-blue-400\/40/);
+  assert.match(value, /hover:text-accent-foreground/);
   assert.doesNotMatch(value, /aria-pressed:[^" ]*ring-/);
   // The focus ring must survive the pressed background, so the state uses border.
   assert.match(value, /focus-visible:ring-\[3px\]/);
+});
+
+test("every variant that fills with accent on hover lands on accent-foreground", () => {
+  // The rule that keeps a label readable: `--accent` and `--foreground` are not a
+  // pair. mono inverts `--accent` to near-black, so the two land 1.11:1 apart and
+  // soft's label vanished on hover. accent-foreground is the token defined as the
+  // counterpart of accent, so it clears AA in every theme and both modes.
+  for (const variant of ["outline", "ghost", "soft"] as const) {
+    assert.match(
+      classes({ variant }),
+      /hover:bg-accent(\/[\d.]+)? hover:text-accent-foreground/,
+      variant,
+    );
+  }
+});
+
+test("no variant pairs an accent fill with bare foreground text", () => {
+  for (const variant of [
+    "default",
+    "outline",
+    "ghost",
+    "destructive",
+    "destructive-soft",
+    "link",
+    "soft",
+  ] as const) {
+    assert.doesNotMatch(classes({ variant }), /hover:text-foreground\b/, variant);
+  }
 });
 
 test("soft stays legible beside outline, which is what it is mistaken for", () => {

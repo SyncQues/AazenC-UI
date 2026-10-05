@@ -73,6 +73,7 @@ test("every box carries min-w-0, or a wide child scrolls the page sideways", () 
     centerVariants(),
     splitVariants(),
     containerVariants(),
+    spacerVariants(),
   ]) {
     assert.match(className, /(^|\s)min-w-0(\s|$)/);
   }

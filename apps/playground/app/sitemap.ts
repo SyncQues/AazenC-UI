@@ -49,6 +49,7 @@ const componentSlugs = [
   "charts",
   "heat-map",
   "metric-card",
+  "layout",
 ];
 
 const routes = [

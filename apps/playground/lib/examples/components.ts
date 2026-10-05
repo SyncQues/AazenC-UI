@@ -1030,7 +1030,7 @@ export function Example() {
         </Split>
 
         {/* Columns, and a breakpoint the caller still owns. */}
-        <Grid columns={3} gap={4} className="sm:grid-cols-1">
+        <Grid columns={1} gap={4} className="sm:grid-cols-3">
           {["Plans", "Usage", "Billing"].map((label) => (
             <div key={label} className="rounded border border-border p-3">
               {label}

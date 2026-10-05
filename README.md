@@ -2,7 +2,7 @@
 
 pnpm + Turborepo monorepo for the AazenC component library. The folder layout matches [intelli-ui](https://github.com/IntelliHelper/IntelliHelper-UI). The build list is [component.md](./component.md).
 
-## Layout
+## Repository layout
 
 ```
 apps/
@@ -115,7 +115,7 @@ sideways.
       </Box>
       <Button type="button" variant="outline">Invite</Button>
     </Split>
-    <Grid columns={3} gap={4} className="sm:grid-cols-1">
+    <Grid columns={1} gap={4} className="sm:grid-cols-3">
       {cards}
     </Grid>
   </Stack>
@@ -127,12 +127,17 @@ Three decisions worth knowing:
 - **`Stack wrap` is the cluster.** A wrapping row of badges is one prop, not a
   second component, so there is no `Cluster` to learn.
 - **No axis picks a breakpoint.** Direction and column count are single values,
-  and `className` owns responsive. `cn` is `twMerge`, so
-  `className="md:grid-cols-3"` replaces `columns={2}`'s track, modifier and all.
-  The container gutter is the one exception and is responsive on purpose.
+  and `className` owns responsive. `cn` is `twMerge`, so a `className` in the
+  same group replaces the primitive's value — but a breakpoint-prefixed class is
+  a different group, so `className="sm:grid-cols-3"` does not remove
+  `columns={1}`'s track; both are emitted and the breakpoint one wins at that
+  width by CSS order. So set the base value with `columns` and add the
+  breakpoint in `className`. The container gutter is the one exception and is
+  responsive on purpose.
 - **`as` and `asChild` are both typed.** A grid can be a `form`, a stack can be
   a `ul`, and `asChild` adopts the child's tag while keeping the primitives'
-  classes.
+  classes. `as` re-types the props with the tag it renders, so `as="a" href`
+  and `as="button" type` are both checked against the tag you actually get.
 
 Everything else about them is the usual three layers: `className` for one
 instance, typed axes for the named presets, tokens for the product. A gap, a
