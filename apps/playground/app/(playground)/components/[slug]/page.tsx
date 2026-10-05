@@ -13,6 +13,8 @@ import { CommandPreview } from "../../../../components/command-preview";
 import { DialogPreview } from "../../../../components/dialog-preview";
 import { DrawerPreview } from "../../../../components/drawer-preview";
 import { DropdownPreview } from "../../../../components/dropdown-preview";
+import { ContextMenuPreview } from "../../../../components/context-menu-preview";
+import { BreadcrumbPreview } from "../../../../components/breadcrumb-preview";
 import { EmptyPreview } from "../../../../components/empty-preview";
 import { AlertPreview } from "../../../../components/alert-preview";
 import { SeparatorPreview } from "../../../../components/separator-preview";
@@ -20,6 +22,7 @@ import { SheetPreview } from "../../../../components/sheet-preview";
 import { ResizablePreview } from "../../../../components/resizable-preview";
 import { FileUploadPreview } from "../../../../components/file-upload-preview";
 import { InputPreview } from "../../../../components/input-preview";
+import { TextareaPreview } from "../../../../components/textarea-preview";
 import { LabelPreview } from "../../../../components/label-preview";
 import { NavbarPreview } from "../../../../components/navbar-preview";
 import { PopoverPreview } from "../../../../components/popover-preview";
@@ -31,6 +34,9 @@ import { SwitchPreview } from "../../../../components/switch-preview";
 import { TablePreview } from "../../../../components/table-preview";
 import { ToastPreview } from "../../../../components/toast-preview";
 import { TooltipPreview } from "../../../../components/tooltip-preview";
+import { HoverCardPreview } from "../../../../components/hover-card-preview";
+import { ToggleGroupPreview } from "../../../../components/toggle-group-preview";
+import { TogglePreview } from "../../../../components/toggle-preview";
 import { TabsPreview } from "../../../../components/tabs-preview";
 import { ThemeSelectorPreview } from "../../../../components/theme-selector-preview";
 import { PdfViewerPreview } from "../../../../components/pdf-viewer-preview";
@@ -64,7 +70,10 @@ export async function generateMetadata({
     sheet: "Sheet",
     resizable: "Resizable",
     dropdown: "Dropdown",
+    "context-menu": "Context menu",
+    breadcrumb: "Breadcrumb",
     input: "Input",
+    textarea: "Textarea",
     select: "Select",
     accordion: "Accordion",
     checkbox: "Checkbox",
@@ -76,6 +85,9 @@ export async function generateMetadata({
     toast: "Toast",
     switch: "Switch",
     tooltip: "Tooltip",
+    "hover-card": "Hover card",
+    "toggle-group": "Toggle group",
+    toggle: "Toggle",
     popover: "Popover",
     avatar: "Avatar",
     carousel: "Carousel",
@@ -115,7 +127,10 @@ export default async function ComponentPage({
     sheet: SheetPreview,
     resizable: ResizablePreview,
     dropdown: DropdownPreview,
+    "context-menu": ContextMenuPreview,
+    breadcrumb: BreadcrumbPreview,
     input: InputPreview,
+    textarea: TextareaPreview,
     select: SelectPreview,
     accordion: AccordionPreview,
     checkbox: CheckboxPreview,
@@ -127,6 +142,9 @@ export default async function ComponentPage({
     toast: ToastPreview,
     switch: SwitchPreview,
     tooltip: TooltipPreview,
+    "hover-card": HoverCardPreview,
+    "toggle-group": ToggleGroupPreview,
+    toggle: TogglePreview,
     popover: PopoverPreview,
     avatar: AvatarPreview,
     carousel: CarouselPreview,

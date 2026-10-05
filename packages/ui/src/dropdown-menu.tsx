@@ -12,7 +12,7 @@ import {
   dropdownMenuShortcutClass,
   dropdownMenuSubTriggerClass,
   type DropdownMenuTone,
-} from "./dropdown-menu-variants";
+} from "./menu-variants";
 
 export type DropdownMenuProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Root>, "className">
 

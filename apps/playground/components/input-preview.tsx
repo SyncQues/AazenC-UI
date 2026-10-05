@@ -26,7 +26,8 @@ export function InputPreview() {
           <p className="text-sm text-muted-foreground">Component</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">Input</h1>
           <p className="mt-3 max-w-2xl text-muted-foreground">
-            One field. Password, email, number, and file use the native type. A leading icon keeps the same chrome.
+            One field. Password, email, number, and file use the native type. A leading icon keeps the same chrome, and
+            showCount counts the text against a limit.
           </p>
         </div>
         <Button type="button" variant="outline" onClick={toggleMode}>
@@ -45,6 +46,10 @@ export function InputPreview() {
         <label className="grid gap-1.5 text-sm font-medium" htmlFor="input-name">
           Name
           <Input id="input-name" name="name" value={value} onChange={(event) => setValue(event.target.value)} placeholder="Ada Lovelace" />
+        </label>
+        <label className="grid gap-1.5 text-sm font-medium" htmlFor="input-username">
+          Username
+          <Input id="input-username" name="username" maxLength={24} showCount placeholder="ada" autoComplete="off" />
         </label>
         <label className="grid gap-1.5 text-sm font-medium" htmlFor="input-email">
           Email

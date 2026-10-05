@@ -329,6 +329,55 @@ export function Example() {
   )
 }`,
   },
+  "context-menu": {
+    filename: "context-menu.tsx",
+    code: `import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@aazenc/ui/context-menu"
+
+export function Example() {
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <div className="grid h-32 place-items-center rounded-lg border border-dashed">
+          Right-click here
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem>Open</ContextMenuItem>
+        <ContextMenuItem>Rename</ContextMenuItem>
+        <ContextMenuItem tone="destructive">Delete</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  )
+}`,
+  },
+  breadcrumb: {
+    filename: "breadcrumb.tsx",
+    code: `import Link from "next/link"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage } from "@aazenc/ui/breadcrumb"
+
+export function Example() {
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href="/projects">Projects</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <BreadcrumbPage>Invoices</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  )
+}`,
+  },
+
   input: {
     filename: "input.tsx",
     code: `import { Input } from "@aazenc/ui/input"
@@ -337,8 +386,22 @@ import { Label } from "@aazenc/ui/label"
 export function Example() {
   return (
     <div>
-      <Label htmlFor="email">Email</Label>
-      <Input id="email" type="email" placeholder="ada@example.com" />
+      <Label htmlFor="username">Username</Label>
+      <Input id="username" maxLength={24} showCount placeholder="ada" />
+    </div>
+  )
+}`,
+  },
+  textarea: {
+    filename: "textarea.tsx",
+    code: `import { Label } from "@aazenc/ui/label"
+import { Textarea } from "@aazenc/ui/textarea"
+
+export function Example() {
+  return (
+    <div>
+      <Label htmlFor="bio">Bio</Label>
+      <Textarea id="bio" maxLength={180} showCount rows={4} />
     </div>
   )
 }`,
@@ -435,6 +498,69 @@ export function Example() {
       <Badge variant="outline">Draft</Badge>
       <Badge variant="destructive">3</Badge>
     </div>
+  )
+}`,
+  },
+  "hover-card": {
+    filename: "hover-card.tsx",
+    code: `import { HoverCard, HoverCardContent, HoverCardTrigger } from "@aazenc/ui/hover-card"
+
+export function Example() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger href="/u/adeeb" className="underline underline-offset-4">
+        @adeeb
+      </HoverCardTrigger>
+      <HoverCardContent>
+        <p className="font-medium">Adeeb Mirza</p>
+        <p className="mt-1 text-xs text-muted-foreground">Maintainer</p>
+      </HoverCardContent>
+    </HoverCard>
+  )
+}`,
+  },
+  toggle: {
+    filename: "toggle.tsx",
+    code: `import { Toggle } from "@aazenc/ui/toggle"
+
+export function Example() {
+  return (
+    <div className="flex gap-2">
+      {/* An icon-only toggle still needs an accessible name. */}
+      <Toggle aria-label="Pin note" />
+      <Toggle variant="outline" defaultPressed>
+        Starred
+      </Toggle>
+    </div>
+  )
+}`,
+  },
+  "toggle-group": {
+    filename: "toggle-group.tsx",
+    code: `"use client"
+
+import { useState } from "react"
+import { ToggleGroup, ToggleGroupItem } from "@aazenc/ui/toggle-group"
+
+const FORMATS = ["bold", "italic", "underline"]
+
+export function Example() {
+  const [formats, setFormats] = useState<string[]>([])
+
+  return (
+    // Pills by default; pass variant="outline" for the joined strip.
+    <ToggleGroup
+      type="multiple"
+      value={formats}
+      onValueChange={setFormats}
+      label="Text format"
+    >
+      {FORMATS.map((format) => (
+        <ToggleGroupItem key={format} value={format}>
+          {format}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   )
 }`,
   },

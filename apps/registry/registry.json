@@ -510,7 +510,7 @@
       "name": "dropdown-menu",
       "type": "registry:ui",
       "title": "Dropdown menu",
-      "description": "SyncQues dropdown. One menu. Destructive is the only item tone.",
+      "description": "SyncQues dropdown. One menu. Destructive is the only item tone. NOTE: this entry now writes components/ui/menu-variants.ts, which was components/ui/dropdown-menu-variants.ts before the context menu landed. Re-running `aazenc-ui add dropdown-menu` leaves the old file behind and orphaned — delete it, and re-apply any local edit to it by hand.",
       "dependencies": [
         "@radix-ui/react-dropdown-menu",
         "class-variance-authority"
@@ -525,9 +525,9 @@
           "target": "components/ui/dropdown-menu.tsx"
         },
         {
-          "path": "packages/ui/src/dropdown-menu-variants.ts",
+          "path": "packages/ui/src/menu-variants.ts",
           "type": "registry:ui",
-          "target": "components/ui/dropdown-menu-variants.ts"
+          "target": "components/ui/menu-variants.ts"
         }
       ],
       "meta": {
@@ -538,10 +538,63 @@
       }
     },
     {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "Context menu",
+      "description": "SyncQues context menu. The same panel as the dropdown, opened on right-click. Shares one menu-variants with it, so the two cannot drift.",
+      "dependencies": [
+        "@radix-ui/react-context-menu",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/context-menu.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/context-menu.tsx"
+        },
+        {
+          "path": "packages/ui/src/menu-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/menu-variants.ts"
+        }
+      ],
+      "meta": {
+        "tones": [
+          "default",
+          "destructive"
+        ]
+      }
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "title": "Breadcrumb",
+      "description": "SyncQues breadcrumb. A labelled nav around a list. The chevron between crumbs is drawn by the item and hidden on the first, so a trail cannot come out with a leading separator.",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/src/breadcrumb.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/breadcrumb.tsx"
+        },
+        {
+          "path": "packages/ui/src/breadcrumb-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/breadcrumb-variants.ts"
+        }
+      ]
+    },
+    {
       "name": "input",
       "type": "registry:ui",
       "title": "Input",
-      "description": "SyncQues input. One field. Native type covers password, search, email, and the rest.",
+      "description": "SyncQues input. One field. Native type covers password, search, email, and the rest. showCount with maxLength puts a count inside it.",
       "dependencies": [
         "class-variance-authority"
       ],
@@ -558,6 +611,45 @@
           "path": "packages/ui/src/input-variants.ts",
           "type": "registry:ui",
           "target": "components/ui/input-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/field-counter.ts",
+          "type": "registry:ui",
+          "target": "components/ui/field-counter.ts"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "SyncQues textarea. The Input field with a shape. Pass shape for a round box, invalid, autoResize with maxRows, and showCount with maxLength.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/textarea.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/textarea.tsx"
+        },
+        {
+          "path": "packages/ui/src/textarea-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/textarea-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/textarea-measure.ts",
+          "type": "registry:ui",
+          "target": "components/ui/textarea-measure.ts"
+        },
+        {
+          "path": "packages/ui/src/field-counter.ts",
+          "type": "registry:ui",
+          "target": "components/ui/field-counter.ts"
         }
       ]
     },
@@ -1541,6 +1633,122 @@
         "sizes": [
           "sm",
           "md",
+          "lg"
+        ]
+      }
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover card",
+      "description": "SyncQues hover card. A preview panel that opens on hover and on focus, and stays open while the pointer is on the card itself.",
+      "dependencies": [
+        "@radix-ui/react-hover-card"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/hover-card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/hover-card.tsx"
+        },
+        {
+          "path": "packages/ui/src/hover-card-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/hover-card-variants.ts"
+        }
+      ],
+      "meta": {
+        "parts": [
+          "HoverCard",
+          "HoverCardTrigger",
+          "HoverCardContent"
+        ]
+      }
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle group",
+      "description": "SyncQues toggle group. Any number of independent on/off answers held at once, with arrow keys and one tab stop.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/toggle-group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toggle-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/toggle-group-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/toggle-group-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/toggle-group-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/toggle-group-utils.ts"
+        },
+        {
+          "path": "packages/ui/src/toggle-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/toggle-variants.ts"
+        }
+      ],
+      "meta": {
+        "types": [
+          "single",
+          "multiple"
+        ],
+        "variants": [
+          "pill",
+          "outline",
+          "ghost"
+        ],
+        "sizes": [
+          "sm",
+          "default",
+          "lg"
+        ]
+      }
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "SyncQues toggle. One button that stays down — pill shaped, springing when it turns on.",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/toggle.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toggle.tsx"
+        },
+        {
+          "path": "packages/ui/src/toggle-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/toggle-variants.ts"
+        }
+      ],
+      "meta": {
+        "variants": [
+          "default",
+          "outline"
+        ],
+        "sizes": [
+          "sm",
+          "default",
           "lg"
         ]
       }

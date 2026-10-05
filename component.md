@@ -1,23 +1,31 @@
 # AazenC UI Component Catalog
 
-Build list for this library. Component source is not in the repo yet.
-Add each one under `packages/ui/src`.
+Build list for this library. ✅ marks what already ships: 55 components, all of
+them in `packages/ui/src`, published through `apps/registry/registry.json`, and
+openable at `/components/<slug>` in the playground. Everything unmarked is still
+to build. Add each one under `packages/ui/src`.
+
+The slug in the backticks is the one the registry, the playground route, and
+`npx aazenc-ui add <slug>` all share. One slug can mark more than one line,
+because one component covers more than one entry here — `input` covers every
+native field type, and `dialog` covers both modal and alert. Count progress by
+slug, not by line.
 
 ## 1. Foundation
 
--   Button
+-   Button ✅ (`button`)
 -   Icon Button
 -   Link
 -   Typography
 -   Divider
--   Badge
--   Avatar
+-   Badge ✅ (`badge`)
+-   Avatar ✅ (`avatar`)
 -   Avatar Group
--   Breadcrumb
+-   Breadcrumb ✅ (`breadcrumb`)
 -   Separator ✅ (`separator`)
--   Skeleton
+-   Skeleton ✅ (`skeleton`)
 -   Spinner ✅ (`spinner`)
--   Progress
+-   Progress ✅ (`progress`)
 -   Circular Progress
 -   Chip
 -   Keyboard Key (Kbd)
@@ -33,33 +41,36 @@ Add each one under `packages/ui/src`.
 
 ## 2. Form Components
 
--   Input
--   Textarea
--   Password Input
--   Search Input
+-   Label ✅ (`label`)
+-   Input ✅ (`input`)
+-   Textarea ✅ (`textarea`)
+-   Password Input ✅ (`input`)
+-   Search Input ✅ (`input`)
 -   OTP Input
--   Number Input
+-   Number Input ✅ (`input`)
 -   Currency Input
 -   Phone Input
--   URL Input
--   Email Input
--   Date Picker
--   Time Picker
--   Date Time Picker
--   Month Picker
--   Range Picker
--   Checkbox
+-   URL Input ✅ (`input`)
+-   Email Input ✅ (`input`)
+-   Date Picker ✅ (`date-picker`)
+-   Time Picker ✅ (`time-picker`)
+-   Date Time Picker ✅ (`date-time-picker`)
+-   Month Picker ✅ (`month-picker`)
+-   Range Picker ✅ (`date-picker`)
+-   Checkbox ✅ (`checkbox`)
 -   Radio Group
--   Switch
--   Slider
--   Select
--   Multi Select
+-   Switch ✅ (`switch`)
+-   Toggle ✅ (`toggle`)
+-   Toggle Group ✅ (`toggle-group`)
+-   Slider ✅ (`slider`)
+-   Select ✅ (`select`)
+-   Multi Select ✅ (`select`)
 -   Combobox
 -   Autocomplete
--   Command Palette
--   File Upload
+-   Command Palette ✅ (`command`)
+-   File Upload ✅ (`file-upload`)
 -   Image Upload
--   Drag & Drop Upload
+-   Drag & Drop Upload ✅ (via `file-upload`)
 -   Color Picker
 -   Rating
 -   Pin Input
@@ -70,33 +81,35 @@ Add each one under `packages/ui/src`.
 
 ## 3. Navigation
 
--   Navbar
+-   Navbar ✅ (`navbar`)
 -   Sidebar
 -   Navigation Menu
 -   Mega Menu
--   Dropdown
--   Context Menu
+-   Dropdown ✅ (`dropdown-menu`)
+-   Context Menu ✅ (`context-menu`)
 -   Pagination
--   Tabs
+-   Tabs ✅ (`tabs`)
+-   Segmented Control ✅ (`segmented-control`)
 -   Stepper
 -   Dock
 -   Bottom Navigation
--   Command Menu
+-   Command Menu ✅ (`command`)
 -   Floating Menu
--   Accordion
+-   Accordion ✅ (`accordion`)
+-   Collapsible ✅ (`collapsible`)
 -   Tree View
 
 ## 4. Overlay Components
 
--   Modal
--   Drawer
+-   Modal ✅ (`dialog`)
+-   Drawer ✅ (`drawer`)
 -   Sheet ✅ (`sheet`)
--   Popover
--   Tooltip
--   Hover Card
--   Alert Dialog
+-   Popover ✅ (`popover`)
+-   Tooltip ✅ (`tooltip`)
+-   Hover Card ✅ (`hover-card`)
+-   Alert Dialog ✅ (`dialog`, via `kind="alert"`)
 -   Confirmation Dialog
--   Toast
+-   Toast ✅ (`toast`)
 -   Notification Center
 -   Tour
 -   Spotlight Search
@@ -104,16 +117,16 @@ Add each one under `packages/ui/src`.
 
 ## 5. Data Display
 
--   Card
--   Table
+-   Card ✅ (`card`)
+-   Table ✅ (`table`)
 -   Data Grid
 -   Virtual Table
 -   Timeline
--   Calendar
+-   Calendar ✅ (`calendar`)
 -   Kanban
 -   List
 -   Description List
--   Empty State
+-   Empty State ✅ (`empty`)
 -   Statistic Card
 -   Metric Card ✅ (`metric-card`)
 -   Pricing Card
@@ -201,7 +214,7 @@ Add each one under `packages/ui/src`.
 -   Floating Action Button
 -   Mobile Navbar
 -   Mobile Sidebar
--   Carousel
+-   Carousel ✅ (`carousel`)
 
 ## 11. Charts
 
@@ -239,8 +252,8 @@ Pie, not a separate component.
 ## 13. Developer Components
 
 -   Copy Button
--   Theme Toggle
--   Code Viewer
+-   Theme Toggle ✅ (`theme-selector`)
+-   Code Viewer ✅ (`code-block`)
 -   API Preview
 -   Props Table
 -   Playground

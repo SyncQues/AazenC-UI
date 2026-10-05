@@ -500,6 +500,48 @@
   }
 }
 
+/* The pill turning on, keyed off `data-state="on"` so it re-runs every press:
+   the attribute stops matching while the pill is off, which cancels it. */
+@utility animate-toggle-press-in {
+  &[data-state="on"] {
+    animation: toggle-press-in var(--duration-normal) var(--ease-spring) backwards;
+  }
+}
+
+/* The pills arriving one after another. `nth-of-type` and `backwards` for the
+   reasons the segmented track uses them — a `forwards` fill would pin this
+   transform over the item's own press. */
+@utility toggle-group-items-in {
+  & > [data-slot="toggle-group-item"] {
+    animation: toggle-item-in var(--duration-slow) var(--ease-panel) backwards;
+  }
+
+  & > [data-slot="toggle-group-item"]:nth-of-type(1) {
+    animation-delay: calc(var(--duration-stagger) * 1);
+  }
+  & > [data-slot="toggle-group-item"]:nth-of-type(2) {
+    animation-delay: calc(var(--duration-stagger) * 2);
+  }
+  & > [data-slot="toggle-group-item"]:nth-of-type(3) {
+    animation-delay: calc(var(--duration-stagger) * 3);
+  }
+  & > [data-slot="toggle-group-item"]:nth-of-type(4) {
+    animation-delay: calc(var(--duration-stagger) * 4);
+  }
+  & > [data-slot="toggle-group-item"]:nth-of-type(5) {
+    animation-delay: calc(var(--duration-stagger) * 5);
+  }
+  & > [data-slot="toggle-group-item"]:nth-of-type(6) {
+    animation-delay: calc(var(--duration-stagger) * 6);
+  }
+  & > [data-slot="toggle-group-item"]:nth-of-type(7) {
+    animation-delay: calc(var(--duration-stagger) * 7);
+  }
+  & > [data-slot="toggle-group-item"]:nth-of-type(8) {
+    animation-delay: calc(var(--duration-stagger) * 8);
+  }
+}
+
 /* The crosshair and the value dot. Kept as one class so a chart cannot end up
    with a crosshair and no dot, or a dot that never gets a crosshair. */
 @utility chart-crosshair {
@@ -657,6 +699,8 @@
   .heat-scale-in,
   .animate-segmented-mark-in,
   .segmented-items-in > [data-slot="segmented-control-item"],
+  .animate-toggle-press-in,
+  .toggle-group-items-in > [data-slot="toggle-group-item"],
   .metric-card-in,
   .metric-card-parts-in > [data-slot="metric-card-header"],
   .metric-card-parts-in > [data-slot="metric-card-value"],
