@@ -37,6 +37,7 @@ import { TooltipPreview } from "../../../../components/tooltip-preview";
 import { HoverCardPreview } from "../../../../components/hover-card-preview";
 import { ToggleGroupPreview } from "../../../../components/toggle-group-preview";
 import { TogglePreview } from "../../../../components/toggle-preview";
+import { TypesetPreview } from "../../../../components/typeset-preview";
 import { TabsPreview } from "../../../../components/tabs-preview";
 import { ThemeSelectorPreview } from "../../../../components/theme-selector-preview";
 import { PdfViewerPreview } from "../../../../components/pdf-viewer-preview";
@@ -88,6 +89,7 @@ export async function generateMetadata({
     "hover-card": "Hover card",
     "toggle-group": "Toggle group",
     toggle: "Toggle",
+    typeset: "Typeset",
     popover: "Popover",
     avatar: "Avatar",
     carousel: "Carousel",
@@ -145,6 +147,7 @@ export default async function ComponentPage({
     "hover-card": HoverCardPreview,
     "toggle-group": ToggleGroupPreview,
     toggle: TogglePreview,
+    typeset: TypesetPreview,
     popover: PopoverPreview,
     avatar: AvatarPreview,
     carousel: CarouselPreview,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { cn } from "@aazenc/utils";
 import { Button } from "./button";
 import { calendarCaptionClass, calendarNavButtonClass, monthButtonClass } from "./calendar-variants";
 import {
@@ -24,6 +25,7 @@ export interface MonthPickerProps {
   allowPresent?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
 function Chevron({ direction }: { direction: "left" | "right" }) {
@@ -50,6 +52,7 @@ function MonthPicker({
   allowPresent = false,
   open,
   onOpenChange,
+  className,
 }: MonthPickerProps) {
   const [isOpen, setOpenState] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<string | null>(null);
@@ -95,7 +98,7 @@ function MonthPicker({
       open={isOpen}
       onOpenChange={setOpen}
     >
-      <div data-slot="month-picker" className="w-[16.5rem] p-1">
+      <div data-slot="month-picker" className={cn("w-[16.5rem] p-1", className)}>
         <div className="relative">
           <div className="absolute inset-x-0 top-0 flex h-9 items-center justify-between">
             <button type="button" className={calendarNavButtonClass} aria-label="Previous year" onClick={() => setYear((current) => (current ?? new Date().getFullYear()) - 1)}>

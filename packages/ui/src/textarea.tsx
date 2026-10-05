@@ -37,6 +37,7 @@ export interface TextareaProps extends Omit<ComponentProps<"textarea">, "classNa
   maxRows?: number;
   /** Shows `used / maxLength` inside the field. Needs `maxLength` to say anything. */
   showCount?: boolean;
+  className?: string;
 }
 
 function Textarea({
@@ -52,6 +53,7 @@ function Textarea({
   onChange,
   "aria-invalid": ariaInvalid,
   "aria-describedby": ariaDescribedBy,
+  className,
   ...props
 }: TextareaProps) {
   const fieldRef = useRef<HTMLTextAreaElement>(null);
@@ -136,7 +138,10 @@ function Textarea({
       maxLength={maxLength}
       aria-invalid={ariaInvalid ?? (invalid ? true : undefined)}
       aria-describedby={describedBy}
-      className={cn(textareaVariants({ shape, resize: autoResize ? "none" : "manual", count: withCount }))}
+      className={cn(
+        textareaVariants({ shape, resize: autoResize ? "none" : "manual", count: withCount }),
+        className,
+      )}
       onChange={handleChange}
       {...props}
     />

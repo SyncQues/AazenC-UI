@@ -2,6 +2,7 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import { type ComponentProps, createContext, type ReactNode, useContext, useLayoutEffect, useRef, useState } from "react";
+import { cn } from "@aazenc/utils";
 import {
   navbarActionsVariants,
   navbarBrandVariants,
@@ -32,11 +33,17 @@ export interface NavbarProps extends Omit<ComponentProps<"header">, "className" 
   children: ReactNode;
   /** `bar` is the sticky docs header. `floating` is the SyncQues pill. */
   variant?: NavbarVariant;
+  className?: string;
 }
 
-function Navbar({ children, variant = "bar", ...props }: NavbarProps) {
+function Navbar({ children, variant = "bar", className, ...props }: NavbarProps) {
   return (
-    <header data-slot="navbar" data-variant={variant} className={navbarVariants({ variant })} {...props}>
+    <header
+      data-slot="navbar"
+      data-variant={variant}
+      className={cn(navbarVariants({ variant }), className)}
+      {...props}
+    >
       <NavbarVariantContext.Provider value={variant}>
         <div className={navbarRowClass}>{children}</div>
       </NavbarVariantContext.Provider>
@@ -46,20 +53,22 @@ function Navbar({ children, variant = "bar", ...props }: NavbarProps) {
 
 export type NavbarBrandProps = Omit<ComponentProps<"a">, "className"> & {
   asChild?: boolean;
+  className?: string;
 };
 
-function NavbarBrand({ asChild = false, ...props }: NavbarBrandProps) {
+function NavbarBrand({ asChild = false, className, ...props }: NavbarBrandProps) {
   const variant = useContext(NavbarVariantContext);
   const Comp = asChild ? Slot : "a";
-  return <Comp data-slot="navbar-brand" className={navbarBrandVariants({ variant })} {...props} />;
+  return <Comp data-slot="navbar-brand" className={cn(navbarBrandVariants({ variant }), className)} {...props} />;
 }
 
 export interface NavbarLinksProps extends Omit<ComponentProps<"nav">, "className" | "children"> {
   children: ReactNode;
   label?: string;
+  className?: string;
 }
 
-function NavbarLinks({ children, label = "Main", ...props }: NavbarLinksProps) {
+function NavbarLinks({ children, label = "Main", className, ...props }: NavbarLinksProps) {
   const variant = useContext(NavbarVariantContext);
   const navRef = useRef<HTMLElement>(null);
   const [box, setBox] = useState<IndicatorBox | null>(null);
@@ -92,7 +101,13 @@ function NavbarLinks({ children, label = "Main", ...props }: NavbarLinksProps) {
   }, []);
 
   return (
-    <nav {...props} ref={navRef} data-slot="navbar-links" aria-label={label} className={navbarLinksVariants({ variant })}>
+    <nav
+      {...props}
+      ref={navRef}
+      data-slot="navbar-links"
+      aria-label={label}
+      className={cn(navbarLinksVariants({ variant }), className)}
+    >
       {box ? (
         <span
           aria-hidden
@@ -109,16 +124,17 @@ function NavbarLinks({ children, label = "Main", ...props }: NavbarLinksProps) {
 export type NavbarLinkProps = Omit<ComponentProps<"a">, "className"> & {
   active?: boolean;
   asChild?: boolean;
+  className?: string;
 };
 
-function NavbarLink({ active = false, asChild = false, ...props }: NavbarLinkProps) {
+function NavbarLink({ active = false, asChild = false, className, ...props }: NavbarLinkProps) {
   const Comp = asChild ? Slot : "a";
   return (
     <Comp
       data-slot="navbar-link"
       data-active={active}
       aria-current={active ? "page" : undefined}
-      className={navbarLinkClass}
+      className={cn(navbarLinkClass, className)}
       {...props}
     />
   );
@@ -126,12 +142,13 @@ function NavbarLink({ active = false, asChild = false, ...props }: NavbarLinkPro
 
 export interface NavbarActionsProps extends Omit<ComponentProps<"div">, "className" | "children"> {
   children: ReactNode;
+  className?: string;
 }
 
-function NavbarActions({ children, ...props }: NavbarActionsProps) {
+function NavbarActions({ children, className, ...props }: NavbarActionsProps) {
   const variant = useContext(NavbarVariantContext);
   return (
-    <div {...props} data-slot="navbar-actions" className={navbarActionsVariants({ variant })}>
+    <div {...props} data-slot="navbar-actions" className={cn(navbarActionsVariants({ variant }), className)}>
       {children}
     </div>
   );

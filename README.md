@@ -24,6 +24,31 @@ docs/                  # Docs slot
 scripts/               # Registry bundle scripts
 ```
 
+## Customizing a component
+
+Every component takes `className`, and it wins. The caller's classes are merged
+last, so a caller can override any size, colour, or spacing the variant set chose:
+
+```tsx
+<Button size="default" className="h-12 px-10" />   // h-12 and px-10 win
+<Card className="max-w-sm" />
+<TableCell className="text-destructive" />
+```
+
+Three layers, each with a clear owner:
+
+| Layer | Scope | Mechanism |
+| --- | --- | --- |
+| `className` | one instance | `cn(variants(...), className)` |
+| `variant` / `size` | named presets | cva, exported per component |
+| tokens | the whole product | CSS variables in `@aazenc/tokens` |
+
+`cn` is `twMerge(clsx(...))`, so conflicting Tailwind utilities resolve in the
+caller's favour rather than depending on stylesheet order. Two things that are
+not class overrides, and stay the component's own: the `data-slot` attributes
+every element carries, and the ARIA and state attributes a variant cannot
+express.
+
 ## What is already here
 
 Shared foundation the components sit on: tokens, the two themes (slate, mono), animations, `cn` / `focusRing`, and the web `ThemeProvider`.
@@ -58,7 +83,9 @@ npx @aazenc/cli@latest update
 npx @aazenc/cli@latest update button --overwrite
 ```
 
-If the project has no `ui` folder, `init` creates `components/ui` (or `src/components/ui`) and `add` writes components there. If a `ui` folder is already present, components go in `aazenc-ui` beside it, for example `components/aazenc-ui`. Pass `--ui <dir>` to choose the directory. Import the generated `aazenc.css` after `tailwindcss` in your global CSS. `@aazenc/cli` on npm is updated when this package is published again. Version 0.1.0 only prints a stub.
+If the project has no `ui` folder, `init` creates `components/ui` (or `src/components/ui`) and `add` writes components there. If a `ui` folder is already present, components go in `aazenc-ui` beside it, for example `components/aazenc-ui`. Pass `--ui <dir>` to choose the directory. Import the generated `aazenc.css` after `tailwindcss` in your global CSS.
+
+You own the copied files, so you can edit them freely. `update` only replaces a file whose current content still matches the hash recorded at install, so local edits are skipped rather than overwritten — merge upstream changes by hand, or pass `--overwrite` to discard your version.
 
 ## Add a component
 

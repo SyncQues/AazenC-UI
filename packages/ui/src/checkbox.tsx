@@ -2,11 +2,13 @@
 
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { type ComponentProps } from "react";
+import { cn } from "@aazenc/utils";
 import { checkboxClass, checkboxIndicatorClass } from "./checkbox-variants";
 
 export interface CheckboxProps extends Omit<ComponentProps<typeof CheckboxPrimitive.Root>, "className"> {
   /** Marks the box invalid. Same box either way this is set. */
   invalid?: boolean;
+  className?: string;
 }
 
 function CheckIcon() {
@@ -25,12 +27,12 @@ function MinusIcon() {
   );
 }
 
-function Checkbox({ invalid = false, "aria-invalid": ariaInvalid, ...props }: CheckboxProps) {
+function Checkbox({ invalid = false, "aria-invalid": ariaInvalid, className, ...props }: CheckboxProps) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       aria-invalid={ariaInvalid ?? (invalid ? true : undefined)}
-      className={checkboxClass}
+      className={cn(checkboxClass, className)}
       {...props}
     >
       <CheckboxPrimitive.Indicator data-slot="checkbox-indicator" className={checkboxIndicatorClass}>

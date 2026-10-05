@@ -1,4 +1,5 @@
 import { type ComponentProps } from "react";
+import { cn } from "@aazenc/utils";
 import {
   emptyClass,
   emptyContentClass,
@@ -8,35 +9,47 @@ import {
   emptyTitleClass,
 } from "./empty-variants";
 
-export type EmptyProps = Omit<ComponentProps<"div">, "className">
-export type EmptyHeaderProps = Omit<ComponentProps<"div">, "className">
-export type EmptyMediaProps = Omit<ComponentProps<"div">, "className">
-export type EmptyTitleProps = Omit<ComponentProps<"div">, "className">
-export type EmptyDescriptionProps = Omit<ComponentProps<"p">, "className">
-export type EmptyContentProps = Omit<ComponentProps<"div">, "className">
-
-function Empty(props: EmptyProps) {
-  return <div data-slot="empty" className={emptyClass} {...props} />;
+export type EmptyProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
+export type EmptyHeaderProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
+export type EmptyMediaProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
+export type EmptyTitleProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+}
+export type EmptyDescriptionProps = Omit<ComponentProps<"p">, "className"> & {
+  className?: string;
+}
+export type EmptyContentProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
 }
 
-function EmptyHeader(props: EmptyHeaderProps) {
-  return <div data-slot="empty-header" className={emptyHeaderClass} {...props} />;
+function Empty({ className, ...props }: EmptyProps) {
+  return <div data-slot="empty" className={cn(emptyClass, className)} {...props} />;
 }
 
-function EmptyMedia(props: EmptyMediaProps) {
-  return <div data-slot="empty-media" className={emptyMediaClass} {...props} />;
+function EmptyHeader({ className, ...props }: EmptyHeaderProps) {
+  return <div data-slot="empty-header" className={cn(emptyHeaderClass, className)} {...props} />;
 }
 
-function EmptyTitle(props: EmptyTitleProps) {
-  return <div data-slot="empty-title" className={emptyTitleClass} {...props} />;
+function EmptyMedia({ className, ...props }: EmptyMediaProps) {
+  return <div data-slot="empty-media" className={cn(emptyMediaClass, className)} {...props} />;
 }
 
-function EmptyDescription(props: EmptyDescriptionProps) {
-  return <p data-slot="empty-description" className={emptyDescriptionClass} {...props} />;
+function EmptyTitle({ className, ...props }: EmptyTitleProps) {
+  return <div data-slot="empty-title" className={cn(emptyTitleClass, className)} {...props} />;
 }
 
-function EmptyContent(props: EmptyContentProps) {
-  return <div data-slot="empty-content" className={emptyContentClass} {...props} />;
+function EmptyDescription({ className, ...props }: EmptyDescriptionProps) {
+  return <p data-slot="empty-description" className={cn(emptyDescriptionClass, className)} {...props} />;
+}
+
+function EmptyContent({ className, ...props }: EmptyContentProps) {
+  return <div data-slot="empty-content" className={cn(emptyContentClass, className)} {...props} />;
 }
 
 export { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle };

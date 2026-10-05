@@ -12,6 +12,7 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
+  className?: string;
 }
 
 /** The button already names itself and carries the busy state, so the mark stays quiet. */
@@ -29,17 +30,18 @@ function Button({
   loading = false,
   disabled,
   children,
+  className,
   ...props
 }: ButtonProps) {
   const iconOnly = typeof size === "string" && size.startsWith("icon");
-  const className = cn(buttonVariants({ variant, size, shape, width, align }));
+  const baseClassName = cn(buttonVariants({ variant, size, shape, width, align }));
 
   if (asChild) {
     return (
       <Slot
         data-slot="button"
         data-loading={loading ? "" : undefined}
-        className={className}
+        className={cn(baseClassName, className)}
         aria-busy={loading || undefined}
         {...props}
       >
@@ -52,7 +54,7 @@ function Button({
     <button
       data-slot="button"
       data-loading={loading ? "" : undefined}
-      className={className}
+      className={cn(baseClassName, className)}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...props}

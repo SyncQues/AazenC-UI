@@ -19,6 +19,7 @@ export interface DateTimePickerProps {
   disablePast?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
 function DateTimePicker({
@@ -31,6 +32,7 @@ function DateTimePicker({
   disablePast = false,
   open,
   onOpenChange,
+  className,
 }: DateTimePickerProps) {
   const [isOpen, setOpen] = useOpen(open, onOpenChange);
   const [inner, setInner] = useState<Date | null>(null);
@@ -53,6 +55,7 @@ function DateTimePicker({
       id={id}
       label={label}
       empty={!selected}
+      className={className}
       disabled={disabled}
       invalid={invalid}
       open={isOpen}

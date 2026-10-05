@@ -19,25 +19,36 @@ export interface CardProps
   extends Omit<ComponentProps<"div">, "className">,
     VariantProps<typeof cardVariants> {
   padding?: CardPadding;
+  className?: string;
 }
 
 export interface CardHeaderProps
   extends Omit<ComponentProps<"div">, "className">,
-    VariantProps<typeof cardHeaderVariants> {}
+    VariantProps<typeof cardHeaderVariants> {
+  className?: string;
+}
 
 export interface CardTitleProps
   extends Omit<ComponentProps<"h3">, "className">,
-    VariantProps<typeof cardTitleVariants> {}
+    VariantProps<typeof cardTitleVariants> {
+  className?: string;
+}
 
-export type CardDescriptionProps = Omit<ComponentProps<"p">, "className">
+export type CardDescriptionProps = Omit<ComponentProps<"p">, "className"> & {
+  className?: string;
+}
 
 export interface CardContentProps
   extends Omit<ComponentProps<"div">, "className">,
-    VariantProps<typeof cardContentVariants> {}
+    VariantProps<typeof cardContentVariants> {
+  className?: string;
+}
 
 export interface CardFooterProps
   extends Omit<ComponentProps<"div">, "className">,
-    VariantProps<typeof cardFooterVariants> {}
+    VariantProps<typeof cardFooterVariants> {
+  className?: string;
+}
 
 function Card({
   variant,
@@ -46,6 +57,7 @@ function Card({
   align,
   interactive,
   children,
+  className,
   ...props
 }: CardProps) {
   return (
@@ -53,7 +65,7 @@ function Card({
       <div
         data-slot="card"
         data-padding={padding}
-        className={cn(cardVariants({ variant, radius, align, interactive }))}
+        className={cn(cardVariants({ variant, radius, align, interactive }), className)}
         {...props}
       >
         {children}
@@ -62,12 +74,12 @@ function Card({
   );
 }
 
-function CardHeader({ layout, children, ...props }: CardHeaderProps) {
+function CardHeader({ layout, children, className, ...props }: CardHeaderProps) {
   const padding = useContext(CardPaddingContext);
   return (
     <div
       data-slot="card-header"
-      className={cn(cardHeaderVariants({ layout }), cardPaddingClass[padding].header)}
+      className={cn(cardHeaderVariants({ layout }), cardPaddingClass[padding].header, className)}
       {...props}
     >
       {children}
@@ -75,28 +87,28 @@ function CardHeader({ layout, children, ...props }: CardHeaderProps) {
   );
 }
 
-function CardTitle({ size, children, ...props }: CardTitleProps) {
+function CardTitle({ size, children, className, ...props }: CardTitleProps) {
   return (
-    <h3 data-slot="card-title" className={cn(cardTitleVariants({ size }))} {...props}>
+    <h3 data-slot="card-title" className={cn(cardTitleVariants({ size }), className)} {...props}>
       {children}
     </h3>
   );
 }
 
-function CardDescription({ children, ...props }: CardDescriptionProps) {
+function CardDescription({ children, className, ...props }: CardDescriptionProps) {
   return (
-    <p data-slot="card-description" className="text-sm text-muted-foreground" {...props}>
+    <p data-slot="card-description" className={cn("text-sm text-muted-foreground", className)} {...props}>
       {children}
     </p>
   );
 }
 
-function CardContent({ gap, children, ...props }: CardContentProps) {
+function CardContent({ gap, children, className, ...props }: CardContentProps) {
   const padding = useContext(CardPaddingContext);
   return (
     <div
       data-slot="card-content"
-      className={cn(cardContentVariants({ gap }), cardPaddingClass[padding].content)}
+      className={cn(cardContentVariants({ gap }), cardPaddingClass[padding].content, className)}
       {...props}
     >
       {children}
@@ -104,12 +116,12 @@ function CardContent({ gap, children, ...props }: CardContentProps) {
   );
 }
 
-function CardFooter({ align, children, ...props }: CardFooterProps) {
+function CardFooter({ align, children, className, ...props }: CardFooterProps) {
   const padding = useContext(CardPaddingContext);
   return (
     <div
       data-slot="card-footer"
-      className={cn(cardFooterVariants({ align }), cardPaddingClass[padding].footer)}
+      className={cn(cardFooterVariants({ align }), cardPaddingClass[padding].footer, className)}
       {...props}
     >
       {children}

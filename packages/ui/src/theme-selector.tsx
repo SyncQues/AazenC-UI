@@ -23,6 +23,7 @@ export interface ThemeSelectorProps extends Omit<ComponentProps<"button">, "clas
   mode: "light" | "dark";
   onTheme: (theme: string) => void;
   onMode: (mode: "light" | "dark") => void;
+  className?: string;
 }
 
 function ThemeSelector({ theme, themes, mode, onTheme, onMode, ...triggerProps }: ThemeSelectorProps) {

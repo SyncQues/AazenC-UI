@@ -31,6 +31,7 @@ export interface MultiSelectProps {
   /** Submits one hidden input per selected value. */
   name?: string;
   onScrollEnd?: () => void;
+  className?: string;
 }
 
 function SearchIcon() {
@@ -92,6 +93,7 @@ function MultiSelect({
   id,
   name,
   onScrollEnd,
+  className,
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -117,7 +119,7 @@ function MultiSelect({
       <div
         data-slot="multi-select"
         aria-invalid={invalid || undefined}
-        className={cn(multiSelectFieldClass, disabled && "pointer-events-none opacity-50")}
+        className={cn(multiSelectFieldClass, disabled && "pointer-events-none opacity-50", className)}
       >
         <PopoverPrimitive.Trigger asChild>
           <button

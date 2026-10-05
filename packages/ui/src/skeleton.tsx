@@ -12,20 +12,34 @@ export interface SkeletonProps extends Omit<ComponentProps<"div">, "className" |
   width?: SkeletonWidth;
   /** Repeats a line. Circles and blocks stay a single shape. */
   count?: number;
+  className?: string;
 }
 
-function Skeleton({ shape = "line", width = "medium", count = 1, ...props }: SkeletonProps) {
+function Skeleton({ shape = "line", width = "medium", count = 1, className, ...props }: SkeletonProps) {
   const repeats = shape === "line" ? Math.max(1, count) : 1;
-  const className = cn(skeletonVariants({ shape, width }));
+  const baseClassName = cn(skeletonVariants({ shape, width }));
 
   if (repeats === 1) {
-    return <div data-slot="skeleton" data-shape={shape} aria-hidden="true" className={className} {...props} />;
+    return (
+      <div
+        data-slot="skeleton"
+        data-shape={shape}
+        aria-hidden="true"
+        className={cn(baseClassName, className)}
+        {...props}
+      />
+    );
   }
 
   return (
-    <div data-slot="skeleton-group" className="flex w-full flex-col gap-2" aria-hidden="true" {...props}>
+    <div
+      data-slot="skeleton-group"
+      className={cn("flex w-full flex-col gap-2", className)}
+      aria-hidden="true"
+      {...props}
+    >
       {Array.from({ length: repeats }, (_, index) => (
-        <div key={index} data-slot="skeleton" data-shape={shape} className={className} />
+        <div key={index} data-slot="skeleton" data-shape={shape} className={baseClassName} />
       ))}
     </div>
   );

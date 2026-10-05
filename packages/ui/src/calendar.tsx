@@ -40,6 +40,7 @@ type CalendarShared = {
   startMonth?: Date;
   endMonth?: Date;
   id?: string;
+  className?: string;
 };
 
 export type CalendarSingleProps = CalendarShared & {
@@ -125,11 +126,11 @@ function CalendarChevron({ orientation }: { orientation?: "up" | "down" | "left"
   return <ChevronIcon direction={orientation === "left" ? "left" : "right"} />;
 }
 
-function CalendarChrome(props: ComponentProps<typeof DayPicker>) {
+function CalendarChrome({ className, ...props }: ComponentProps<typeof DayPicker>) {
   return (
     <DayPicker
       showOutsideDays
-      className={calendarClass}
+      className={cn(calendarClass, className)}
       classNames={{
         months: calendarMonthsClass,
         month: calendarMonthClass,
@@ -196,6 +197,7 @@ function Calendar(props: CalendarProps) {
         startMonth={startMonth}
         endMonth={endMonth}
         id={rest.id}
+        className={rest.className}
       />
     );
   }
@@ -212,6 +214,7 @@ function Calendar(props: CalendarProps) {
       startMonth={startMonth}
       endMonth={endMonth}
       id={rest.id}
+      className={rest.className}
     />
   );
 }

@@ -107,7 +107,8 @@ test("where the panel goes is Radix's, and this component cannot argue", () => {
     );
   }
   // And the one that is genuinely ours: the panel is the dropdown's panel.
-  assert.match(component, /className=\{contextMenuContentClass\}/);
+  // Wrapped in `cn` so a caller can still add their own classes.
+  assert.match(component, /className=\{cn\(\s*contextMenuContentClass\s*,\s*className\s*\)\}/);
 });
 
 test("every part the dropdown exposes, the context menu exposes too", () => {
@@ -138,7 +139,7 @@ test("items carry their tone in the DOM, not only in a class", () => {
 });
 
 test("the checkable indicator is pinned, so a tick cannot push the label", () => {
-  assert.match(component, /className=\{contextMenuCheckboxItemClass\}/);
+  assert.match(component, /className=\{cn\(\s*contextMenuCheckboxItemClass\s*,\s*className\s*\)\}/);
   assert.match(component, /absolute left-2 flex size-3\.5 items-center justify-center/);
 });
 

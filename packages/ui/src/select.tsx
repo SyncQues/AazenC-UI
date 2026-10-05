@@ -2,6 +2,7 @@
 
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { type ComponentProps } from "react";
+import { cn } from "@aazenc/utils";
 import {
   selectContentClass,
   selectIconClass,
@@ -15,22 +16,35 @@ import {
 
 export type SelectProps = ComponentProps<typeof SelectPrimitive.Root>
 
-export type SelectGroupProps = Omit<ComponentProps<typeof SelectPrimitive.Group>, "className">
+export type SelectGroupProps = Omit<ComponentProps<typeof SelectPrimitive.Group>, "className"> & {
+  className?: string;
+}
 
-export type SelectValueProps = Omit<ComponentProps<typeof SelectPrimitive.Value>, "className">
+export type SelectValueProps = Omit<ComponentProps<typeof SelectPrimitive.Value>, "className"> & {
+  className?: string;
+}
 
 export interface SelectTriggerProps extends Omit<ComponentProps<typeof SelectPrimitive.Trigger>, "className"> {
   /** Marks the field invalid. Same pill either way this is set. */
   invalid?: boolean;
+  className?: string;
 }
 
-export type SelectContentProps = Omit<ComponentProps<typeof SelectPrimitive.Content>, "className" | "position">
+export type SelectContentProps = Omit<ComponentProps<typeof SelectPrimitive.Content>, "className" | "position"> & {
+  className?: string;
+}
 
-export type SelectLabelProps = Omit<ComponentProps<typeof SelectPrimitive.Label>, "className">
+export type SelectLabelProps = Omit<ComponentProps<typeof SelectPrimitive.Label>, "className"> & {
+  className?: string;
+}
 
-export type SelectItemProps = Omit<ComponentProps<typeof SelectPrimitive.Item>, "className">
+export type SelectItemProps = Omit<ComponentProps<typeof SelectPrimitive.Item>, "className"> & {
+  className?: string;
+}
 
-export type SelectSeparatorProps = Omit<ComponentProps<typeof SelectPrimitive.Separator>, "className">
+export type SelectSeparatorProps = Omit<ComponentProps<typeof SelectPrimitive.Separator>, "className"> & {
+  className?: string;
+}
 
 function ChevronIcon({ direction }: { direction: "down" | "up" }) {
   return (
@@ -64,12 +78,12 @@ function SelectValue(props: SelectValueProps) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />;
 }
 
-function SelectTrigger({ invalid = false, "aria-invalid": ariaInvalid, children, ...props }: SelectTriggerProps) {
+function SelectTrigger({ invalid = false, "aria-invalid": ariaInvalid, children, className, ...props }: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       aria-invalid={ariaInvalid ?? (invalid ? true : undefined)}
-      className={selectTriggerClass}
+      className={cn(selectTriggerClass, className)}
       {...props}
     >
       {children}
@@ -96,7 +110,7 @@ function SelectScrollDownButton() {
   );
 }
 
-function SelectContent({ sideOffset = 4, children, ...props }: SelectContentProps) {
+function SelectContent({ sideOffset = 4, children, className, ...props }: SelectContentProps) {
   return (
     <SelectPrimitive.Portal>
       <div className="menu-presence pointer-events-none fixed inset-0 z-[var(--z-popper)]">
@@ -105,7 +119,7 @@ function SelectContent({ sideOffset = 4, children, ...props }: SelectContentProp
           data-presence=""
           position="popper"
           sideOffset={sideOffset}
-          className={selectContentClass}
+          className={cn(selectContentClass, className)}
           {...props}
         >
           <SelectScrollUpButton />
@@ -117,13 +131,13 @@ function SelectContent({ sideOffset = 4, children, ...props }: SelectContentProp
   );
 }
 
-function SelectLabel(props: SelectLabelProps) {
-  return <SelectPrimitive.Label data-slot="select-label" className={selectLabelClass} {...props} />;
+function SelectLabel({ className, ...props }: SelectLabelProps) {
+  return <SelectPrimitive.Label data-slot="select-label" className={cn(selectLabelClass, className)} {...props} />;
 }
 
-function SelectItem({ children, ...props }: SelectItemProps) {
+function SelectItem({ children, className, ...props }: SelectItemProps) {
   return (
-    <SelectPrimitive.Item data-slot="select-item" className={selectItemClass} {...props}>
+    <SelectPrimitive.Item data-slot="select-item" className={cn(selectItemClass, className)} {...props}>
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <CheckIcon />
@@ -134,8 +148,8 @@ function SelectItem({ children, ...props }: SelectItemProps) {
   );
 }
 
-function SelectSeparator(props: SelectSeparatorProps) {
-  return <SelectPrimitive.Separator data-slot="select-separator" className={selectSeparatorClass} {...props} />;
+function SelectSeparator({ className, ...props }: SelectSeparatorProps) {
+  return <SelectPrimitive.Separator data-slot="select-separator" className={cn(selectSeparatorClass, className)} {...props} />;
 }
 
 export {

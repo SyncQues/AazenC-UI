@@ -133,7 +133,7 @@ test("the fix lives inside the portal, because the portal mounts late", () => {
   // component above the portal never re-renders when the card appears.
   assert.match(
     component,
-    /<HoverCardPrimitive\.Portal>\s*<HoverCardSurface \{\.\.\.props\} \/>/,
+    /<HoverCardPrimitive\.Portal>\s*<HoverCardSurface className=\{className\} \{\.\.\.props\} \/>/,
     "the surface has to be inside the portal or its effect runs against nothing",
   );
   // And `Content` takes a forwarded ref and never attaches it, so a ref on it is

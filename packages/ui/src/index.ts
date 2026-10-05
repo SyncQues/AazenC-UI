@@ -585,3 +585,16 @@ export type {
   ToggleGroupVariantProps,
 } from "./toggle-group-variants";
 export type { ToggleGroupOrientation, ToggleGroupType } from "./toggle-group-utils";
+export { Typeset, TypesetFit } from "./typeset";
+export {
+  typesetEmbedClass,
+  typesetFitClass,
+  typesetNotClass,
+  typesetScrollClass,
+  typesetVariants,
+} from "./typeset-variants";
+export type {
+  TypesetMeasure,
+  TypesetPreset,
+  TypesetVariantProps,
+} from "./typeset-variants";

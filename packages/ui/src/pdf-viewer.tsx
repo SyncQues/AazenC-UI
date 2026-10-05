@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useId, useRef, useState, type ComponentProps, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { cn } from "@aazenc/utils";
 import { Button } from "./button";
 import { Skeleton } from "./skeleton";
 import {
@@ -54,9 +55,10 @@ export interface PdfViewerProps extends Omit<ComponentProps<"div">, "className" 
   onPageChange?: (page: number, numPages: number) => void;
   onLoadSuccess?: (numPages: number) => void;
   options?: PdfAssetOptions;
+  className?: string;
 }
 
-function PdfViewer({ src, title, initialPage = 1, onPageChange, onLoadSuccess, options, onKeyDown, ...regionProps }: PdfViewerProps) {
+function PdfViewer({ src, title, initialPage = 1, onPageChange, onLoadSuccess, options, onKeyDown, className, ...regionProps }: PdfViewerProps) {
   const labelId = useId();
   const regionRef = useRef<HTMLDivElement>(null);
   const activeThumbRef = useRef<HTMLButtonElement>(null);
@@ -183,7 +185,7 @@ function PdfViewer({ src, title, initialPage = 1, onPageChange, onLoadSuccess, o
       aria-label={title ? undefined : "PDF"}
       tabIndex={0}
       data-slot="pdf-viewer"
-      className={pdfViewerClass}
+      className={cn(pdfViewerClass, className)}
       {...regionProps}
       ref={regionRef}
       data-expanded={expanded ? "true" : undefined}

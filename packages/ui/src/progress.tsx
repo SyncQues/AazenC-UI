@@ -2,12 +2,15 @@
 
 import * as ProgressPrimitive from "@radix-ui/react-progress";
 import { type ComponentProps, useEffect, useState } from "react";
+import { cn } from "@aazenc/utils";
 import { meterFillClass, meterFillMotionClass, meterTrackClass } from "./meter-variants";
 import { clampProgress } from "./progress-utils";
 
-export type ProgressProps = Omit<ComponentProps<typeof ProgressPrimitive.Root>, "className">;
+export type ProgressProps = Omit<ComponentProps<typeof ProgressPrimitive.Root>, "className"> & {
+  className?: string;
+};
 
-function Progress({ value, max = 100, ...props }: ProgressProps) {
+function Progress({ value, max = 100, className, ...props }: ProgressProps) {
   const amount = clampProgress(value, max);
   const safeMax = max > 0 ? max : 100;
   const percent = amount == null ? null : (amount / safeMax) * 100;
@@ -25,7 +28,13 @@ function Progress({ value, max = 100, ...props }: ProgressProps) {
   }, [percent]);
 
   return (
-    <ProgressPrimitive.Root data-slot="progress" value={amount} max={safeMax} className={meterTrackClass} {...props}>
+    <ProgressPrimitive.Root
+      data-slot="progress"
+      value={amount}
+      max={safeMax}
+      className={cn(meterTrackClass, className)}
+      {...props}
+    >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
         className={`${meterFillClass} ${percent == null ? "w-1/3 animate-pulse motion-reduce:animate-none" : meterFillMotionClass}`}

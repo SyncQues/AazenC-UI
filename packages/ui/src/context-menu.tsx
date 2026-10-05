@@ -14,39 +14,65 @@ import {
   type ContextMenuTone,
 } from "./menu-variants";
 
-export type ContextMenuProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Root>, "className">
+export type ContextMenuProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Root>, "className"> & {
+  className?: string;
+}
 
 export interface ContextMenuTriggerProps
   extends Omit<ComponentProps<typeof ContextMenuPrimitive.Trigger>, "className"> {
   asChild?: boolean;
+  className?: string;
 }
 
-export type ContextMenuContentProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Content>, "className">
+export type ContextMenuContentProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Content>, "className"> & {
+  className?: string;
+}
 
 export interface ContextMenuItemProps
   extends Omit<ComponentProps<typeof ContextMenuPrimitive.Item>, "className"> {
   tone?: ContextMenuTone;
+  className?: string;
 }
 
-export type ContextMenuCheckboxItemProps = Omit<ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>, "className">
+export type ContextMenuCheckboxItemProps = Omit<ComponentProps<typeof ContextMenuPrimitive.CheckboxItem>, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuRadioItemProps = Omit<ComponentProps<typeof ContextMenuPrimitive.RadioItem>, "className">
+export type ContextMenuRadioItemProps = Omit<ComponentProps<typeof ContextMenuPrimitive.RadioItem>, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuLabelProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Label>, "className">
+export type ContextMenuLabelProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Label>, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuSeparatorProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Separator>, "className">
+export type ContextMenuSeparatorProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Separator>, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuShortcutProps = Omit<ComponentProps<"span">, "className">
+export type ContextMenuShortcutProps = Omit<ComponentProps<"span">, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuGroupProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Group>, "className">
+export type ContextMenuGroupProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Group>, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuRadioGroupProps = Omit<ComponentProps<typeof ContextMenuPrimitive.RadioGroup>, "className">
+export type ContextMenuRadioGroupProps = Omit<ComponentProps<typeof ContextMenuPrimitive.RadioGroup>, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuSubProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Sub>, "className">
+export type ContextMenuSubProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Sub>, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuSubTriggerProps = Omit<ComponentProps<typeof ContextMenuPrimitive.SubTrigger>, "className">
+export type ContextMenuSubTriggerProps = Omit<ComponentProps<typeof ContextMenuPrimitive.SubTrigger>, "className"> & {
+  className?: string;
+}
 
-export type ContextMenuSubContentProps = Omit<ComponentProps<typeof ContextMenuPrimitive.SubContent>, "className">
+export type ContextMenuSubContentProps = Omit<ComponentProps<typeof ContextMenuPrimitive.SubContent>, "className"> & {
+  className?: string;
+}
 
 /** Same chevron and tick the dropdown draws, so the two panels read as one menu. */
 function MenuCheckIcon() {
@@ -93,14 +119,14 @@ function ContextMenuSub(props: ContextMenuSubProps) {
  * `sideOffset: 2`, and that 2px is the whole difference from a dropdown — the panels are
  * otherwise the same class, which is the point of `menu-variants`.
  */
-function ContextMenuContent(props: ContextMenuContentProps) {
+function ContextMenuContent({ className, ...props }: ContextMenuContentProps) {
   return (
     <ContextMenuPrimitive.Portal>
       <div className="menu-presence pointer-events-none fixed inset-0 z-[var(--z-popper)]">
         <ContextMenuPrimitive.Content
           data-slot="context-menu-content"
           data-presence=""
-          className={contextMenuContentClass}
+          className={cn(contextMenuContentClass, className)}
           {...props}
         />
       </div>
@@ -108,14 +134,14 @@ function ContextMenuContent(props: ContextMenuContentProps) {
   );
 }
 
-function ContextMenuSubContent(props: ContextMenuSubContentProps) {
+function ContextMenuSubContent({ className, ...props }: ContextMenuSubContentProps) {
   return (
     <ContextMenuPrimitive.Portal>
       <div className="menu-presence pointer-events-none fixed inset-0 z-[var(--z-popper)]">
         <ContextMenuPrimitive.SubContent
           data-slot="context-menu-sub-content"
           data-presence=""
-          className={contextMenuContentClass}
+          className={cn(contextMenuContentClass, className)}
           {...props}
         />
       </div>
@@ -123,22 +149,22 @@ function ContextMenuSubContent(props: ContextMenuSubContentProps) {
   );
 }
 
-function ContextMenuItem({ tone = "default", ...props }: ContextMenuItemProps) {
+function ContextMenuItem({ tone = "default", className, ...props }: ContextMenuItemProps) {
   return (
     <ContextMenuPrimitive.Item
       data-slot="context-menu-item"
       data-tone={tone}
-      className={cn(contextMenuItemVariants({ tone }))}
+      className={cn(contextMenuItemVariants({ tone }), className)}
       {...props}
     />
   );
 }
 
-function ContextMenuCheckboxItem({ children, checked, ...props }: ContextMenuCheckboxItemProps) {
+function ContextMenuCheckboxItem({ children, checked, className, ...props }: ContextMenuCheckboxItemProps) {
   return (
     <ContextMenuPrimitive.CheckboxItem
       data-slot="context-menu-checkbox-item"
-      className={contextMenuCheckboxItemClass}
+      className={cn(contextMenuCheckboxItemClass, className)}
       checked={checked}
       {...props}
     >
@@ -152,11 +178,11 @@ function ContextMenuCheckboxItem({ children, checked, ...props }: ContextMenuChe
   );
 }
 
-function ContextMenuRadioItem({ children, ...props }: ContextMenuRadioItemProps) {
+function ContextMenuRadioItem({ children, className, ...props }: ContextMenuRadioItemProps) {
   return (
     <ContextMenuPrimitive.RadioItem
       data-slot="context-menu-radio-item"
-      className={contextMenuCheckboxItemClass}
+      className={cn(contextMenuCheckboxItemClass, className)}
       {...props}
     >
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
@@ -169,23 +195,23 @@ function ContextMenuRadioItem({ children, ...props }: ContextMenuRadioItemProps)
   );
 }
 
-function ContextMenuLabel(props: ContextMenuLabelProps) {
-  return <ContextMenuPrimitive.Label data-slot="context-menu-label" className={contextMenuLabelClass} {...props} />;
+function ContextMenuLabel({ className, ...props }: ContextMenuLabelProps) {
+  return <ContextMenuPrimitive.Label data-slot="context-menu-label" className={cn(contextMenuLabelClass, className)} {...props} />;
 }
 
-function ContextMenuSeparator(props: ContextMenuSeparatorProps) {
+function ContextMenuSeparator({ className, ...props }: ContextMenuSeparatorProps) {
   return (
-    <ContextMenuPrimitive.Separator data-slot="context-menu-separator" className={contextMenuSeparatorClass} {...props} />
+    <ContextMenuPrimitive.Separator data-slot="context-menu-separator" className={cn(contextMenuSeparatorClass, className)} {...props} />
   );
 }
 
-function ContextMenuShortcut(props: ContextMenuShortcutProps) {
-  return <span data-slot="context-menu-shortcut" className={contextMenuShortcutClass} {...props} />;
+function ContextMenuShortcut({ className, ...props }: ContextMenuShortcutProps) {
+  return <span data-slot="context-menu-shortcut" className={cn(contextMenuShortcutClass, className)} {...props} />;
 }
 
-function ContextMenuSubTrigger({ children, ...props }: ContextMenuSubTriggerProps) {
+function ContextMenuSubTrigger({ children, className, ...props }: ContextMenuSubTriggerProps) {
   return (
-    <ContextMenuPrimitive.SubTrigger data-slot="context-menu-sub-trigger" className={contextMenuSubTriggerClass} {...props}>
+    <ContextMenuPrimitive.SubTrigger data-slot="context-menu-sub-trigger" className={cn(contextMenuSubTriggerClass, className)} {...props}>
       {children}
       <MenuChevronIcon />
     </ContextMenuPrimitive.SubTrigger>

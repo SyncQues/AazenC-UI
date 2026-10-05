@@ -564,6 +564,27 @@ export function Example() {
   )
 }`,
   },
+  typeset: {
+    filename: "typeset.tsx",
+    code: `import { Typeset } from "@aazenc/ui/typeset"
+
+export function Example() {
+  // The class styles the HTML inside, so any markup works — here, JSX.
+  return (
+    <Typeset preset="docs" measure="wide">
+      <h2>Release note</h2>
+      <p>
+        Headings, lists, tables, quotes, and code all get a rhythm from three
+        CSS variables. A Tailwind utility on any element still wins.
+      </p>
+      <ul>
+        <li>Appending a block never restyles the ones above it.</li>
+        <li>Components marked data-slot are skipped automatically.</li>
+      </ul>
+    </Typeset>
+  )
+}`,
+  },
   "segmented-control": {
     filename: "segmented-control.tsx",
     code: `import { useState } from "react"

@@ -2,6 +2,7 @@
 
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { type ComponentProps, type ReactNode } from "react";
+import { cn } from "@aazenc/utils";
 import {
   accordionChevronClass,
   accordionContentClass,
@@ -15,6 +16,7 @@ type AccordionShared = {
   disabled?: boolean;
   orientation?: "horizontal" | "vertical";
   dir?: "ltr" | "rtl";
+  className?: string;
 };
 
 export type AccordionProps = AccordionShared &
@@ -34,11 +36,17 @@ export type AccordionProps = AccordionShared &
       }
   );
 
-export type AccordionItemProps = Omit<ComponentProps<typeof AccordionPrimitive.Item>, "className">
+export type AccordionItemProps = Omit<ComponentProps<typeof AccordionPrimitive.Item>, "className"> & {
+  className?: string;
+}
 
-export type AccordionTriggerProps = Omit<ComponentProps<typeof AccordionPrimitive.Trigger>, "className">
+export type AccordionTriggerProps = Omit<ComponentProps<typeof AccordionPrimitive.Trigger>, "className"> & {
+  className?: string;
+}
 
-export type AccordionContentProps = Omit<ComponentProps<typeof AccordionPrimitive.Content>, "className">
+export type AccordionContentProps = Omit<ComponentProps<typeof AccordionPrimitive.Content>, "className"> & {
+  className?: string;
+}
 
 function ChevronIcon() {
   return (
@@ -57,14 +65,14 @@ function Accordion(props: AccordionProps) {
   );
 }
 
-function AccordionItem(props: AccordionItemProps) {
-  return <AccordionPrimitive.Item data-slot="accordion-item" className={accordionItemClass} {...props} />;
+function AccordionItem({ className, ...props }: AccordionItemProps) {
+  return <AccordionPrimitive.Item data-slot="accordion-item" className={cn(accordionItemClass, className)} {...props} />;
 }
 
-function AccordionTrigger({ children, ...props }: AccordionTriggerProps) {
+function AccordionTrigger({ children, className, ...props }: AccordionTriggerProps) {
   return (
     <AccordionPrimitive.Header className="flex">
-      <AccordionPrimitive.Trigger data-slot="accordion-trigger" className={accordionTriggerClass} {...props}>
+      <AccordionPrimitive.Trigger data-slot="accordion-trigger" className={cn(accordionTriggerClass, className)} {...props}>
         {children}
         <ChevronIcon />
       </AccordionPrimitive.Trigger>
@@ -72,9 +80,13 @@ function AccordionTrigger({ children, ...props }: AccordionTriggerProps) {
   );
 }
 
-function AccordionContent({ children, ...props }: AccordionContentProps) {
+function AccordionContent({ children, className, ...props }: AccordionContentProps) {
   return (
-    <AccordionPrimitive.Content data-slot="accordion-content" className={accordionContentClass} {...props}>
+    <AccordionPrimitive.Content
+      data-slot="accordion-content"
+      className={cn(accordionContentClass, className)}
+      {...props}
+    >
       <div className={accordionContentInnerClass}>{children}</div>
     </AccordionPrimitive.Content>
   );

@@ -14,12 +14,17 @@ export interface SpinnerProps extends Omit<ComponentProps<"svg">, "className"> {
    * which is right inside a button that already says what it is doing.
    */
   label?: string;
+  className?: string;
 }
 
-export type SpinnerLabelProps = Omit<ComponentProps<"p">, "className">;
-export type SpinnerOverlayProps = Omit<ComponentProps<"div">, "className">;
+export type SpinnerLabelProps = Omit<ComponentProps<"p">, "className"> & {
+  className?: string;
+};
+export type SpinnerOverlayProps = Omit<ComponentProps<"div">, "className"> & {
+  className?: string;
+};
 
-function Spinner({ size = "md", label, ...props }: SpinnerProps) {
+function Spinner({ size = "md", label, className, ...props }: SpinnerProps) {
   const name = props["aria-label"] ?? label;
   const named = typeof name === "string" && name.length > 0;
 
@@ -31,7 +36,7 @@ function Spinner({ size = "md", label, ...props }: SpinnerProps) {
       role={props.role ?? (named ? "status" : undefined)}
       aria-label={named ? name : undefined}
       aria-hidden={named ? undefined : true}
-      className={cn(spinnerVariants({ size }))}
+      className={cn(spinnerVariants({ size }), className)}
       {...props}
     >
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="3" opacity="0.25" />
@@ -40,12 +45,12 @@ function Spinner({ size = "md", label, ...props }: SpinnerProps) {
   );
 }
 
-function SpinnerLabel(props: SpinnerLabelProps) {
-  return <p data-slot="spinner-label" className={spinnerLabelClass} {...props} />;
+function SpinnerLabel({ className, ...props }: SpinnerLabelProps) {
+  return <p data-slot="spinner-label" className={cn(spinnerLabelClass, className)} {...props} />;
 }
 
-function SpinnerOverlay(props: SpinnerOverlayProps) {
-  return <div data-slot="spinner-overlay" className={spinnerOverlayClass} {...props} />;
+function SpinnerOverlay({ className, ...props }: SpinnerOverlayProps) {
+  return <div data-slot="spinner-overlay" className={cn(spinnerOverlayClass, className)} {...props} />;
 }
 
 export { Spinner, SpinnerLabel, SpinnerOverlay, spinnerVariants };

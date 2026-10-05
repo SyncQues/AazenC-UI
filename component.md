@@ -1,6 +1,6 @@
 # AazenC UI Component Catalog
 
-Build list for this library. ✅ marks what already ships: 55 components, all of
+Build list for this library. ✅ marks what already ships: 56 components, all of
 them in `packages/ui/src`, published through `apps/registry/registry.json`, and
 openable at `/components/<slug>` in the playground. Everything unmarked is still
 to build. Add each one under `packages/ui/src`.
@@ -17,6 +17,10 @@ slug, not by line.
 -   Icon Button
 -   Link
 -   Typography
+-   Typeset ✅ (`typeset`) — the stylesheet in `packages/tokens/src/typeset.css`
+    is separate from this line. `Typography` is still the React primitive; Typeset
+    is the CSS system that styles plain HTML and rendered markdown. They are
+    complements, not the same component.
 -   Divider
 -   Badge ✅ (`badge`)
 -   Avatar ✅ (`avatar`)

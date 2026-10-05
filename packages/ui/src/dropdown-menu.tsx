@@ -14,39 +14,65 @@ import {
   type DropdownMenuTone,
 } from "./menu-variants";
 
-export type DropdownMenuProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Root>, "className">
+export type DropdownMenuProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Root>, "className"> & {
+  className?: string;
+}
 
 export interface DropdownMenuTriggerProps
   extends Omit<ComponentProps<typeof DropdownMenuPrimitive.Trigger>, "className"> {
   asChild?: boolean;
+  className?: string;
 }
 
-export type DropdownMenuContentProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Content>, "className">
+export type DropdownMenuContentProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Content>, "className"> & {
+  className?: string;
+}
 
 export interface DropdownMenuItemProps
   extends Omit<ComponentProps<typeof DropdownMenuPrimitive.Item>, "className"> {
   tone?: DropdownMenuTone;
+  className?: string;
 }
 
-export type DropdownMenuCheckboxItemProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>, "className">
+export type DropdownMenuCheckboxItemProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuRadioItemProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.RadioItem>, "className">
+export type DropdownMenuRadioItemProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.RadioItem>, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuLabelProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Label>, "className">
+export type DropdownMenuLabelProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Label>, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuSeparatorProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Separator>, "className">
+export type DropdownMenuSeparatorProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Separator>, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuShortcutProps = Omit<ComponentProps<"span">, "className">
+export type DropdownMenuShortcutProps = Omit<ComponentProps<"span">, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuGroupProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Group>, "className">
+export type DropdownMenuGroupProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Group>, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuRadioGroupProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>, "className">
+export type DropdownMenuRadioGroupProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuSubProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Sub>, "className">
+export type DropdownMenuSubProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Sub>, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuSubTriggerProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.SubTrigger>, "className">
+export type DropdownMenuSubTriggerProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.SubTrigger>, "className"> & {
+  className?: string;
+}
 
-export type DropdownMenuSubContentProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.SubContent>, "className">
+export type DropdownMenuSubContentProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.SubContent>, "className"> & {
+  className?: string;
+}
 
 function MenuCheckIcon() {
   return (
@@ -84,7 +110,7 @@ function DropdownMenuSub(props: DropdownMenuSubProps) {
   return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />;
 }
 
-function DropdownMenuContent({ sideOffset = 4, ...props }: DropdownMenuContentProps) {
+function DropdownMenuContent({ sideOffset = 4, className, ...props }: DropdownMenuContentProps) {
   return (
     <DropdownMenuPrimitive.Portal>
       <div className="menu-presence pointer-events-none fixed inset-0 z-[var(--z-popper)]">
@@ -92,7 +118,7 @@ function DropdownMenuContent({ sideOffset = 4, ...props }: DropdownMenuContentPr
           data-slot="dropdown-menu-content"
           data-presence=""
           sideOffset={sideOffset}
-          className={dropdownMenuContentClass}
+          className={cn(dropdownMenuContentClass, className)}
           {...props}
         />
       </div>
@@ -100,14 +126,14 @@ function DropdownMenuContent({ sideOffset = 4, ...props }: DropdownMenuContentPr
   );
 }
 
-function DropdownMenuSubContent(props: DropdownMenuSubContentProps) {
+function DropdownMenuSubContent({ className, ...props }: DropdownMenuSubContentProps) {
   return (
     <DropdownMenuPrimitive.Portal>
       <div className="menu-presence pointer-events-none fixed inset-0 z-[var(--z-popper)]">
         <DropdownMenuPrimitive.SubContent
           data-slot="dropdown-menu-sub-content"
           data-presence=""
-          className={dropdownMenuContentClass}
+          className={cn(dropdownMenuContentClass, className)}
           {...props}
         />
       </div>
@@ -115,22 +141,22 @@ function DropdownMenuSubContent(props: DropdownMenuSubContentProps) {
   );
 }
 
-function DropdownMenuItem({ tone = "default", ...props }: DropdownMenuItemProps) {
+function DropdownMenuItem({ tone = "default", className, ...props }: DropdownMenuItemProps) {
   return (
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"
       data-tone={tone}
-      className={cn(dropdownMenuItemVariants({ tone }))}
+      className={cn(dropdownMenuItemVariants({ tone }), className)}
       {...props}
     />
   );
 }
 
-function DropdownMenuCheckboxItem({ children, checked, ...props }: DropdownMenuCheckboxItemProps) {
+function DropdownMenuCheckboxItem({ children, checked, className, ...props }: DropdownMenuCheckboxItemProps) {
   return (
     <DropdownMenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
-      className={dropdownMenuCheckboxItemClass}
+      className={cn(dropdownMenuCheckboxItemClass, className)}
       checked={checked}
       {...props}
     >
@@ -144,9 +170,9 @@ function DropdownMenuCheckboxItem({ children, checked, ...props }: DropdownMenuC
   );
 }
 
-function DropdownMenuRadioItem({ children, ...props }: DropdownMenuRadioItemProps) {
+function DropdownMenuRadioItem({ children, className, ...props }: DropdownMenuRadioItemProps) {
   return (
-    <DropdownMenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" className={dropdownMenuCheckboxItemClass} {...props}>
+    <DropdownMenuPrimitive.RadioItem data-slot="dropdown-menu-radio-item" className={cn(dropdownMenuCheckboxItemClass, className)} {...props}>
       <span className="absolute left-2 flex size-3.5 items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
           <span className="size-2 rounded-full bg-current" />
@@ -157,23 +183,23 @@ function DropdownMenuRadioItem({ children, ...props }: DropdownMenuRadioItemProp
   );
 }
 
-function DropdownMenuLabel(props: DropdownMenuLabelProps) {
-  return <DropdownMenuPrimitive.Label data-slot="dropdown-menu-label" className={dropdownMenuLabelClass} {...props} />;
+function DropdownMenuLabel({ className, ...props }: DropdownMenuLabelProps) {
+  return <DropdownMenuPrimitive.Label data-slot="dropdown-menu-label" className={cn(dropdownMenuLabelClass, className)} {...props} />;
 }
 
-function DropdownMenuSeparator(props: DropdownMenuSeparatorProps) {
+function DropdownMenuSeparator({ className, ...props }: DropdownMenuSeparatorProps) {
   return (
-    <DropdownMenuPrimitive.Separator data-slot="dropdown-menu-separator" className={dropdownMenuSeparatorClass} {...props} />
+    <DropdownMenuPrimitive.Separator data-slot="dropdown-menu-separator" className={cn(dropdownMenuSeparatorClass, className)} {...props} />
   );
 }
 
-function DropdownMenuShortcut(props: DropdownMenuShortcutProps) {
-  return <span data-slot="dropdown-menu-shortcut" className={dropdownMenuShortcutClass} {...props} />;
+function DropdownMenuShortcut({ className, ...props }: DropdownMenuShortcutProps) {
+  return <span data-slot="dropdown-menu-shortcut" className={cn(dropdownMenuShortcutClass, className)} {...props} />;
 }
 
-function DropdownMenuSubTrigger({ children, ...props }: DropdownMenuSubTriggerProps) {
+function DropdownMenuSubTrigger({ children, className, ...props }: DropdownMenuSubTriggerProps) {
   return (
-    <DropdownMenuPrimitive.SubTrigger data-slot="dropdown-menu-sub-trigger" className={dropdownMenuSubTriggerClass} {...props}>
+    <DropdownMenuPrimitive.SubTrigger data-slot="dropdown-menu-sub-trigger" className={cn(dropdownMenuSubTriggerClass, className)} {...props}>
       {children}
       <MenuChevronIcon />
     </DropdownMenuPrimitive.SubTrigger>

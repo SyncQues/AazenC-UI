@@ -3,6 +3,7 @@
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import { type VariantProps } from "class-variance-authority";
 import { type ComponentProps } from "react";
+import { cn } from "@aazenc/utils";
 import { separatorVariants, type SeparatorOrientation } from "./separator-variants";
 
 export interface SeparatorProps
@@ -16,9 +17,10 @@ export interface SeparatorProps
    * all the a11y this component has. It still takes no focus — the rule is static.
    */
   decorative?: boolean;
+  className?: string;
 }
 
-function Separator({ orientation, decorative = true, ...props }: SeparatorProps) {
+function Separator({ orientation, decorative = true, className, ...props }: SeparatorProps) {
   const resolvedOrientation: SeparatorOrientation = orientation ?? "horizontal";
 
   return (
@@ -26,7 +28,7 @@ function Separator({ orientation, decorative = true, ...props }: SeparatorProps)
       data-slot="separator"
       orientation={resolvedOrientation}
       decorative={decorative}
-      className={separatorVariants({ orientation: resolvedOrientation })}
+      className={cn(separatorVariants({ orientation: resolvedOrientation }), className)}
       {...props}
     />
   );

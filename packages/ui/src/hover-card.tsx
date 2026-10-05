@@ -47,6 +47,7 @@ export type HoverCardProps = Omit<
   openDelay?: number;
   /** Milliseconds after the pointer and the focus are both gone before it closes. */
   closeDelay?: number;
+  className?: string;
 };
 
 export interface HoverCardTriggerProps extends Omit<
@@ -109,6 +110,7 @@ function HoverCard({
   children,
   ...props
 }: HoverCardProps) {
+  // The root carries no classes of its own, so `className` rides `...props` to Radix.
   // Latched, as `SegmentedControl` latches: a parent supplying `open` with its
   // data must not flip the card controlled and discard what the user found.
   const [isControlled] = useState(openProp !== undefined);
@@ -184,10 +186,10 @@ function HoverCardTrigger({
   );
 }
 
-function HoverCardContent(props: HoverCardContentProps) {
+function HoverCardContent({ className, ...props }: HoverCardContentProps) {
   return (
     <HoverCardPrimitive.Portal>
-      <HoverCardSurface {...props} />
+      <HoverCardSurface className={className} {...props} />
     </HoverCardPrimitive.Portal>
   );
 }
