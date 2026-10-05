@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * SyncQues button.
- * Six variants. Same structure is not given a second name.
+ * Seven variants. Same structure is not given a second name.
  * Pill is the default shape. Rounded and square are opt-in.
  */
 export const buttonVariants = cva(
@@ -28,6 +28,13 @@ export const buttonVariants = cva(
         "destructive-soft":
           "bg-transparent text-destructive shadow-none hover:bg-destructive/10 hover:text-destructive dark:text-[oklch(0.78_0.16_25)] dark:hover:bg-destructive/15 dark:hover:text-[oklch(0.78_0.16_25)]",
         link: "bg-transparent text-primary shadow-none underline-offset-4 hover:underline",
+        /* The post-card action pill — a quiet raised surface for icon-plus-count
+           rows. `aria-pressed` holds the blue so a "liked" state survives the
+           pointer leaving. Blue is a brand ramp, not a semantic token, because
+           "you reacted" has to read the same in every theme. The border is
+           transparent at rest so claiming it does not shift the pill by 1px. */
+        soft:
+          "border border-transparent bg-accent/60 text-muted-foreground hover:bg-accent hover:text-foreground aria-pressed:border-blue-500/40 aria-pressed:bg-blue-500/15 aria-pressed:text-blue-600 dark:aria-pressed:border-blue-400/40 dark:aria-pressed:text-blue-400",
       },
       size: {
         xs: "h-7 gap-1 px-2.5 text-xs has-[>svg]:px-2",

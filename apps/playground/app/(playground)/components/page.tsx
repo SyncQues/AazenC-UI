@@ -91,17 +91,20 @@ const components = [
   {
     href: "/components/context-menu",
     name: "Context Menu",
-    description: "SyncQues context menu. The same panel as the dropdown, opened on right-click.",
+    description:
+      "SyncQues context menu. The same panel as the dropdown, opened on right-click.",
   },
   {
     href: "/components/breadcrumb",
     name: "Breadcrumb",
-    description: "SyncQues breadcrumb. A labelled nav around a list, with the separator built in.",
+    description:
+      "SyncQues breadcrumb. A labelled nav around a list, with the separator built in.",
   },
   {
     href: "/components/input",
     name: "Input",
-    description: "SyncQues input. One field for every native type, with a count against a limit.",
+    description:
+      "SyncQues input. One field for every native type, with a count against a limit.",
   },
   {
     href: "/components/textarea",
@@ -260,6 +263,12 @@ const components = [
     name: "Metric card",
     description:
       "A KPI tile. The trend is coloured by sentiment, not by sign, and never by colour alone.",
+  },
+  {
+    href: "/components/layout",
+    name: "Layout",
+    description:
+      "The boxes a page is made of. Stack, Grid, Flex, Center, Split, Container, Box, Spacer.",
   },
 ];
 

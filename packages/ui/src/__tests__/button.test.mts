@@ -46,6 +46,32 @@ test("destructive fill stays white, and soft danger text lightens in dark mode",
   assert.doesNotMatch(soft, /text-white/);
 });
 
+test("soft is a raised pill whose pressed state is held by aria-pressed, not :active", () => {
+  const value = classes({ variant: "soft" });
+  assert.match(value, /rounded-full/);
+  assert.match(value, /bg-accent\/60/);
+  assert.match(value, /text-muted-foreground/);
+  assert.match(value, /hover:bg-accent/);
+  // Transparent at rest so the pressed border claims a pixel that is already there.
+  assert.match(value, /border-transparent/);
+  assert.match(value, /aria-pressed:bg-blue-500\/15/);
+  assert.match(value, /aria-pressed:text-blue-600/);
+  assert.match(value, /aria-pressed:border-blue-500\/40/);
+  assert.match(value, /dark:aria-pressed:text-blue-400/);
+  assert.doesNotMatch(value, /aria-pressed:[^" ]*ring-/);
+  // The focus ring must survive the pressed background, so the state uses border.
+  assert.match(value, /focus-visible:ring-\[3px\]/);
+});
+
+test("soft stays legible beside outline, which is what it is mistaken for", () => {
+  const soft = classes({ variant: "soft" });
+  const outline = classes({ variant: "outline" });
+  assert.doesNotMatch(soft, /bg-background/);
+  assert.match(outline, /border-border/);
+  assert.doesNotMatch(soft, /text-destructive|bg-destructive/);
+  assert.match(classes({ variant: "soft", size: "sm" }), /\bh-8\b/);
+});
+
 test("shape, width, align, and icon sizes do not need utility classes", () => {
   assert.match(classes({ shape: "rounded" }), /rounded-md/);
   assert.doesNotMatch(classes({ shape: "rounded" }), /rounded-full/);

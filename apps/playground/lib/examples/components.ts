@@ -1008,4 +1008,45 @@ export function Example() {
   )
 }`,
   },
+  layout: {
+    filename: "layout.tsx",
+    code: `import { Badge } from "@aazenc/ui/badge"
+import { Button } from "@aazenc/ui/button"
+import { Box, Container, Grid, Split, Stack } from "@aazenc/ui/layout"
+
+export function Example() {
+  return (
+    <Container size="7xl" as="main">
+      {/* A column, one rhythm gap. */}
+      <Stack gap={4}>
+        <Split>
+          <Box>
+            <h2 className="text-lg font-semibold">Members</h2>
+            <p className="text-sm text-muted-foreground">12 people with access</p>
+          </Box>
+          <Button type="button" variant="outline">
+            Invite
+          </Button>
+        </Split>
+
+        {/* Columns, and a breakpoint the caller still owns. */}
+        <Grid columns={3} gap={4} className="sm:grid-cols-1">
+          {["Plans", "Usage", "Billing"].map((label) => (
+            <div key={label} className="rounded border border-border p-3">
+              {label}
+            </div>
+          ))}
+        </Grid>
+
+        {/* A wrapping row, which is what a cluster usually turns out to be. */}
+        <Stack direction="row" wrap gap={2}>
+          <Badge variant="outline">TypeScript</Badge>
+          <Badge variant="outline">RSC</Badge>
+          <Badge variant="outline">a11y</Badge>
+        </Stack>
+      </Stack>
+    </Container>
+  )
+}`,
+  },
 };
