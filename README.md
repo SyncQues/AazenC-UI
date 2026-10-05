@@ -26,8 +26,9 @@ scripts/               # Registry bundle scripts
 
 ## Customizing a component
 
-Every component takes `className`, and it wins. The caller's classes are merged
-last, so a caller can override any size, colour, or spacing the variant set chose:
+Every component that renders an element takes `className`, and it wins. The
+caller's classes are merged last, so a caller can override any size, colour, or
+spacing the variant set chose:
 
 ```tsx
 <Button size="default" className="h-12 px-10" />   // h-12 and px-10 win
@@ -35,19 +36,67 @@ last, so a caller can override any size, colour, or spacing the variant set chos
 <TableCell className="text-destructive" />
 ```
 
+The roots are the exception, and they say so in their types: `Dialog`,
+`Popover`, `Tooltip`, `Drawer`, `Sheet`, `HoverCard`, `DropdownMenu`,
+`ContextMenu` and their `Sub`s are Radix context providers that render no
+element, so they take no `className` — style the `Trigger` or `Content`.
+`Accordion` and `Collapsible` are not in that list: their roots render a `div`.
+`SelectValue` is the same case for a different reason: Radix drops the prop on
+it. Omitting the prop rather than accepting-and-discarding it is deliberate, so
+the compiler catches the next person.
+
 Three layers, each with a clear owner:
 
 | Layer | Scope | Mechanism |
 | --- | --- | --- |
 | `className` | one instance | `cn(variants(...), className)` |
 | `variant` / `size` | named presets | cva, exported per component |
-| tokens | the whole product | CSS variables in `@aazenc/tokens` |
+| tokens | the whole product | CSS variables, inlined into the `aazenc.css` the CLI writes |
 
 `cn` is `twMerge(clsx(...))`, so conflicting Tailwind utilities resolve in the
 caller's favour rather than depending on stylesheet order. Two things that are
 not class overrides, and stay the component's own: the `data-slot` attributes
 every element carries, and the ARIA and state attributes a variant cannot
 express.
+
+One hole worth knowing: on an `asChild` component (`Badge`, `BreadcrumbLink`,
+`NavbarLink`, …) Radix's `Slot` joins the two class strings with a plain space
+and no `twMerge`, so a genuine conflict there is settled by stylesheet order
+rather than in the caller's favour. The classes all apply; only the tie is
+decided elsewhere.
+
+## Typeset
+
+`typeset` is the one component whose value is CSS. `add typeset` writes the
+stylesheet into your `aazenc.css` between `/* aazenc:typeset:begin */` and
+`/* aazenc:typeset:end */` markers — it appends that block to an existing theme
+file rather than overwriting it, so a project that ran `init` before typeset
+existed is upgraded in place. Nothing else in the library needs this: every
+other component's styles travel inside the copied `.tsx` as Tailwind utilities.
+
+```tsx
+<Typeset preset="docs" measure="narrow" as="article" className="mx-auto">
+  <MarkdownViewer html={post.body} />
+</Typeset>
+```
+
+`className="typeset"` on any element does the same job without the component.
+Seven presets (`default`, `compact`, `chat`, `docs`, `reading`, `display`,
+`large`) and three measures. `TypesetFit` is an opt-in ancestor that sizes
+narrow columns by their own width instead of the viewport.
+
+Two opt-out depths, and they are not interchangeable:
+
+- `not-typeset` / `[data-not-typeset]` skips the element **and its subtree**.
+  Right for anything you do not want touched.
+- `[data-slot]` skips **only that element**, so a component keeps its own look
+  while prose rendered inside it stays styled. Every component root here carries
+  one, which is why a `Button` or a `Table` inside a typeset looks like a button
+  or a table.
+
+If the component renders but nothing is styled, the sheet is missing from your
+`aazenc.css` — the CLI writes it, so this means the file was replaced by hand
+after install.
 
 ## What is already here
 

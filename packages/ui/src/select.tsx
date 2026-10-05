@@ -20,9 +20,13 @@ export type SelectGroupProps = Omit<ComponentProps<typeof SelectPrimitive.Group>
   className?: string;
 }
 
-export type SelectValueProps = Omit<ComponentProps<typeof SelectPrimitive.Value>, "className"> & {
-  className?: string;
-}
+/**
+ * No `className`, and the omission is load-bearing rather than an oversight:
+ * Radix destructures `className` off `Value` and never re-applies it
+ * (`@radix-ui/react-select` `index.mjs:236`), so accepting one would type-check
+ * and then render nothing. Style the `SelectTrigger`'s children instead.
+ */
+export type SelectValueProps = Omit<ComponentProps<typeof SelectPrimitive.Value>, "className">
 
 export interface SelectTriggerProps extends Omit<ComponentProps<typeof SelectPrimitive.Trigger>, "className"> {
   /** Marks the field invalid. Same pill either way this is set. */

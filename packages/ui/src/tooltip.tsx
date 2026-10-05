@@ -5,13 +5,10 @@ import { createContext, useContext, type ComponentProps, type ReactNode } from "
 import { cn } from "@aazenc/utils";
 import { tooltipContentClass } from "./tooltip-variants";
 
-export type TooltipProviderProps = Omit<ComponentProps<typeof TooltipPrimitive.Provider>, "className"> & {
-  className?: string;
-};
+/** Both are context providers with no element, so neither can take a `className`. */
+export type TooltipProviderProps = Omit<ComponentProps<typeof TooltipPrimitive.Provider>, "className">;
 
-export type TooltipProps = Omit<ComponentProps<typeof TooltipPrimitive.Root>, "className"> & {
-  className?: string;
-};
+export type TooltipProps = Omit<ComponentProps<typeof TooltipPrimitive.Root>, "className">;
 
 export interface TooltipTriggerProps extends Omit<ComponentProps<typeof TooltipPrimitive.Trigger>, "className"> {
   asChild?: boolean;

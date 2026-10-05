@@ -22,7 +22,6 @@ const DrawerChromeContext = createContext({ close: true });
 export interface DrawerProps
   extends Omit<ComponentProps<typeof DrawerPrimitive.Root>, "className" | "direction"> {
   side?: DrawerSide;
-  className?: string;
 }
 
 export interface DrawerTriggerProps

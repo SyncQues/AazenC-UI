@@ -60,7 +60,7 @@ function TimePicker({
         disabled={disabled}
         onChange={(nextHours, nextMinutes) => setSelected(applyTime(selected ?? new Date(), nextHours, nextMinutes))}
       />
-      <div className="flex flex-col gap-1 px-1 pt-1 pb-1">
+      <div data-slot="time-picker" className="flex flex-col gap-1 px-1 pt-1 pb-1">
         {selected ? (
           <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear

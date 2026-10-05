@@ -74,11 +74,11 @@ function Carousel({ children, label = "Slides", onKeyDown, className, ...rest }:
         role="region"
         aria-roledescription="carousel"
         aria-label={label}
-        className="w-full"
+        className={cn("w-full", className)}
         onKeyDown={onRegionKeyDown}
         {...rest}
       >
-        <div className={cn(carouselFrameClass, className)}>
+        <div className={carouselFrameClass}>
           <div ref={scrollerRef} className={carouselTrackClass} onScroll={onScroll}>
             {items.map((child, itemIndex) =>
               isValidElement(child) ? cloneElement(child as ReactElement<{ index?: number }>, { index: itemIndex }) : child,

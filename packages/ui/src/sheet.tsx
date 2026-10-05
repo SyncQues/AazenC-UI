@@ -22,9 +22,8 @@ type SheetChrome = { close: boolean };
 
 const SheetChromeContext = createContext<SheetChrome>({ close: true });
 
-export type SheetProps = Omit<ComponentProps<typeof SheetPrimitive.Root>, "className"> & {
-  className?: string;
-}
+/** A root, so no `className`: `SheetPrimitive.Root` renders a provider, not an element. */
+export type SheetProps = Omit<ComponentProps<typeof SheetPrimitive.Root>, "className">
 
 export interface SheetTriggerProps
   extends Omit<ComponentProps<typeof SheetPrimitive.Trigger>, "className"> {

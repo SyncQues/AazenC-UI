@@ -9,6 +9,13 @@
  *   2. Overridability — element rules sit in :where(), so a Tailwind utility
  *      on the element wins without !important.
  *
+ * Progressive, and each degrades to a dropped declaration on an older engine:
+ * `text-wrap: balance` (Chrome 114), `text-wrap: pretty` (Chrome 117),
+ * `margin-trim` (Safari 18.4), and `aspect-ratio: attr(width) / attr(height)`,
+ * which needs typed `attr()` and is live in Chrome only. None of them is load
+ * bearing — browserslist still targets Chrome/Firefox/Edge 111 and Safari 16.4
+ * because the file has a real fallback for every one of these.
+ *
  * Replaces the ideas in shadcn/typeset with AazenC's own token names.
  */
 
@@ -38,6 +45,7 @@
     --typeset-surface: var(--muted);
     --typeset-focus: var(--ring);
     --typeset-radius: var(--radius);
+    --typeset-mark: oklch(0.86 0.17 95);
   }
 }
 
@@ -112,7 +120,13 @@
       widows: 3;
     }
 
-    /* Headings. Size comes from the scale ratio, so it stays a real ratio. */
+    /* Headings. A hand-tuned scale, biggest step at the top: h1 sits two scale
+       ratios above body and h2 one, then the levels step down gently into the
+       muted subheads. All six are distinct on purpose — h3 and h4 once both
+       resolved to 1em, which collapsed two levels of an outline into one.
+       h4 being body-sized is the usual compromise; weight and colour carry it.
+       Each level divides --typeset-flow by its own size, so the gap above stays
+       the same absolute distance instead of shrinking along with the type. */
     &:where(h1, h2, h3, h4, h5, h6) {
       color: var(--typeset-ink);
       font-family: var(--typeset-font-heading);
@@ -132,8 +146,8 @@
       margin-block-start: calc(var(--typeset-flow) * 1.4);
     }
     &:where(h3) {
-      font-size: calc(var(--typeset-scale) / 1.25 * 1em);
-      margin-block-start: var(--typeset-flow);
+      font-size: 1.125em;
+      margin-block-start: calc(var(--typeset-flow) / 1.125);
     }
     &:where(h4) {
       font-size: 1em;
@@ -163,23 +177,17 @@
       margin-block-start: 0;
     }
 
-    /* Anchors clear the sticky bar, so a jump never lands under the navbar. */
+    /*
+     * Anchors clear the sticky bar, so a jump never lands under the navbar.
+     * `base.css` always sets --navbar-height, so the `0px` fallback only covers
+     * a consumer who overrode or stripped it. In a modal or an embed with no
+     * navbar, set --typeset-anchor-offset to 0 — the fallback cannot tell there
+     * is no bar to clear.
+     */
     &:where([id]) {
       scroll-margin-block-start: calc(
         var(--typeset-anchor-offset) + var(--navbar-height, 0px)
       );
-    }
-
-    /* Headings own the space below them. `h1 + *` looks backwards, so it is
-       append-safe: adding a sibling after the heading cannot change it. */
-    &:where(h1 + *, h2 + *, h3 + *, h4 + *, h5 + *, h6 + *) {
-      margin-block-start: 1em;
-    }
-    &:where(hgroup + *) {
-      margin-block-start: 1em;
-    }
-    &:where(:is(h1, h2, h3, h4) :is(code)) {
-      font-size: 0.9em;
     }
 
     /* Links. */
@@ -210,7 +218,7 @@
     &:where(mark) {
       background-color: color-mix(
         in oklab,
-        oklch(0.86 0.17 95) 40%,
+        var(--typeset-mark) 40%,
         transparent
       );
       color: inherit;
@@ -492,7 +500,9 @@
     }
 
     /* Horizontal scroll for any wide block. The wrapper owns the flow margin,
-       so wrap a wide table rather than compressing it. */
+       so wrap a wide table rather than compressing it. It must go *inside* the
+       typeset, as a child of it: the rule is nested under the umbrella, so
+       `<div class="typeset-scroll"><div class="typeset">` scrolls nothing. */
     &:where(.typeset-scroll) {
       overflow-x: auto;
       margin-block-start: var(--typeset-flow);
@@ -541,6 +551,29 @@
     }
     &:where(li > pre) {
       margin-block-start: calc(0.5em / 0.875);
+    }
+
+    /*
+     * Headings own the space below them. This sits last in the umbrella on
+     * purpose: every rule above is also (0,1,0) — `.typeset` in the selector and
+     * the element inside `:where()` — so this wins by source order alone. Read
+     * any higher up, `p` would take 1em and `pre`, `ul`, `blockquote`, `table` and
+     * `figure` would quietly keep their own `--typeset-flow`, and the rhythm under
+     * a heading would depend on which element happened to follow it.
+     *
+     * `+` still looks backwards, so moving it here costs nothing in
+     * append-stability: a sibling added after a heading still cannot change it.
+     */
+    &:where(h1 + *, h2 + *, h3 + *, h4 + *, h5 + *, h6 + *) {
+      margin-block-start: 1em;
+    }
+    &:where(hgroup + *) {
+      margin-block-start: 1em;
+    }
+
+    /* Code in a heading shrinks a little more than code in a paragraph. */
+    &:where(:is(h1, h2, h3, h4) :is(code)) {
+      font-size: 0.9em;
     }
 
     @media print {
@@ -614,7 +647,7 @@
    * run a tight one in chat and a roomy one in docs at the same time.
    */
   .typeset-compact {
-    --typeset-size: 14px;
+    --typeset-size: 0.875em;
     --typeset-leading: 1.6;
     --typeset-flow: 1em;
   }
@@ -625,7 +658,7 @@
   }
 
   .typeset-docs {
-    --typeset-size: 15px;
+    --typeset-size: 0.9375em;
     --typeset-leading: 1.75;
     --typeset-flow: 1.5em;
   }
@@ -633,7 +666,7 @@
   .typeset-reading {
     --typeset-font-body: var(--font-serif);
     --typeset-font-heading: var(--font-serif);
-    --typeset-size: 18px;
+    --typeset-size: 1.125em;
     --typeset-leading: 1.9;
     --typeset-flow: 2em;
   }
@@ -647,7 +680,7 @@
 
   /* Accessibility: a roomier typeset exposed as a reader setting. */
   .typeset-large {
-    --typeset-size: 16px;
+    --typeset-size: 1em;
     --typeset-leading: 2;
     --typeset-flow: 2em;
   }

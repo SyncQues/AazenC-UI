@@ -34,16 +34,21 @@ function Collapsible(props: CollapsibleProps) {
 }
 
 function CollapsibleTrigger({ asChild = false, children, className, ...props }: CollapsibleTriggerProps) {
+  // Merged once, passed on both paths. On the `asChild` path Radix's `Slot`
+  // joins this with the child's own className, so a caller that wraps a custom
+  // header row still gets its classes instead of them vanishing with `...props`.
+  const triggerClass = cn(collapsibleTriggerClass, className);
+
   if (asChild) {
     return (
-      <CollapsiblePrimitive.Trigger asChild data-slot="collapsible-trigger" {...props}>
+      <CollapsiblePrimitive.Trigger asChild data-slot="collapsible-trigger" className={triggerClass} {...props}>
         {children}
       </CollapsiblePrimitive.Trigger>
     );
   }
 
   return (
-    <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" className={cn(collapsibleTriggerClass, className)} {...props}>
+    <CollapsiblePrimitive.Trigger data-slot="collapsible-trigger" className={triggerClass} {...props}>
       {children}
       <ChevronIcon />
     </CollapsiblePrimitive.Trigger>

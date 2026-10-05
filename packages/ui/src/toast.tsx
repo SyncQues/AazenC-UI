@@ -101,7 +101,12 @@ export const toast = Object.assign((title: string, options?: ToastOptions) => pu
   dismiss: dismissToast,
 });
 
-function Toaster() {
+export interface ToasterProps {
+  /** The live region. Merged last, so an offset or a max-width can be set here. */
+  className?: string;
+}
+
+function Toaster({ className }: ToasterProps = {}) {
   const items = useSyncExternalStore(subscribe, () => records, () => EMPTY);
 
   useEffect(() => {
@@ -112,7 +117,7 @@ function Toaster() {
   }, []);
 
   return (
-    <div data-slot="toaster" className={toastViewportClass} aria-live="polite" aria-atomic="false">
+    <div data-slot="toaster" className={cn(toastViewportClass, className)} aria-live="polite" aria-atomic="false">
       {items.map((item) => (
         <div
           key={item.id}

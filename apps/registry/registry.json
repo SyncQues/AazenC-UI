@@ -355,12 +355,15 @@
       "name": "typeset",
       "type": "registry:ui",
       "title": "Typeset",
-      "description": "A prose container that styles the plain HTML inside it, so markdown and CMS content get a real type system. The stylesheet ships with the theme tokens, so this adds only the class helpers.",
+      "description": "A prose container that styles the plain HTML inside it, so markdown and CMS content get a real type system. Needs the typeset stylesheet, which `add` writes into your theme file for you.",
       "dependencies": [
         "class-variance-authority"
       ],
       "registryDependencies": [
         "utils"
+      ],
+      "css": [
+        "typeset"
       ],
       "files": [
         {

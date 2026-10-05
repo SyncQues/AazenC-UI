@@ -37,7 +37,10 @@ function Progress({ value, max = 100, className, ...props }: ProgressProps) {
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
-        className={`${meterFillClass} ${percent == null ? "w-1/3 animate-pulse motion-reduce:animate-none" : meterFillMotionClass}`}
+        className={cn(
+          meterFillClass,
+          percent == null ? "w-1/3 animate-pulse motion-reduce:animate-none" : meterFillMotionClass,
+        )}
         style={percent == null ? undefined : { width: `${visual}%` }}
       />
     </ProgressPrimitive.Root>

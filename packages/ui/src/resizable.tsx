@@ -136,7 +136,7 @@ function ResizableChevronIcon({ direction }: { direction: "start" | "end" }) {
 function ResizablePanelGroup({
   orientation,
   className,
-...props
+  ...props
 }: ResizablePanelGroupProps) {
   const resolvedOrientation: ResizableOrientation = orientation ?? "horizontal";
   const [entries, setEntries] = useState<ResizableEntry[]>([]);

@@ -82,7 +82,7 @@ function SingleDatePicker({
         }}
       />
       {selected ? (
-        <div className="px-1 pt-1 pb-1">
+        <div data-slot="date-picker" className="px-1 pt-1 pb-1">
           <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear
           </Button>
@@ -140,7 +140,7 @@ function RangeDatePicker({
         }}
       />
       {selected?.from ? (
-        <div className="px-1 pt-1 pb-1">
+        <div data-slot="date-picker" className="px-1 pt-1 pb-1">
           <Button type="button" variant="ghost" width="full" onClick={() => setSelected(null)}>
             Clear
           </Button>

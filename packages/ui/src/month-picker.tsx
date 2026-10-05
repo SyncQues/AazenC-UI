@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { cn } from "@aazenc/utils";
 import { Button } from "./button";
 import { calendarCaptionClass, calendarNavButtonClass, monthButtonClass } from "./calendar-variants";
 import {
@@ -97,8 +96,9 @@ function MonthPicker({
       invalid={invalid}
       open={isOpen}
       onOpenChange={setOpen}
+      className={className}
     >
-      <div data-slot="month-picker" className={cn("w-[16.5rem] p-1", className)}>
+      <div data-slot="month-picker" className="w-[16.5rem] p-1">
         <div className="relative">
           <div className="absolute inset-x-0 top-0 flex h-9 items-center justify-between">
             <button type="button" className={calendarNavButtonClass} aria-label="Previous year" onClick={() => setYear((current) => (current ?? new Date().getFullYear()) - 1)}>

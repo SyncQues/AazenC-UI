@@ -14,11 +14,17 @@ import {
 
 export type TableProps = Omit<ComponentProps<"table">, "className"> & {
   className?: string;
+  /**
+   * The scroll container, not the table. It owns `overflow-x-auto` and the
+   * max-height, so it is the element a consumer usually needs to cap — a
+   * `max-w-*` on `className` sizes the inner table and desyncs it instead.
+   */
+  containerClassName?: string;
 };
 
-function Table({ className, ...props }: TableProps) {
+function Table({ className, containerClassName, ...props }: TableProps) {
   return (
-    <div data-slot="table-container" className={tableContainerClass}>
+    <div data-slot="table-container" className={cn(tableContainerClass, containerClassName)}>
       <table data-slot="table" className={cn(tableClass, className)} {...props} />
     </div>
   );

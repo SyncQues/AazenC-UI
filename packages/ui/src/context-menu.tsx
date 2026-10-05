@@ -14,9 +14,8 @@ import {
   type ContextMenuTone,
 } from "./menu-variants";
 
-export type ContextMenuProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Root>, "className"> & {
-  className?: string;
-}
+/** A root, so no `className`: `ContextMenuPrimitive.Root` renders a provider, not an element. */
+export type ContextMenuProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Root>, "className">
 
 export interface ContextMenuTriggerProps
   extends Omit<ComponentProps<typeof ContextMenuPrimitive.Trigger>, "className"> {
@@ -62,9 +61,8 @@ export type ContextMenuRadioGroupProps = Omit<ComponentProps<typeof ContextMenuP
   className?: string;
 }
 
-export type ContextMenuSubProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Sub>, "className"> & {
-  className?: string;
-}
+/** A sub-root wraps a `PopperPrimitive.Root` provider, so it takes no `className`. */
+export type ContextMenuSubProps = Omit<ComponentProps<typeof ContextMenuPrimitive.Sub>, "className">
 
 export type ContextMenuSubTriggerProps = Omit<ComponentProps<typeof ContextMenuPrimitive.SubTrigger>, "className"> & {
   className?: string;

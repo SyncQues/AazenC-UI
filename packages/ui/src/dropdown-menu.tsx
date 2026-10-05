@@ -14,9 +14,8 @@ import {
   type DropdownMenuTone,
 } from "./menu-variants";
 
-export type DropdownMenuProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Root>, "className"> & {
-  className?: string;
-}
+/** A root, so no `className`: `DropdownMenuPrimitive.Root` renders a provider, not an element. */
+export type DropdownMenuProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Root>, "className">
 
 export interface DropdownMenuTriggerProps
   extends Omit<ComponentProps<typeof DropdownMenuPrimitive.Trigger>, "className"> {
@@ -62,9 +61,8 @@ export type DropdownMenuRadioGroupProps = Omit<ComponentProps<typeof DropdownMen
   className?: string;
 }
 
-export type DropdownMenuSubProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Sub>, "className"> & {
-  className?: string;
-}
+/** A sub-root wraps a `PopperPrimitive.Root` provider, so it takes no `className`. */
+export type DropdownMenuSubProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.Sub>, "className">
 
 export type DropdownMenuSubTriggerProps = Omit<ComponentProps<typeof DropdownMenuPrimitive.SubTrigger>, "className"> & {
   className?: string;

@@ -1,5 +1,3 @@
-"use client";
-
 import { createElement, type ComponentProps, type ElementType } from "react";
 import { cn } from "@aazenc/utils";
 import {
@@ -40,7 +38,6 @@ export function Typeset({
 } & Omit<ComponentProps<"div">, "className">) {
   return createElement(Tag, {
     ...props,
-    "data-typeset": "",
     className: cn(typesetVariants({ preset, measure }), className),
   });
 }

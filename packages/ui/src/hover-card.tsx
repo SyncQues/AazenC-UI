@@ -38,6 +38,12 @@ function useHoverCardIntent(part: string): HoverCardIntent {
   return intent;
 }
 
+/**
+ * No `className` on the root, and it is not a gap in the sweep: Radix's
+ * `HoverCardPrimitive.Root` is a context provider that renders no element
+ * (`@radix-ui/react-hover-card` `index.mjs`), so a forwarded class is discarded
+ * rather than applied. `HoverCardTrigger` and `HoverCardContent` take one.
+ */
 export type HoverCardProps = Omit<
   ComponentProps<typeof HoverCardPrimitive.Root>,
   "className" | "children"
@@ -47,7 +53,6 @@ export type HoverCardProps = Omit<
   openDelay?: number;
   /** Milliseconds after the pointer and the focus are both gone before it closes. */
   closeDelay?: number;
-  className?: string;
 };
 
 export interface HoverCardTriggerProps extends Omit<
@@ -110,7 +115,6 @@ function HoverCard({
   children,
   ...props
 }: HoverCardProps) {
-  // The root carries no classes of its own, so `className` rides `...props` to Radix.
   // Latched, as `SegmentedControl` latches: a parent supplying `open` with its
   // data must not flip the card controlled and discard what the user found.
   const [isControlled] = useState(openProp !== undefined);

@@ -14,7 +14,7 @@ import { useTheme } from "@aazenc/themes";
 
 export function TypesetPreview() {
   const { mode, toggleMode } = useTheme();
-  const [preset, setPreset] = useState<"default" | "compact" | "chat" | "docs" | "reading" | "large">(
+  const [preset, setPreset] = useState<"default" | "compact" | "chat" | "docs" | "reading" | "display" | "large">(
     "docs",
   );
 
@@ -35,7 +35,7 @@ export function TypesetPreview() {
       </div>
 
       <div className="mt-10 flex flex-wrap gap-2">
-        {(["default", "compact", "chat", "docs", "reading", "large"] as const).map(
+        {(["default", "compact", "chat", "docs", "reading", "display", "large"] as const).map(
           (value) => (
             <Button
               key={value}
@@ -137,15 +137,15 @@ export function TypesetPreview() {
         chat bubble and a docs page size independently of the window.
       </p>
       <div className="mt-4 flex flex-wrap gap-4">
-        <div className="rounded-lg border p-4">
+        <div className="max-w-2xl rounded-lg border p-4">
           <p className="mb-2 text-xs font-medium text-muted-foreground">
             Wide — 2xl
           </p>
           <TypesetFit>
-            <Typeset preset="chat" measure="narrow">
+            <Typeset preset="chat">
               <p>
-                Same component, same preset. Nothing here knows the viewport
-                width.
+                Same component, same preset, same measure. Nothing here knows the
+                viewport width.
               </p>
             </Typeset>
           </TypesetFit>
@@ -157,8 +157,8 @@ export function TypesetPreview() {
           <TypesetFit>
             <Typeset preset="chat">
               <p>
-                Same component, same preset. Nothing here knows the viewport
-                width.
+                Same component, same preset, same measure. Nothing here knows the
+                viewport width.
               </p>
             </Typeset>
           </TypesetFit>

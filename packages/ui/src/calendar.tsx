@@ -96,7 +96,7 @@ function CalendarDayButton({ day, modifiers, className, ...props }: DayButtonPro
       data-today={modifiers.today ? "true" : undefined}
       data-outside={modifiers.outside ? "true" : undefined}
       data-selection={selection}
-      className={cn(className, calendarDayButtonClass)}
+      className={cn(calendarDayButtonClass, className)}
       {...props}
     />
   );

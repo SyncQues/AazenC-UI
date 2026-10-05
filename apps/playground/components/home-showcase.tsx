@@ -70,10 +70,7 @@ export function HomeShowcase() {
         </Row>
 
         <Row label="Progress">
-          {/* Progress omits className, so the width belongs on a wrapper. */}
-          <div className="w-40">
-            <Progress value={value} />
-          </div>
+          <Progress value={value} className="w-40" />
           <Button
             type="button"
             size="sm"

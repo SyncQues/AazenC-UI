@@ -26,9 +26,8 @@ type DialogChrome = {
 
 const DialogChromeContext = createContext<DialogChrome>({ padding: "default", close: true });
 
-export type DialogProps = Omit<ComponentProps<typeof DialogPrimitive.Root>, "className"> & {
-  className?: string;
-}
+/** A root, so no `className`: `DialogPrimitive.Root` renders a provider, not an element. */
+export type DialogProps = Omit<ComponentProps<typeof DialogPrimitive.Root>, "className">
 
 export interface DialogTriggerProps
   extends Omit<ComponentProps<typeof DialogPrimitive.Trigger>, "className"> {

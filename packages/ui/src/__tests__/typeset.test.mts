@@ -85,6 +85,26 @@ test("contract: spacing only ever comes from the top margin", () => {
     "bare `margin:` shorthand cannot be audited for direction",
   );
 
+  // `margin-block:` is the same hole one level in: `margin-block: 1em 0` sets a
+  // block-end in the same declaration that sets the block-start, matches none of
+  // the patterns below, and would pass this test while breaking the contract.
+  assert.ok(
+    !/(^|[^-])margin-block:/.test(css),
+    "`margin-block:` sets block-end in one declaration and cannot be audited",
+  );
+
+  // `margin-inline:` is out of scope — the inline axis cannot move a block — but
+  // the shorthand form is still banned, so no declaration ever sets two axes at
+  // once. `blockquote` and `figure` use it to drop the UA's default side margins.
+  for (const match of css.matchAll(/(^|[^-])margin-inline:\s*([^;}]+)/g)) {
+    const value = match[2]!.trim();
+    assert.equal(
+      value.split(/\s+/).length,
+      1,
+      `margin-inline: ${value} sets two values in one declaration`,
+    );
+  }
+
   const endings = [...css.matchAll(/margin-block-end:\s*([^;}]+)/g)];
   assert.ok(endings.length > 0, "expected explicit block-end resets");
   for (const [, value] of endings) {
@@ -178,15 +198,34 @@ test("colours resolve to AazenC tokens, not shadcn's names", () => {
     "--typeset-surface",
     "--typeset-focus",
     "--typeset-radius",
+    "--typeset-mark",
   ]);
+  // Declared in the token block specifically, not merely mentioned somewhere.
+  // `css.includes(`${name}: var(`)` passes for a colour that is only ever read,
+  // which is how an undeclared token reaches a browser as an invalid value.
+  const tokenBlock = rules.find((rule) => rule.selector === ".typeset");
+  assert.ok(tokenBlock, "expected the .typeset token block");
   for (const name of used) {
     if (!themed.has(name)) continue;
-    assert.ok(css.includes(`${name}: var(`), `${name} is read but never declared`);
+    assert.ok(
+      tokenBlock.body.includes(`${name}: `),
+      `${name} is read but never declared on .typeset`,
+    );
   }
   for (const token of ["--foreground", "--muted-foreground", "--border", "--ring", "--primary", "--muted", "--radius"]) {
     assert.ok(css.includes(`var(${token})`), `expected AazenC token ${token}`);
   }
   assert.ok(!css.includes("--color-foreground"), "shadcn token names do not exist here");
+
+  // No raw colour literal in a usage rule. `mark` had one hardcoded oklch while
+  // the header promised every colour was a token; contrast was fine, the
+  // contract was not. The token block and the at-rule wrappers that contain it
+  // are exempt: a literal is exactly what a token's default value is.
+  for (const rule of rules) {
+    if (rule.selector === ".typeset" || rule.selector.startsWith("@")) continue;
+    const literals = rule.body.match(/#[0-9a-f]{3,8}\b|\b(?:oklch|oklab|rgb|hsl)\(/gi) ?? [];
+    assert.deepEqual(literals, [], `raw colour literal in ${rule.selector.slice(0, 40)}`);
+  }
 });
 
 test("anchors clear the sticky bar", () => {
@@ -197,13 +236,31 @@ test("anchors clear the sticky bar", () => {
 });
 
 test("every class the variants promise exists in the sheet", () => {
-  const promised = [
-    ...Object.keys(typesetVariants({ preset: undefined }).split(/\s+/)),
-    ...["fit", "scroll", "embed", "not"].map(
-      (k) => ({ fit: typesetFitClass, scroll: typesetScrollClass, embed: typesetEmbedClass, not: typesetNotClass })[k]!,
-    ),
-  ];
+  // Every preset and every measure, not just the default: `typesetVariants({ preset:
+  // undefined })` returns just "typeset", so checking that alone left the other
+  // six presets to be covered by accident.
+  const promised = new Set<string>();
+  const presets: TypesetPreset[] = ["default", "compact", "chat", "docs", "reading", "display", "large"];
+  const measures = ["default", "narrow", "wide"] as const;
+  for (const preset of presets) {
+    for (const measure of measures) {
+      for (const className of typesetVariants({ preset, measure }).split(/\s+/)) {
+        promised.add(className);
+      }
+    }
+  }
+  for (const className of [typesetFitClass, typesetScrollClass, typesetEmbedClass, typesetNotClass]) {
+    promised.add(className);
+  }
+
   for (const className of promised) {
+    // A measure is a Tailwind arbitrary utility, not a `.class` this sheet
+    // defines, so the sheet check does not apply. It does have to be an em cap,
+    // or the prose column stops following the typeset's own size.
+    if (className.startsWith("max-w-[")) {
+      assert.match(className, /^max-w-\[\d+(\.\d+)?em\]$/, `measure must be an em cap: ${className}`);
+      continue;
+    }
     assert.ok(css.includes(`.${className}`), `.${className} is exported but not styled`);
   }
 });
@@ -211,12 +268,12 @@ test("every class the variants promise exists in the sheet", () => {
 test("presets carry the rhythm they advertise", () => {
   const defaults: Record<TypesetPreset, { size?: string; leading?: string; flow?: string }> = {
     default: {},
-    compact: { size: "14px", leading: "1.6", flow: "1em" },
+    compact: { size: "0.875em", leading: "1.6", flow: "1em" },
     chat: { leading: "1.6", flow: "1em" },
-    docs: { size: "15px", leading: "1.75", flow: "1.5em" },
-    reading: { size: "18px", leading: "1.9", flow: "2em" },
+    docs: { size: "0.9375em", leading: "1.75", flow: "1.5em" },
+    reading: { size: "1.125em", leading: "1.9", flow: "2em" },
     display: {},
-    large: { size: "16px", leading: "2", flow: "2em" },
+    large: { size: "1em", leading: "2", flow: "2em" },
   };
 
   for (const [preset, expected] of Object.entries(defaults) as [TypesetPreset, typeof defaults[TypesetPreset]][]) {
@@ -246,4 +303,110 @@ test("size is relative, so a typeset inherits its context", () => {
   assert.ok(base?.body.includes("--typeset-size: 1em"));
   // Heading sizes are `em`, not `rem`, or they would ignore --typeset-size.
   assert.ok(!css.includes("font-size: 1.5rem"), "rem sizes break the scale");
+
+  // Every preset too. A preset pinned to `14px` overrides the reader's own
+  // browser text size, which is the one setting `typeset-large` advertises.
+  for (const match of css.matchAll(/--typeset-size:\s*([^;}]+)/g)) {
+    const value = match[1]!.trim();
+    assert.match(value, /^\d*\.?\d+em$/, `--typeset-size must be em, got ${value}`);
+  }
+  assert.ok(
+    !/font-size:\s*[^;}]*\d(px|rem)\b/.test(css),
+    "a px or rem font-size ignores the reader's text size",
+  );
+});
+
+/*
+ * The three checks below read the cascade, not the text of the file. The rest of
+ * this suite is a set of regexes, which is why a heading size could collide with
+ * its neighbour, a rule could be shadowed by a later one, and a declaration
+ * could sit above the rule it was written to override — all three shipped green
+ * for the same reason. These assert the resolved outcome.
+ */
+
+/** Resolves a `font-size` written in `em` to a number, at one scale ratio. */
+function sizeInEm(body: string, scale = 1.25): number {
+  const match = body.match(/font-size:\s*([^;}]+)/);
+  assert.ok(match, `no font-size in: ${body.slice(0, 60)}`);
+  const expr = match[1]!
+    .trim()
+    .replace(/^calc\(/, "")
+    .replace(/\)$/, "")
+    .replaceAll("var(--typeset-scale)", String(scale))
+    .trim();
+  assert.match(expr, /em$/, `size must be in em so it follows --typeset-size: ${expr}`);
+
+  return expr
+    .slice(0, -2)
+    .split("*")
+    .map((term) => {
+      const t = term.trim();
+      const [num, den] = t.split("/").map((n) => n.trim());
+      const value = Number(num) / (den === undefined ? 1 : Number(den));
+      assert.ok(Number.isFinite(value), `unreadable font-size term: ${t}`);
+      return value;
+    })
+    .reduce((acc, term) => acc * term, 1);
+}
+
+test("all six heading levels are distinguishable", () => {
+  const sizes = new Map<string, number>();
+  for (const level of ["h1", "h2", "h3", "h4", "h5", "h6"]) {
+    const rule = rules.find((r) => r.selector === `&:where(${level})`);
+    assert.ok(rule, `no rule for ${level}`);
+    sizes.set(level, sizeInEm(rule.body));
+  }
+
+  // Two levels at the same size collapse the outline: a table of contents or a
+  // skip link shows two identical rows. h3 and h4 both resolved to 1em once.
+  const seen = new Map<number, string>();
+  for (const [level, size] of sizes) {
+    const other = seen.get(size);
+    assert.equal(other, undefined, `${other} and ${level} are both ${size}em`);
+    seen.set(size, level);
+  }
+});
+
+test("a heading's own rhythm beats the heading-follows rule on ties", () => {
+  const followsHeading = (rule: Rule): boolean => /\bh1 \+ \*/.test(rule.selector);
+  const follows = rules.find(followsHeading);
+  assert.ok(follows, "expected the `hN + *` rule");
+
+  // Scoped to the element rules nested in the umbrella (`&:where(...)`). Those
+  // are all (0,1,0) — `.typeset` in the selector, the element inside `:where()`
+  // — so a tie with the heading-follows rule is settled by source order alone.
+  // Read any higher up, `p` got 1em while `pre`, `ul`, `blockquote`, `table` and
+  // `figure` each kept their own `--typeset-flow`, and the rhythm under a
+  // heading came to depend on which block happened to follow it.
+  //
+  // The first-child resets and `hgroup + *` are outside this: the resets are a
+  // different mechanism and are meant to win, and a first child by definition
+  // cannot also be a heading's next sibling.
+  const shadowed = rules.filter(
+    (rule) =>
+      rule.selector.startsWith("&:where(") &&
+      /margin-block-start:/.test(rule.body) &&
+      !followsHeading(rule) &&
+      rule.selector !== "&:where(hgroup + *)" &&
+      rules.indexOf(rule) > rules.indexOf(follows),
+  );
+  assert.deepEqual(
+    shadowed.map((r) => r.selector.slice(0, 40)),
+    [],
+    "these set margin-block-start after the heading-follows rule and win the tie",
+  );
+});
+
+test("the heading code size is declared after the generic one", () => {
+  const generic = rules.find((r) => r.selector === "&:where(:not(pre) > code)");
+  const inHeading = rules.find((r) => r.selector.includes("h1, h2, h3, h4) :is(code)"));
+  assert.ok(generic, "expected the generic code size");
+  assert.ok(inHeading, "expected the code-in-a-heading size");
+
+  // Both are (0,1,0). Read any higher up this rule can never apply, and code in
+  // a heading silently renders at the paragraph size.
+  assert.ok(
+    rules.indexOf(inHeading) > rules.indexOf(generic),
+    "code in a heading is shadowed by the later generic rule and never applies",
+  );
 });

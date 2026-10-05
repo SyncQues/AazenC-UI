@@ -13,13 +13,38 @@ const packageCss = {
   "@aazenc/themes/mono.css": "packages/themes/src/mono.css",
 };
 
+/*
+ * Sheets the CLI must be able to hand to a project on its own, keyed by module
+ * name. Everything else is inlined into `registry.css` and lands in `aazenc.css`
+ * at `init` — but `init` keeps an existing `aazenc.css`, so a project that ran it
+ * before a sheet existed never picks that sheet up. A style module is emitted
+ * into the bundle *and* recorded here, marked, so the CLI can append it later
+ * without disturbing whatever else the project has in the file.
+ */
+const styleModules = {
+  "packages/tokens/src/typeset.css": "typeset",
+};
+
+const styles = {};
+
 function read(rel) {
   return readFileSync(resolve(repoRoot, rel), "utf8");
+}
+
+function styleBlock(name, body) {
+  return `\n/* aazenc:${name}:begin */\n${body}\n/* aazenc:${name}:end */\n`;
 }
 
 function inlineCss(rel, seen = new Set()) {
   if (seen.has(rel)) return "";
   seen.add(rel);
+
+  const styleName = styleModules[rel];
+  if (styleName) {
+    styles[styleName] = read(rel).trim();
+    return styleBlock(styleName, styles[styleName]);
+  }
+
   const abs = resolve(repoRoot, rel);
   const text = readFileSync(abs, "utf8");
   return text.replace(/@import\s+["']([^"']+)["'];?/g, (_match, spec) => {
@@ -80,6 +105,7 @@ const css = inlineCss("packages/config/src/globals.css")
   .trim();
 
 registry.css = `/* AazenC UI tokens, themes, and motion. Import this after tailwindcss. */\n${css}\n`;
+registry.styles = styles;
 registry.sources = sources;
 
 mkdirSync(dirname(outFile), { recursive: true });

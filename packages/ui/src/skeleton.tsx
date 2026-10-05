@@ -31,15 +31,18 @@ function Skeleton({ shape = "line", width = "medium", count = 1, className, ...p
     );
   }
 
+  // The group stays fixed and the caller's classes go on the lines, so `count`
+  // cannot change which element a class lands on. A `w-*` on the group would
+  // fight the lines rather than size them.
   return (
     <div
       data-slot="skeleton-group"
-      className={cn("flex w-full flex-col gap-2", className)}
+      className="flex w-full flex-col gap-2"
       aria-hidden="true"
       {...props}
     >
       {Array.from({ length: repeats }, (_, index) => (
-        <div key={index} data-slot="skeleton" data-shape={shape} className={baseClassName} />
+        <div key={index} data-slot="skeleton" data-shape={shape} className={cn(baseClassName, className)} />
       ))}
     </div>
   );

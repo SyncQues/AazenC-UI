@@ -345,6 +345,7 @@ export type {
 export { FileUpload } from "./file-upload";
 export type { FileUploadProps } from "./file-upload";
 export { toast, Toaster } from "./toast";
+export type { ToasterProps } from "./toast";
 export type { ToastOptions } from "./toast";
 export type { ToastTone } from "./toast-variants";
 export { Switch } from "./switch";

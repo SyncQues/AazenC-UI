@@ -5,9 +5,8 @@ import { type ComponentProps } from "react";
 import { cn } from "@aazenc/utils";
 import { popoverContentClass } from "./popover-variants";
 
-export type PopoverProps = Omit<ComponentProps<typeof PopoverPrimitive.Root>, "className"> & {
-  className?: string;
-};
+/** A root, so no `className`: `PopoverPrimitive.Root` renders a provider, not an element. */
+export type PopoverProps = Omit<ComponentProps<typeof PopoverPrimitive.Root>, "className">;
 
 export interface PopoverTriggerProps extends Omit<ComponentProps<typeof PopoverPrimitive.Trigger>, "className"> {
   asChild?: boolean;
