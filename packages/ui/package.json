@@ -61,7 +61,8 @@
     "./hover-card": "./src/hover-card.tsx",
     "./toggle": "./src/toggle.tsx",
     "./toggle-group": "./src/toggle-group.tsx",
-    "./typeset": "./src/typeset.tsx"
+    "./typeset": "./src/typeset.tsx",
+    "./layout": "./src/layout.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

@@ -191,7 +191,7 @@ export default function GettingStartedPage() {
           <Link href="/components" className="text-foreground underline underline-offset-4">
             Browse the catalog
           </Link>{" "}
-          or run <code className="font-mono text-foreground">list</code> to see all 55.
+          or run <code className="font-mono text-foreground">list</code> to see all 57.
         </p>
       </Step>
 

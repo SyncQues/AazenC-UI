@@ -2,7 +2,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 /**
  * SyncQues button.
- * Six variants. Same structure is not given a second name.
+ * Seven variants. Same structure is not given a second name.
  * Pill is the default shape. Rounded and square are opt-in.
  */
 export const buttonVariants = cva(
@@ -28,6 +28,10 @@ export const buttonVariants = cva(
         "destructive-soft":
           "bg-transparent text-destructive shadow-none hover:bg-destructive/10 hover:text-destructive dark:text-[oklch(0.78_0.16_25)] dark:hover:bg-destructive/15 dark:hover:text-[oklch(0.78_0.16_25)]",
         link: "bg-transparent text-primary shadow-none underline-offset-4 hover:underline",
+        /* Post-card action pill, blue held by `aria-pressed` so a reaction survives
+           the pointer. The fill is `--muted`, not `--accent`: mono's inverted accent collapses against muted text and drops the label below AA, so the pressed text is blue-700 rather than blue-600 for the same reason. */
+        soft:
+          "border border-transparent bg-muted text-foreground hover:bg-accent hover:text-accent-foreground aria-pressed:border-blue-500/40 aria-pressed:bg-blue-500/15 aria-pressed:text-blue-700 dark:aria-pressed:border-blue-400/40 dark:aria-pressed:text-blue-400",
       },
       size: {
         xs: "h-7 gap-1 px-2.5 text-xs has-[>svg]:px-2",

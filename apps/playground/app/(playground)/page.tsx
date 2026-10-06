@@ -8,12 +8,12 @@ import { HomeShowcase } from "../../components/home-showcase";
 export const metadata: Metadata = {
   title: "AazenC UI — component library for product UI",
   description:
-    "AazenC UI is a component library for product UI. 55 components, copied into your project by a CLI, themed entirely with tokens.",
+    "AazenC UI is a component library for product UI. 57 components, copied into your project by a CLI, themed entirely with tokens.",
 };
 
 const stats = [
-  { value: "55", label: "Components in the registry" },
-  { value: "46", label: "Documented, with examples" },
+  { value: "57", label: "Components in the registry" },
+  { value: "48", label: "Documented, with examples" },
   { value: "2", label: "Themes — slate and mono" },
   { value: "20", label: "Catalog categories" },
 ];
@@ -38,7 +38,7 @@ const principles = [
 ];
 
 const popular = [
-  { href: "/components/button", name: "Button", note: "Six variants, five sizes, pill by default" },
+  { href: "/components/button", name: "Button", note: "Seven variants, five sizes, pill by default" },
   { href: "/components/dialog", name: "Dialog", note: "One panel, modal or alert" },
   { href: "/components/drawer", name: "Drawer", note: "One sheet, with a scrolling body" },
   { href: "/components/command", name: "Command", note: "One list, inline or in a dialog" },
@@ -137,7 +137,7 @@ export default function HomePage() {
         </ul>
         <p className="mt-6 text-sm text-muted-foreground">
           <Link href="/components" className="text-foreground underline underline-offset-4">
-            All 46 documented components
+            All 48 documented components
           </Link>
         </p>
       </section>

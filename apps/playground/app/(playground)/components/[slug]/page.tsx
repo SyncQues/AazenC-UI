@@ -38,6 +38,7 @@ import { HoverCardPreview } from "../../../../components/hover-card-preview";
 import { ToggleGroupPreview } from "../../../../components/toggle-group-preview";
 import { TogglePreview } from "../../../../components/toggle-preview";
 import { TypesetPreview } from "../../../../components/typeset-preview";
+import { LayoutPreview } from "../../../../components/layout-preview";
 import { TabsPreview } from "../../../../components/tabs-preview";
 import { ThemeSelectorPreview } from "../../../../components/theme-selector-preview";
 import { PdfViewerPreview } from "../../../../components/pdf-viewer-preview";
@@ -104,6 +105,7 @@ export async function generateMetadata({
     charts: "Charts",
     "heat-map": "Heat Map",
     "metric-card": "Metric card",
+    layout: "Layout",
   };
   return { title: titles[slug] ?? slug };
 }
@@ -162,6 +164,7 @@ export default async function ComponentPage({
     charts: ChartsPreview,
     "heat-map": HeatMapPreview,
     "metric-card": MetricCardPreview,
+    layout: LayoutPreview,
   };
   const Preview = previews[slug];
 

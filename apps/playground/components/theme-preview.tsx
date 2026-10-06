@@ -655,7 +655,7 @@ export function ThemePreview({ themeId }: { themeId?: ThemeId }) {
         <Card>
           <CardHeader>
             <CardTitle>Recipes</CardTitle>
-            <CardDescription>Six variants, three shapes, the same structure in every theme.</CardDescription>
+            <CardDescription>Seven variants, three shapes, the same structure in every theme.</CardDescription>
           </CardHeader>
           <CardContent gap="md">
             <div className="flex flex-wrap items-center gap-2">

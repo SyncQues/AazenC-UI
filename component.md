@@ -1,6 +1,6 @@
 # AazenC UI Component Catalog
 
-Build list for this library. ✅ marks what already ships: 56 components, all of
+Build list for this library. ✅ marks what already ships: 57 components, all of
 them in `packages/ui/src`, published through `apps/registry/registry.json`, and
 openable at `/components/<slug>` in the playground. Everything unmarked is still
 to build. Add each one under `packages/ui/src`.
@@ -35,13 +35,15 @@ slug, not by line.
 -   Keyboard Key (Kbd)
 -   Scroll Area
 -   Aspect Ratio
--   Container
--   Stack
--   Grid
--   Flex
--   Box
--   Center
--   Spacer
+-   Container ✅ (`layout`)
+-   Stack ✅ (`layout`)
+-   Grid ✅ (`layout`)
+-   Flex ✅ (`layout`)
+-   Box ✅ (`layout`)
+-   Center ✅ (`layout`)
+-   Spacer ✅ (`layout`)
+-   Cluster ✅ (`layout`, via `<Stack wrap>`)
+-   Split ✅ (`layout`)
 
 ## 2. Form Components
 
@@ -197,7 +199,7 @@ slug, not by line.
 
 ## 9. Layout
 
--   Split Pane
+-   Split Pane ✅ (`resizable`; `layout`'s Split is the fixed two-end row)
 -   Resizable Panel ✅ (`resizable`)
 -   Masonry Grid
 -   Bento Grid

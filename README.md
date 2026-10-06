@@ -2,7 +2,7 @@
 
 pnpm + Turborepo monorepo for the AazenC component library. The folder layout matches [intelli-ui](https://github.com/IntelliHelper/IntelliHelper-UI). The build list is [component.md](./component.md).
 
-## Layout
+## Repository layout 
 
 ```
 apps/
@@ -97,6 +97,53 @@ Two opt-out depths, and they are not interchangeable:
 If the component renders but nothing is styled, the sheet is missing from your
 `aazenc.css` — the CLI writes it, so this means the file was replaced by hand
 after install.
+
+## Layout
+
+`layout` is the one family whose value is that you stop typing class strings.
+Eight primitives — `Box`, `Stack`, `Grid`, `Flex`, `Center`, `Split`,
+`Container`, `Spacer` — share one gap scale and carry `min-w-0`, which is the
+class that stops a flex or grid child refusing to shrink and pushing the page
+sideways.
+
+```tsx
+<Container size="7xl" as="main">
+  <Stack gap={4}>
+    <Split>
+      <Box>
+        <h2 className="text-lg font-semibold">Members</h2>
+      </Box>
+      <Button type="button" variant="outline">Invite</Button>
+    </Split>
+    <Grid columns={1} gap={4} className="sm:grid-cols-3">
+      {cards}
+    </Grid>
+  </Stack>
+</Container>
+```
+
+Three decisions worth knowing:
+
+- **`Stack wrap` is the cluster.** A wrapping row of badges is one prop, not a
+  second component, so there is no `Cluster` to learn.
+- **No axis picks a breakpoint.** Direction and column count are single values,
+  and `className` owns responsive. `cn` is `twMerge`, so a `className` in the
+  same group replaces the primitive's value — but a breakpoint-prefixed class is
+  a different group, so `className="sm:grid-cols-3"` does not remove
+  `columns={1}`'s track; both are emitted and the breakpoint one wins at that
+  width by CSS order. So set the base value with `columns` and add the
+  breakpoint in `className`. The container gutter is the one exception and is
+  responsive on purpose.
+- **`as` and `asChild` are both typed.** A grid can be a `form`, a stack can be
+  a `ul`, and `asChild` adopts the child's tag while keeping the primitives'
+  classes. `as` re-types the props with the tag it renders, so `as="a" href`
+  and `as="button" type` are both checked against the tag you actually get.
+
+Everything else about them is the usual three layers: `className` for one
+instance, typed axes for the named presets, tokens for the product. A gap, a
+column count and a container size are enumerated values rather than free strings,
+so `gap="4xl"` is a compile error and `className="gap-14"` stays available for
+the case that needs it.
 
 ## What is already here
 

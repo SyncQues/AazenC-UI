@@ -7,7 +7,7 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "SyncQues product button. Six variants, pill by default. Pass variant, size, shape, width, and align.",
+      "description": "SyncQues product button. Seven variants, pill by default. Pass variant, size, shape, width, and align.",
       "dependencies": [
         "@radix-ui/react-slot",
         "class-variance-authority"
@@ -35,7 +35,8 @@
           "ghost",
           "destructive",
           "destructive-soft",
-          "link"
+          "link",
+          "soft"
         ],
         "sizes": [
           "xs",
@@ -1793,6 +1794,101 @@
           "sm",
           "default",
           "lg"
+        ]
+      }
+    },
+    {
+      "name": "layout",
+      "type": "registry:ui",
+      "title": "Layout",
+      "description": "Stack, Grid, Flex, Center, Split, Container, Box and Spacer: the boxes a page is made of, as named primitives on one gap scale. Every one takes a typed axis instead of a class string, every one carries min-w-0 so a wide child cannot scroll the page sideways, and every one takes as or asChild so a layout can be a form, a list or a link.",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/layout.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/layout.tsx"
+        },
+        {
+          "path": "packages/ui/src/layout-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/layout-variants.ts"
+        }
+      ],
+      "meta": {
+        "components": [
+          "Box",
+          "Center",
+          "Container",
+          "Flex",
+          "Grid",
+          "Spacer",
+          "Split",
+          "Stack"
+        ],
+        "directions": [
+          "col",
+          "row"
+        ],
+        "aligns": [
+          "start",
+          "center",
+          "end",
+          "baseline",
+          "stretch"
+        ],
+        "justifies": [
+          "start",
+          "center",
+          "end",
+          "between",
+          "around",
+          "evenly"
+        ],
+        "gaps": [
+          "0",
+          "0.5",
+          "1",
+          "1.5",
+          "2",
+          "2.5",
+          "3",
+          "3.5",
+          "4",
+          "5",
+          "6",
+          "8",
+          "10",
+          "12"
+        ],
+        "columns": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "sizes": [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "xl",
+          "2xl",
+          "3xl",
+          "4xl",
+          "5xl",
+          "6xl",
+          "7xl",
+          "prose",
+          "full"
         ]
       }
     }
