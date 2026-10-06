@@ -181,6 +181,12 @@ npx @aazenc/cli@latest update button --overwrite
 
 If the project has no `ui` folder, `init` creates `components/ui` (or `src/components/ui`) and `add` writes components there. If a `ui` folder is already present, components go in `aazenc-ui` beside it, for example `components/aazenc-ui`. Pass `--ui <dir>` to choose the directory. Import the generated `aazenc.css` after `tailwindcss` in your global CSS.
 
+Settings are written to `aazenc.json`. Earlier versions used `components.json`,
+which is also shadcn's filename; `init` now recognises a foreign `components.json`,
+leaves it alone, and writes its own file beside it, so one project can run both
+tools. A config already stored in `components.json` by an earlier version keeps
+being read and written there.
+
 You own the copied files, so you can edit them freely. `update` only replaces a file whose current content still matches the hash recorded at install, so local edits are skipped rather than overwritten — merge upstream changes by hand, or pass `--overwrite` to discard your version.
 
 ## Add a component
