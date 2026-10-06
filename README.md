@@ -2,7 +2,7 @@
 
 pnpm + Turborepo monorepo for the AazenC component library. The folder layout matches [intelli-ui](https://github.com/IntelliHelper/IntelliHelper-UI). The build list is [component.md](./component.md).
 
-## Repository layout
+## Repository layout 
 
 ```
 apps/
