@@ -1,6 +1,6 @@
 {
   "name": "@aazenc/cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "CLI for AazenC UI. init, list, add, and update copy components into your app.",
   "type": "module",
   "license": "MIT",

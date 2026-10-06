@@ -6,5 +6,16 @@
     "moduleResolution": "Bundler"
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "src/__tests__"]
+  /*
+   * Runtime tests are Node-stripped, never typechecked, so they are excluded by
+   * name. `classname-props.type-test.tsx` stays in the program on purpose: it is
+   * a compile-time contract, and excluding it would delete the check it exists
+   * to perform.
+   */
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/__tests__/*.test.mts",
+    "src/__tests__/register-extensionless.mjs"
+  ]
 }
