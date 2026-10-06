@@ -7,10 +7,13 @@ Usage
   aazenc-ui update [component...] [--overwrite] [--skip-install]
 
 Commands
-  init      Write components.json and the theme CSS. Does not replace your UI files.
+  init      Write aazenc.json and the theme CSS. Does not replace your UI files.
   list      List registry components.
   add       Copy components into the project and install their npm dependencies.
   update    Refresh components this CLI installed.
+
+Settings live in aazenc.json. A components.json belonging to another tool,
+such as shadcn, is left untouched and the two can share a project.
 
 Existing files are left in place unless you pass --overwrite.
 update refreshes a file only when it still matches the last installed copy.
@@ -22,9 +25,10 @@ Options
   --css <file>       Global CSS file that should import the AazenC sheet.
   --cwd <dir>        Project directory. Default: the current directory.
   --all              Add every component.
-  --installed        List only components recorded in components.json.
+  --installed        List only components recorded in aazenc.json.
   --overwrite        Replace files that already exist or were edited.
   --skip-install     Do not install npm dependencies.
-  --force            On init, rewrite components.json and the theme CSS.
+  --force            On init, rewrite your aazenc.json and the theme CSS. Never
+                     rewrites another tool's components.json.
   --yes              Accepted for scripts. Prompts are already skipped.
 `;

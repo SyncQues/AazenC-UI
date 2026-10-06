@@ -1,5 +1,5 @@
 import { flagOn, flagString, type Args } from "../lib/args.js";
-import { projectRoot, readConfig, writeConfig } from "../lib/config.js";
+import { projectRoot, readConfig, requireConfig, writeConfig } from "../lib/config.js";
 import { installComponents } from "../lib/install.js";
 import { loadRegistry } from "../lib/registry.js";
 import { resolveClosure } from "../lib/resolve.js";
@@ -9,8 +9,10 @@ import { init } from "./init.js";
 export function add(args: Args): void {
   const cwd = projectRoot(flagString(args.flags, "cwd") ?? process.cwd());
   if (!readConfig(cwd)) init({ ...args, command: "init", positionals: [], flags: args.flags });
-  const config = readConfig(cwd);
-  if (!config) throw new Error("Could not write components.json.");
+  // `requireConfig` rather than a bare re-read: when init declines to write,
+  // the reason (a foreign or broken file) is the useful thing to say, and it is
+  // the same sentence the rest of the CLI uses.
+  const config = requireConfig(cwd);
 
   const registry = loadRegistry();
   const names = flagOn(args.flags, "all") ? registry.items.map((item) => item.name).filter((name) => name !== "utils") : args.positionals;
