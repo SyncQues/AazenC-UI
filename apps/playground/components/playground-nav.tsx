@@ -14,6 +14,7 @@ const links = [
   { href: "/guides", label: "Guides" },
   { href: "/about", label: "About" },
   { href: "/sitemap", label: "Sitemap" },
+  { href: "/github", label: "GitHub" },
 ];
 
 export function PlaygroundNav() {
@@ -28,9 +29,12 @@ export function PlaygroundNav() {
       <NavbarLinks>
         {links.map((link) => {
           const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+          const isExternal = link.href.startsWith("https://");
           return (
             <NavbarLink key={link.href} asChild active={active}>
-              <Link href={link.href}>{link.label}</Link>
+              <Link href={link.href} target={isExternal ? "_blank" : undefined} rel={isExternal ? "noopener noreferrer" : undefined}>
+                {link.label}
+              </Link>
             </NavbarLink>
           );
         })}
