@@ -331,6 +331,10 @@ export type {
 } from "./accordion";
 export { Checkbox } from "./checkbox";
 export type { CheckboxProps } from "./checkbox";
+export { RadioGroup, RadioGroupItem } from "./radio-group";
+export type { RadioGroupItemProps, RadioGroupProps } from "./radio-group";
+export { Tour } from "./tour";
+export type { TourLabels, TourProps, TourSide, TourStep } from "./tour";
 export {
   Collapsible,
   CollapsibleContent,

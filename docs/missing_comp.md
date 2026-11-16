@@ -8,7 +8,7 @@ Source root: `SyncQues-Frontend/src/components`.
 ## Form
 
 - Textarea — `ui/textarea.tsx`
-- Radio Group — `ui/radio-group.tsx`
+- Radio Group — `ui/radio-group.tsx` ✅ (`radio-group` — RadioGroup, RadioGroupItem)
 - Form — `ui/form.tsx`
 - Labeled Field — `ui/labeled-field.tsx`
 - Synced Input — `ui/synced-input.tsx`

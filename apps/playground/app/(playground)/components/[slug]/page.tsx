@@ -8,6 +8,7 @@ import { SegmentedControlPreview } from "../../../../components/segmented-contro
 import { ButtonPreview } from "../../../../components/button-preview";
 import { CardPreview } from "../../../../components/card-preview";
 import { CheckboxPreview } from "../../../../components/checkbox-preview";
+import { RadioGroupPreview } from "../../../../components/radio-group-preview";
 import { CollapsiblePreview } from "../../../../components/collapsible-preview";
 import { CommandPreview } from "../../../../components/command-preview";
 import { DialogPreview } from "../../../../components/dialog-preview";
@@ -26,6 +27,7 @@ import { TextareaPreview } from "../../../../components/textarea-preview";
 import { LabelPreview } from "../../../../components/label-preview";
 import { NavbarPreview } from "../../../../components/navbar-preview";
 import { PopoverPreview } from "../../../../components/popover-preview";
+import { TourPreview } from "../../../../components/tour-preview";
 import { ProgressPreview } from "../../../../components/progress-preview";
 import { SelectPreview } from "../../../../components/select-preview";
 import { SkeletonPreview } from "../../../../components/skeleton-preview";
@@ -79,6 +81,7 @@ export async function generateMetadata({
     select: "Select",
     accordion: "Accordion",
     checkbox: "Checkbox",
+    "radio-group": "Radio group",
     collapsible: "Collapsible",
     label: "Label",
     badge: "Badge",
@@ -92,6 +95,7 @@ export async function generateMetadata({
     toggle: "Toggle",
     typeset: "Typeset",
     popover: "Popover",
+    tour: "Tour",
     avatar: "Avatar",
     carousel: "Carousel",
     progress: "Progress",
@@ -138,6 +142,7 @@ export default async function ComponentPage({
     select: SelectPreview,
     accordion: AccordionPreview,
     checkbox: CheckboxPreview,
+    "radio-group": RadioGroupPreview,
     collapsible: CollapsiblePreview,
     label: LabelPreview,
     badge: BadgePreview,
@@ -151,6 +156,7 @@ export default async function ComponentPage({
     toggle: TogglePreview,
     typeset: TypesetPreview,
     popover: PopoverPreview,
+    tour: TourPreview,
     avatar: AvatarPreview,
     carousel: CarouselPreview,
     progress: ProgressPreview,

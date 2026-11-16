@@ -457,6 +457,46 @@ export function Example() {
   )
 }`,
   },
+  "radio-group": {
+    filename: "radio-group.tsx",
+    code: `import { Label } from "@aazenc/ui/label"
+import { RadioGroup, RadioGroupItem } from "@aazenc/ui/radio-group"
+
+export function Example() {
+  return (
+    <RadioGroup defaultValue="email" aria-label="Alerts">
+      <div>
+        <RadioGroupItem id="email" value="email" />
+        <Label htmlFor="email">Email</Label>
+      </div>
+      <div>
+        <RadioGroupItem id="push" value="push" />
+        <Label htmlFor="push">Push</Label>
+      </div>
+    </RadioGroup>
+  )
+}`,
+  },
+  tour: {
+    filename: "tour.tsx",
+    code: `import { useState } from "react"
+import { Button } from "@aazenc/ui/button"
+import { Tour } from "@aazenc/ui/tour"
+
+const steps = [
+  { target: "#save", title: "Save", description: "Write the change when you are ready.", side: "bottom" as const },
+]
+
+export function Example() {
+  const [open, setOpen] = useState(false)
+  return (
+    <div>
+      <Button id="save" type="button" onClick={() => setOpen(true)}>Save</Button>
+      <Tour open={open} onOpenChange={setOpen} steps={steps} />
+    </div>
+  )
+}`,
+  },
   collapsible: {
     filename: "collapsible.tsx",
     code: `import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@aazenc/ui/collapsible"
