@@ -129,6 +129,12 @@ const components = [
       "SyncQues checkbox. One box, with a dash for a partial selection.",
   },
   {
+    href: "/components/radio-group",
+    name: "Radio group",
+    description:
+      "SyncQues radio group. One circle. The chosen option shows a primary dot.",
+  },
+  {
     href: "/components/collapsible",
     name: "Collapsible",
     description: "SyncQues collapsible. One disclosure.",
@@ -174,6 +180,12 @@ const components = [
     href: "/components/popover",
     name: "Popover",
     description: "SyncQues popover. One panel, same radius as the menus.",
+  },
+  {
+    href: "/components/tour",
+    name: "Tour",
+    description:
+      "SyncQues tour. One spotlight. The card walks through the page one step at a time.",
   },
   {
     href: "/components/hover-card",

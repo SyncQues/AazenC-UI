@@ -782,6 +782,30 @@
       ]
     },
     {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "Radio Group",
+      "description": "SyncQues radio group. One circle. The chosen option shows a primary dot.",
+      "dependencies": [
+        "@radix-ui/react-radio-group"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/radio-group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/radio-group.tsx"
+        },
+        {
+          "path": "packages/ui/src/radio-group-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/radio-group-variants.ts"
+        }
+      ]
+    },
+    {
       "name": "collapsible",
       "type": "registry:ui",
       "title": "Collapsible",
@@ -1018,6 +1042,36 @@
       ],
       "dependencies": [
         "@radix-ui/react-popover"
+      ]
+    },
+    {
+      "name": "tour",
+      "type": "registry:ui",
+      "title": "Tour",
+      "description": "SyncQues tour. One spotlight. The card walks through the page one step at a time.",
+      "dependencies": [
+        "react-dom"
+      ],
+      "registryDependencies": [
+        "button",
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/tour.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tour.tsx"
+        },
+        {
+          "path": "packages/ui/src/tour-variants.ts",
+          "type": "registry:ui",
+          "target": "components/ui/tour-variants.ts"
+        },
+        {
+          "path": "packages/ui/src/tour-utils.ts",
+          "type": "registry:ui",
+          "target": "components/ui/tour-utils.ts"
+        }
       ]
     },
     {

@@ -8,11 +8,11 @@ import { HomeShowcase } from "../../components/home-showcase";
 export const metadata: Metadata = {
   title: "AazenC UI — component library for product UI",
   description:
-    "AazenC UI is a component library for product UI. 57 components, copied into your project by a CLI, themed entirely with tokens.",
+    "AazenC UI is a component library for product UI. 59 components, copied into your project by a CLI, themed entirely with tokens.",
 };
 
 const stats = [
-  { value: "57", label: "Components in the registry" },
+  { value: "59", label: "Components in the registry" },
   { value: "48", label: "Documented, with examples" },
   { value: "2", label: "Themes — slate and mono" },
   { value: "20", label: "Catalog categories" },

@@ -1,6 +1,6 @@
 # AazenC UI Component Catalog
 
-Build list for this library. ✅ marks what already ships: 57 components, all of
+Build list for this library. ✅ marks what already ships: 59 components, all of
 them in `packages/ui/src`, published through `apps/registry/registry.json`, and
 openable at `/components/<slug>` in the playground. Everything unmarked is still
 to build. Add each one under `packages/ui/src`.
@@ -64,7 +64,7 @@ slug, not by line.
 -   Month Picker ✅ (`month-picker`)
 -   Range Picker ✅ (`date-picker`)
 -   Checkbox ✅ (`checkbox`)
--   Radio Group
+-   Radio Group ✅ (`radio-group`)
 -   Switch ✅ (`switch`)
 -   Toggle ✅ (`toggle`)
 -   Toggle Group ✅ (`toggle-group`)
@@ -117,7 +117,7 @@ slug, not by line.
 -   Confirmation Dialog
 -   Toast ✅ (`toast`)
 -   Notification Center
--   Tour
+-   Tour ✅ (`tour`)
 -   Spotlight Search
 -   Fullscreen Dialog
 
